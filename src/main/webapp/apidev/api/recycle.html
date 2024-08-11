@@ -90,7 +90,7 @@
 		     }},
 	       {field: 'update_by', title: '操作人', width: 100,align:'center'},
 	       {field: 'diffInDays', title: '剩余时间', width: 100,align:'center'},
-	       {title: '操作', width:80,align:'center', templet: function(obj){
+	       {title: '操作', width:100,align:'center', templet: function(obj){
 				return `<a lay-on="${tableType}-tips-left${obj.status==1?'1':''}" class="${obj.status==1 ? 'td-a' : 0}"
 						style="color: ${obj.status==1?'#7f7676':'#16baaa'};cursor: ${obj.status==1 ? 'not-allowed':'pointer'};"
 				 		data-id="${obj.status==1?'':obj.id}">恢复</a>`;

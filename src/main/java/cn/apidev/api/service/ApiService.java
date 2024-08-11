@@ -111,10 +111,10 @@ public class ApiService extends ApidevBaseService {
 		}
 
 		if (saveList.size() > 0) {
-			Db.batchSave("apidev_api", saveList, 500);
+			Db.batchSave(tableName, saveList, 500);
 		}
 		if (updateList.size() > 0) {
-			Db.batchUpdate("apidev_api", updateList, 500);
+			Db.batchUpdate(tableName, updateList, 500);
 		}
 
 		if (counter == 0) {
@@ -180,7 +180,7 @@ public class ApiService extends ApidevBaseService {
 		Page<Record> page = getPage(pageNumber, pageSize, params,"order by update_time desc");
 		page.getList().forEach(rd -> {
 			String pid = rd.getStr("parent_id");
-			rd.set("parentName", getParantNames(pid));
+			rd.set("parentNames", getParantNames(pid));
 			rd.set("parentIds", getParentIds(pid));
 		});
 		return page;
@@ -343,7 +343,7 @@ public class ApiService extends ApidevBaseService {
 
 		});
 
-		return b ? ok("删除成功") : fail("删除失败");
+		return b ? ok("已移到回收站") : fail("数据异常");
 	}
 
 	/**
@@ -423,7 +423,11 @@ public class ApiService extends ApidevBaseService {
 				return fail("所属接口文档已不存在");
 			} else if(parentApi==null || (parentApi != null && parentApi.getInt("del") != 0)){
 				msg="原目录已删除，文件还原到根目录";
-				api.set("parent_id", "-1");
+				String parentIds=getParentIds(id);
+				if(parentIds.contains("-1"))
+					api.set("parent_id", "-1");
+				else
+					api.set("parent_id", "-2");
 			}
 			update(api);
 			recoverChildrenApi(id);

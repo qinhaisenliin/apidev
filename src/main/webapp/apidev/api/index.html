@@ -1383,13 +1383,13 @@ function del(id,treeType) {
 	    var typeName={menu:'目录',api:'接口',demo:'实例',link:'快捷请求',}
 	    var content=`删除${typeName[nodeType]}【${title}】?<br/>
 		    ${nodeType=='menu'?`该${typeName[nodeType]}及该${typeName[nodeType]}下的${treeType == '-1' ? '接口和实例':'快捷请求'}`:`该${typeName[nodeType]}`}将移至回收站，30 天后自动彻底删除。`;
-	    layer.confirm(content, {icon: 0, title:'提示'}, function(index){
+	    layer.confirm(content, {icon: 0, title:'提示',offset:'100px',}, function(index){
 	    	$.ajax({
 				 url:'#(path)/apidev/api/delete',
 		 	 	 	type:"POST",
 		 	 	 	data:{'id':id},
 		 	 	 	success:function(ret){
-			 	 	 	layer.msg(ret.msg);
+			 	 	 	layer.msg(ret.msg,{icon:1,offset:'b',anim: 'slideUp'});
 			 	 	 	if(ret.state=='ok'){
 			 	 	 	   getApiTreeList(treeType);
 			 	 	 	}  
