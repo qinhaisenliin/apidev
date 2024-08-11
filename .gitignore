@@ -29,3 +29,4 @@ target/*
 *.jar
 *.zip
 /README.md
+/README.en.md
