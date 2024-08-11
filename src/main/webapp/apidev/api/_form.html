@@ -1,0 +1,35 @@
+	<input type="hidden" class="layui-input"  name="runApi.id" value="#(runApi.id??)" />
+	<input type="hidden" class="layui-input"  name="runApi.dataType" value="#(runApi.dataType??0)" />
+	<input type="hidden" class="layui-input"  name="menuId" value="#(menuId)" />
+#(token)
+<div class="layui-row layui-col-space1 task-row">
+	#set(req=true)
+	#@colStart("所属项目",12)
+	<select id="projectId" name="runApi.projectId" class="layui-select" lay-filter="projectId" lay-verify="required" >
+		<option value="">--所属项目--</option>
+		#for(data:projectList)
+		<option value="#(data.id??)" #if(data.id==runApi.project_id??) selected="selected" #end>#(data.project_name??)</option>
+		#end
+	</select>
+	#@colEnd() 
+</div>
+<div class="layui-row layui-col-space1 task-row">
+	 #set(req=true)
+	 #@colStart("接口路径",12)
+	<input type="text" class="layui-input"  name="runApi.actionKey" value="#(runApi.action_key??)" lay-verType='tips'lay-verify="required" maxlength="100" placeholder="请输入接口路径，也可以是http地址"/>
+	 #@colEnd() 
+	 #@colStart("接口标题",12)
+	<input type="text" class="layui-input"  name="runApi.title" value="#(runApi.title??)" lay-verType='tips'lay-verify="#(runApi.id??'required')" maxlength="100" placeholder="请输入接口文档标题"/>
+	 #@colEnd() 
+	 #@colStart("控制器",12)
+	<input type="text" class="layui-input"  name="runApi.controller" value="#(runApi.controller??)" lay-verType='tips'lay-verify="" maxlength="100" placeholder="控制器"/>
+	 #@colEnd() 
+</div>
+
+<div class="layui-row layui-col-space1 task-row">
+	 #@colStart("备注",12)
+	<input type="text" class="layui-input"  name="runApi.remark" value="#(runApi.remark??)" lay-verType='tips'lay-verify="" maxlength="100"/>
+	 #@colEnd() 
+</div>
+
+	#@submitButton()

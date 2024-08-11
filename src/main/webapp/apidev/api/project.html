@@ -1,0 +1,43 @@
+<style>
+.project-row{
+	border: 1px solid #ccc;
+    padding: 10px 15px;
+    margin: 5px 5px 15px 5px;
+    border-radius: 10px;
+}
+.grid-project-data {
+	padding-top:20px;
+	font-size:12px;
+}
+.project-count{
+	font-size:22px;
+}
+</style>
+<div class="layui-row project-row">
+  <div>项目统计</div>
+  <div class="layui-col-md3">
+    <div class="grid-project-data"><span class="project-count">#(projectData.api??0)</span><br/>接口数</div>
+  </div>
+  <div class="layui-col-md3">
+    <div class="grid-project-data"><span class="project-count">#(projectData.demo??0)</span><br/>接口用例数</div>
+  </div>
+  <div class="layui-col-md3">
+    <div class="grid-project-data"><span class="project-count">#(projectData.doc??0)</span><br/>文档数</div>
+  </div>
+  <div class="layui-col-md3">
+    <div class="grid-project-data"><span class="project-count">#(projectData.link??0)</span><br/>快捷请求数</div>
+  </div>
+</div>
+   
+<div class="layui-row project-row">
+	<div>分享列表<br/>
+		<i class="layui-icon layui-icon-about"></i>将接口文档以 URL 形式分享出去，方便外部团队在线查看
+		<button type="button" class="layui-btn layui-btn-primary layui-btn-sm layui-hide" style="float: right">
+	    <i class="layui-icon layui-icon-addition"></i> 新建分享
+	  </button>
+	</div>
+	
+  <div class="layui-col-md12">
+    <div class="grid-project-data" style="text-align: center"><a><i class="layui-icon layui-icon-addition"></i> 新建分享</a></div>
+  </div>
+</div>

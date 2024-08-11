@@ -1,0 +1,7 @@
+# db config
+jdbcUrl = jdbc:mysql://localhost/apidev?useSSL=false&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+user = root
+password = root
+
+devMode = true
+engineDevMode = true
