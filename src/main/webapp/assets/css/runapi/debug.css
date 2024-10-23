@@ -1,9 +1,9 @@
     .layui-input:hover, .layui-textarea:hover,.form-data-param:hover {
-        border-color: #1e9fff !important;
+        border-color: #16b777!important;
     }
     .layui-input:focus,.layui-textarea:focus,.form-data-param:focus{
         outline: 0;
-        border: 1px solid #1e9fff!important;
+        border: 1px solid #16b777!important;
     }
     .layui-input .remove-btn .layui-textarea{
         border-color: #d2d2d2!important;
@@ -36,22 +36,22 @@
     td select{
         height: 32px!important;
     }
-    td input[type="checkbox"]{
+    /* td input[type="checkbox"]{
         display: inline-block!important;
-    }
+    } */
      .layui-input, .layui-this::after, .layui-textarea {
         border-color: #d2d2d2;
     }
     .form-data-param{
-        height: 30px;
+       height: 30px;
         line-height: 1.3;
         line-height: 30px;
         border-width: 1px;
         border-style: solid;
-        background-color: #fff;
-        color: rgba(0,0,0,.85);
+       /*  background-color: #fff;
+        color: rgba(0,0,0,.85); */
         border-radius: 2px;
-        border-color:#d2d2d2!important;
+       /*  border-color:#d2d2d2!important; */
         padding-left: 5px;
     }
 
@@ -67,10 +67,13 @@
     .td-min{
         height:30px;
         width:15%;
-        padding-left: 10px;
+        /* padding-left: 10px; */
     }
     .input-max{
         width:100%;
+    }
+    .td-btn{
+    	width:60px;
     }
     #cookies_data_table{
         width:50%
@@ -78,17 +81,21 @@
     #cookies_data_table td{
         padding-left: 10px;
     }
-    #cookies_data_table .remove-btn {
+    #cookies_data_table .add-tr-btn {
         margin-left: 5px!important;
     }
+    .remove-btn,.add-tr-btn{
+    	cursor: pointer;
+    }
     .remove-btn{
-        margin-left: 15px;
-        padding: 5px;
-        width: 30px;
-        height: 30px;
+        margin-left: 3px;
+    }
+    .add-tr-btn{
+        margin-left: 10px;
     }
     .add-row{
-        margin: 10px;
+        margin: 5px 5px 5px 15px;
+        padding-left: 5px;
     }
     .add-row a{
         padding: 20px;
@@ -116,14 +123,14 @@
     }
     
     .response-info{
-    	margin-top:-40px!important;
+    	/* margin-top:-40px!important; */
     	float:right!important;
     	pointer-events:none; 
     	opacity:0.6;  
     }
     
     .response-info #status{
-   		color:green;
+   		color:#11ab11;
    	}
    	
    	.response-info #time,.response-info #size{

@@ -4,17 +4,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import cn.apidev.base.ApidevBaseService;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Action;
 import com.jfinal.core.JFinal;
+import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.Ret;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -83,6 +87,28 @@ public class ApiService extends ApidevBaseService {
 		List<Record> saveList = new ArrayList<>();
 		List<Record> updateList = new ArrayList<>();
 		List<String> allActionKeys = JFinal.me().getAllActionKeys();
+		Record root=findById("1");
+		Record root2=findById("2");
+		if(root==null) {
+			root = new Record();
+			root.set("id","1");
+			root.set("title", "根目录");
+			root.set("type", "menu");
+			root.set("parent_id", "root");
+			root.set("create_time", new Date());
+			root.set("update_time", new Date());
+			save(root);
+		}
+		if(root2==null) {
+			root2 = new Record();
+			root2.set("id","2");
+			root2.set("title", "快捷请求");
+			root2.set("type", "menu");
+			root2.set("parent_id", "root");
+			root2.set("create_time", new Date());
+			root2.set("update_time", new Date());
+			save(root2);
+		}
 		for (String actionKey : allActionKeys) {
 
 			String[] urlPara = new String[1];
@@ -93,18 +119,35 @@ public class ApiService extends ApidevBaseService {
 
 			String controller = action.getControllerClass().getName();
 
-			String sql = getQueryFullSql("action_key", "controller");
-			Record api = Db.findFirst(sql, actionKey, controller);
+			String sql = getQueryFullSql("action_key", "controller","type");
+			Record api = Db.findFirst(sql, actionKey, controller,"api");
 
 			if (api == null) {
 				api = new Record();
 				api.set("id", UUID.randomUUID().toString().replace("-", ""));
 				api.set("action_key", actionKey);
+				api.set("request_url", actionKey);
 				api.set("controller", controller);
-				api.set("parent_id", "-1");
+				api.set("parent_id", "1");
 				api.set("type", "api");
+				api.set("request_mode", "GET");
+				api.set("interface_status", "开发中");
 				api.set("create_time", new Date());
 				api.set("update_time", new Date());
+				api.set("visible", 1);
+				// 根据controller分组
+				sql=getQueryFullSql("title","controller","type");
+				Record parent = Db.findFirst(sql, controller, controller,"menu");
+				if(parent==null) {
+					parent=new Record();
+					parent.set("id", UUID.randomUUID().toString().replace("-", ""));
+					//parent.set("action_key", controller);
+					parent.set("controller", controller);
+					parent.set("title", controller);
+					parent.set("type", "menu");
+					save(parent);
+				}
+				api.set("parent_id", parent.getStr("id"));
 				saveList.add(api);
 				counter++;
 			}
@@ -132,8 +175,10 @@ public class ApiService extends ApidevBaseService {
 	 * @return
 	 */
 	public List<Record> getTreeList(String parentId, String type) {
-		String sql = "select id,type,request_mode,parent_id,action_key,LOWER(COALESCE(title, CONCAT(action_key, '（未调试）'))) AS title  from "
-				+ tableName + " where del = 0 and parent_id=?";
+		String sql = "select id,type,request_mode,parent_id,action_key,interface_status,controller,"
+				+ " title,password,visible,create_time,update_time  "
+				+ " from "+ tableName 
+				+ " where del = 0 and parent_id=?";
 		List<Record> list;
 		if (type != null) {
 			sql += " and type = ?";
@@ -144,12 +189,38 @@ public class ApiService extends ApidevBaseService {
 
 		for (Record rd : list) {
 			String id = rd.get("id");
-			if ("-1".equals(parentId) || "-2".equals(parentId)) {
+			if ("1".equals(parentId) || "2".equals(parentId)) {
 				rd.set("isopen", true);
 			} else {
 				rd.set("isopen", false);
 			}
+			if(rd.get("title")==null) {
+				rd.set("title", rd.getStr("action_key"));
+				rd.set("tips", "api".equals(rd.get("type")) ? "接口未调试" : "");
+			}
 			List<Record> children = getTreeList(id, type);
+			if (children.size() > 0)
+				rd.set("children", children);
+		}
+		return list;
+	}
+	
+	/**
+	 * 查询被标记删除的数据
+	 * @param parentId
+	 * @param del
+	 * @return
+	 */
+	public List<Record> getDelTreeList(String parentId, int del) {
+		String sql = "select id,type,request_mode,parent_id,action_key,interface_status,controller,"
+				+ " title,password,visible,create_time,update_time  "
+				+ " from "+ tableName 
+				+ " where del = ? and parent_id=? ";
+		List<Record> list = Db.find(sql, del, parentId);
+
+		for (Record rd : list) {
+			String id = rd.get("id");
+			List<Record> children = getDelTreeList(id,del);
 			if (children.size() > 0)
 				rd.set("children", children);
 		}
@@ -171,7 +242,7 @@ public class ApiService extends ApidevBaseService {
 	public Page<Record> list(int pageNumber, int pageSize, Record record) {
 		Record params = new Record();
 		String parentId = record.getStr("parentId");
-		if (parentId != null && !"-1".equals(parentId) && !"-2".equals(parentId)) {
+		if (parentId != null && !"1".equals(parentId) && !"2".equals(parentId)) {
 			params.set("parent_id=", parentId);
 		}
 		params.set("type=", record.getStr("type"));
@@ -193,9 +264,9 @@ public class ApiService extends ApidevBaseService {
 	 * @return
 	 */
 	public String getParantNames(String id) {
-		if ("-1".equals(id)) {
+		if ("1".equals(id)) {
 			return "根目录";
-		} else if ("-2".equals(id)) {
+		} else if ("2".equals(id)) {
 			return "快捷请求";
 		}
 
@@ -215,9 +286,9 @@ public class ApiService extends ApidevBaseService {
 
 			// 如果有父级名称，进行拼接
 			if (parentName != null) {
-				titleBuilder.append(parentName).append(" / ").append(title);
-			} else {
-				titleBuilder.append(title);
+				titleBuilder.append(parentName);
+				if(api.get("type").equals("menu"))
+					titleBuilder.append(" / ").append(title);
 			}
 
 			return titleBuilder.toString();
@@ -227,13 +298,13 @@ public class ApiService extends ApidevBaseService {
 	}
 
 	public String getParentIds(String id) {
-		if ("-1".equals(id) || "-2".equals(id)) {
+		if ("1".equals(id) || "2".equals(id)) {
 			return id;
 		}
 
 		Record api = findById(id);
 		if (api != null) {
-			StringBuilder titleBuilder = new StringBuilder();
+			StringBuilder parentIdBuilder = new StringBuilder();
 
 			// 递归获取父级名称
 			String parentId = api.getStr("parent_id");
@@ -241,12 +312,12 @@ public class ApiService extends ApidevBaseService {
 
 			// 如果有父级名称，进行拼接
 			if (parentIds != null) {
-				titleBuilder.append(parentIds).append(" / ").append(id);
-			} else {
-				titleBuilder.append(id);
+				parentIdBuilder.append(parentIds);
+				if(api.get("type").equals("menu"))
+					parentIdBuilder.append(" / ").append(id);
 			}
 
-			return titleBuilder.toString();
+			return parentIdBuilder.toString();
 		}
 
 		return null;
@@ -257,6 +328,8 @@ public class ApiService extends ApidevBaseService {
 			api.set("id", UUID.randomUUID().toString().replace("-", ""));
 		api.set("create_time", new Date());
 		api.set("update_time", new Date());
+		if(api.get("parent_id")==null)
+			api.set("parent_id", "1");
 		api.set("del", 0);
 		boolean b = Db.save(tableName, api);
 		return b ? ok("保存成功") : fail("保存失败");
@@ -275,6 +348,63 @@ public class ApiService extends ApidevBaseService {
 		boolean b = Db.update(tableName, api);
 		return b ? ok("修改成功") : fail("修改失败");
 	}
+	
+	/**
+	 * 修改状态
+	 * @param ids
+	 * @param status
+	 * @return
+	 */
+	public Ret updateStatus(String ids,String status) {
+		if(ids==null || status==null)
+			return fail("id or status is null");
+		String[] str=ids.split(",");
+		for(String id:str) {
+			Record api=new Record();
+			api.set("id", id).set("interface_status", status);
+			api.set("update_time", new Date());
+			Db.update(tableName, api);
+		}
+		return ok("修改成功");
+	}
+	
+	/**
+	 * 显示隐藏接口
+	 * @param ids
+	 * @param visible
+	 * @return
+	 */
+	public Ret updateVisible(String ids,String visible) {
+		if(ids==null || visible==null)
+			return fail("id or visible is null");
+		String[] str=ids.split(",");
+		for(String id:str) {
+			Record api=new Record();
+			api.set("id", id).set("visible", visible);
+			api.set("update_time", new Date());
+			Db.update(tableName, api);
+		}
+		return ok("修改成功");
+	}
+	
+	/**
+	 * 批量移动
+	 * @param ids
+	 * @param parentId
+	 * @return
+	 */
+	public Ret moveTo(String ids,String parentId) {
+		if(ids==null || parentId==null)
+			return fail("id or parentId is null");
+		String[] str=ids.split(",");
+		for(String id:str) {
+			Record api=new Record();
+			api.set("id", id).set("parent_id", parentId);
+			api.set("update_time", new Date());
+			Db.update(tableName, api);
+		}
+		return ok("移动成功");
+	}
 
 	/**
 	 * 复制
@@ -289,8 +419,9 @@ public class ApiService extends ApidevBaseService {
 			String newId = UUID.randomUUID().toString().replace("-", "");
 			api.set("id", newId);
 			if (parentId == null) {
-				api.set("title", api.getStr("title") == null ? api.getStr("action_key") + "（未调试） Copy"
-						: api.getStr("title") + " Copy");
+				String title =api.getStr("title") == null ? api.getStr("action_key") + " Copy"
+						: api.getStr("title") + " Copy";
+				api.set("title", title);
 			}
 			api.set("parent_id", parentId == null ? api.getStr("parent_id") : parentId);
 			save(api);
@@ -355,7 +486,9 @@ public class ApiService extends ApidevBaseService {
 	private void flattenTree(List<Record> tree, List<Record> list, boolean isApi) {
 		for (Record record : tree) {
 			if (isApi) {
-				if ("api".equals(record.get("type"))) {
+				if ("api".equals(record.get("type")) || "link".equals(record.get("type"))) {
+					String parentNames=getParantNames(record.getStr("id"));
+					record.set("parentNames", parentNames);
 					list.add(record);
 				}
 			} else {
@@ -385,6 +518,22 @@ public class ApiService extends ApidevBaseService {
 		});
 		return childrenList;
 	}
+	
+	public List<Record> getExportSelectApiList(String ids){
+		List<Record> list = new ArrayList<>();
+		if(ids!=null) {
+			String[] str = ids.split(",");
+			for(String id:str) {
+				Record api=findById(id);
+				toApiJson(api);
+				if(api.get("title")==null)
+					api.set("title",api.get("action_key"));
+				
+				list.add(api);
+			}
+		}
+		return list;
+	}
 
 	/**
 	 * 添加接口文档参数
@@ -393,12 +542,42 @@ public class ApiService extends ApidevBaseService {
 	public void toApiJson(Record api) {
 		api.put("headersJson", JSONObject.parseArray(api.get("request_headers")));
 		api.put("queryJson", JSONObject.parseArray(api.get("request_param_explain")));
+		api.put("pathJson", JSONObject.parseArray(api.get("request_path_explain")));
 		api.put("formDataJson", JSONObject.parseArray(api.get("request_form_data")));
 		api.put("bodyJson", JSONObject.parseArray(api.get("request_body_explain")));
 		api.put("successDataExplain", JSONObject.parseArray(api.get("success_demo_explain")));
 		api.put("failuerDataExplain", JSONObject.parseArray(api.get("failuer_demo_explain")));
+		
+		// 转译html字符，避免渲染html数据
+		String successDemo = api.getStr("success_demo");
+		successDemo = escapeHtml(successDemo);
+		api.set("success_demo",successDemo);
+		String failDemo = api.getStr("fail_demo");
+		failDemo = escapeHtml(failDemo);
+		api.set("fail_demo",failDemo);
+		String requestResult = api.getStr("request_result");
+		requestResult = escapeHtml(requestResult);
+		api.set("request_result",requestResult);
+		
 	}
-
+	
+	/**
+	 * 转义html字符
+	 * @param html
+	 * @return
+	 */
+	 public String escapeHtml(String html) {  
+        if (html == null) {  
+            return null;  
+        }  
+        return html  
+            .replace("&", "&amp;")  
+            .replace("<", "&lt;")  
+            .replace(">", "&gt;")  
+            .replace("\"", "&quot;")  
+            .replace("'", "&apos;");  
+	}  
+	 
 	/**
 	 * 恢复
 	 * 
@@ -417,24 +596,25 @@ public class ApiService extends ApidevBaseService {
 		api.set("del", 0);
 		String msg="恢复成功";
 		String parentId = api.get("parent_id");
-		if (!"-1".equals(parentId) && !"-2".equals(parentId)) {
+		if (!"1".equals(parentId) && !"2".equals(parentId)) {
 			Record parentApi = findById(parentId);
 			if ("demo".equals(api.get("type")) && (parentApi == null || (parentApi != null && parentApi.getInt("del") != 0))) {
 				return fail("所属接口文档已不存在");
 			} else if(parentApi==null || (parentApi != null && parentApi.getInt("del") != 0)){
 				msg="原目录已删除，文件还原到根目录";
 				String parentIds=getParentIds(id);
-				if(parentIds.contains("-1"))
-					api.set("parent_id", "-1");
+				if(parentIds.contains("1"))
+					api.set("parent_id", "1");
 				else
-					api.set("parent_id", "-2");
-			}
-			update(api);
-			recoverChildrenApi(id);
-		} else {
-			update(api);
-			recoverChildrenApi(id);
+					api.set("parent_id", "2");
+			}			
 		}
+		Db.tx(() -> {
+			update(api);
+			recoverChildrenApi(id);
+			return true;
+		});
+		
 		return ok(msg);
 	}
 	
@@ -443,7 +623,7 @@ public class ApiService extends ApidevBaseService {
 	 * @param parentId
 	 */
 	public void recoverChildrenApi(String parentId) {
-		List<Record> treeList=getTreeList(parentId, null);
+		List<Record> treeList=getDelTreeList(parentId,2);
 		List<Record> childrenList = new ArrayList<>();
 		flattenTree(treeList, childrenList, false);
 		childrenList.forEach(api ->{
@@ -451,6 +631,36 @@ public class ApiService extends ApidevBaseService {
 			update(api);
 		});
 	}
+	
+	/**
+	 * 目录数据
+	 * @param id
+	 * @return
+	 */
+	public List<Record> getMenuApiList(String id,String keyword,String treeType) {
+		String type="api";
+		if("2".equals(treeType)) {
+			type = "link";
+		}
+		List<Record> treeList=getTreeList(id, type);
+		List<Record> apiList=new ArrayList<>();
+		flattenTree(treeList, apiList, true);
+		if(keyword!=null) {
+			List<Record> filteredList = apiList.stream()  
+	                .filter(record -> recordContainsKeyword(record, keyword))  
+	                .collect(Collectors.toList()); 
+			return filteredList;
+		}
+		return apiList;
+	}
+	
+	private static boolean recordContainsKeyword(Record record, String keyword) {  
+        // 在这里定义如何检查 Record 是否包含关键字，比如检查某个字段  
+		String title=record.getStr("title");
+		String actionKey=record.getStr("action_key");
+		String controller=record.getStr("controller");
+        return (title+actionKey+controller).contains(keyword); // 假设 Record 的 toString() 方法包含关键字  
+    }  
 	
 	/**
 	 * 项目统计数据
@@ -479,7 +689,7 @@ public class ApiService extends ApidevBaseService {
 			// 判断数据是否可以恢复
 			String parentId=rd.get("parent_id");
 			int status=0;
-			if(!"-1".equals(parentId)&&!"-2".equals(parentId)) {
+			if(!"1".equals(parentId)&&!"2".equals(parentId)) {
 				Record parent=findById(parentId);
 				if("demo".equals(rd.get("type"))){
 					if(parent==null|parent.getInt("del")!=0) {
@@ -495,12 +705,12 @@ public class ApiService extends ApidevBaseService {
 	        long diffInMillis = now.getTime() - updateTime.getTime();  
 	        // 将差值转换为天数  
 	        long diffInDays = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);  
-	        rd.set("diffInDays", (30-diffInDays)+" 天");
+	        rd.set("diffInDays", (29-diffInDays)+" 天");
 	        // 区分接口和快捷请求
 	        String parentIds=rd.get("parentIds");
-			if(parentIds!=null && parentIds.contains("-1")) {
+			if(parentIds!=null && parentIds.contains("1")) {
 				apiData.add(rd);
-			} else if(parentIds!=null && parentIds.contains("-2")){
+			} else if(parentIds!=null && parentIds.contains("2")){
 				shortcutData.add(rd);
 			}else{
 				apiData.add(rd);
@@ -513,4 +723,78 @@ public class ApiService extends ApidevBaseService {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public String sendRequest(JSONObject json){
+    	String url=json.getString("url");
+    	String body=json.getString("body");
+    	JSONObject queryParas=json.getJSONObject("queryPara");
+    	JSONObject headers=json.getJSONObject("header");
+    	String method=json.getString("method");
+    	String contentType=json.getString("contentType");
+    	String cookies=json.getString("cookies");
+    	if(StrKit.notBlank(cookies))
+    		headers.put("Cookie", cookies);
+    	String result="";
+    	if("GET".equals(method)){
+    		result=HttpKit.get(url, null, headers.toJavaObject(Map.class));
+    	}else{
+    		switch (contentType) { 
+    			case "none":  
+			    	result=HttpKit.post(url, null, headers.toJavaObject(Map.class));
+			        break;  
+    		    case "json":  
+    		    	headers.put("Content-Type", "application/json; utf-8");  
+    		    	result=HttpKit.post(url, body, headers.toJavaObject(Map.class));
+    		        break;  
+    		    case "raw":  
+    		    	headers.put("Content-Type", "text/plain; charset=utf-8");  
+    		    	result=HttpKit.post(url, body, headers.toJavaObject(Map.class));
+    		        break;  
+    		    case "xml":  
+    		    	headers.put("Content-Type", "application/xml; charset=utf-8");  
+    		    	result=HttpKit.post(url, body, headers.toJavaObject(Map.class));
+    		        break;  
+    		    case "form-data":  
+    		    	headers.put("Content-Type", "multipart/form-data; boundary="+System.currentTimeMillis());  
+    		    	result=HttpKit.post(url, queryParas.toJavaObject(Map.class), null, headers.toJavaObject(Map.class));
+    		        break;  
+    		    case "x-www-form-urlencoded":  
+    		    	headers.put("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"); 
+    		    	result=HttpKit.post(url, queryParas.toJavaObject(Map.class), null, headers.toJavaObject(Map.class));
+    		    	break;  
+    		    default:  
+    		    	headers.put("Content-Type", "application/"+contentType+"; charset=utf-8"); 
+    		    	result=HttpKit.post(url, body, headers.toJavaObject(Map.class));
+    		}  
+    	
+    	}
+    	return result;
+    }
+	
+	/**
+	 * 保存接口文档
+	 * @param body
+	 * @return
+	 */
+	public Ret saveApi(JSONObject body) {
+		Record api=new Record();      
+    	//循环转换                
+    	for (Map.Entry<String, Object> entry : body.entrySet()) {    
+    		api.set(entry.getKey(), entry.getValue());            
+    	}   
+    	
+    	// 新曾接口
+    	boolean isAdd = api.getBoolean("isAdd");
+    	api.remove("isAdd");
+    	if(isAdd) {
+    		return save(api);
+    	}else {
+    		Ret ret=update(api);
+    		
+        	if(ret.isFail()) {
+        		ret=save(api);
+        	}
+        	return ret;
+    	}
+	}
 }

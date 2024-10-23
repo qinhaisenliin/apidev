@@ -1,5 +1,5 @@
 	//显示历史记录数据
-	function createTableRow(id,jsonText){
+	function createTableRow(id,jsonText,apiId){
 		if(jsonText){
 	    	try{
 		    	var arr=JSON.parse(jsonText);
@@ -16,18 +16,20 @@
 					if(!name)
 						continue;
 					
-					if(id=='body_data_list')
-						addBodyDataRow(name,type,require,remark);
-					else if(id=='form_data_list')
-						addFormDataRow(disable,name,type,value,require,remark);
-					else if(id=='headers_data_list')
-						addHeadersDataRow(disable,name,type,value,require,remark);
-					else if(id=='query_data_list')
-						addQueryDataRow(name,type,value,require,remark);
-					else if(id=='success_data_list')
-						addSuccessDataRow(name,type,remark);
-					else if(id=='failuer_data_list')
-						addFailuerDataRow(name,type,remark);
+					if(id=='body_data_list_'+apiId)
+						addBodyDataRow(name,type,require,remark,apiId);
+					else if(id=='form_data_list_'+apiId)
+						addFormDataRow(disable,name,type,value,require,remark,apiId);
+					else if(id=='headers_data_list_'+apiId)
+						addHeadersDataRow(disable,name,type,value,require,remark,apiId);
+					else if(id=='query_data_list_'+apiId)
+						addQueryDataRow(disable,name,type,value,require,remark,apiId);
+					else if(id=='path_data_list_'+apiId)
+						addPathDataRow(disable,name,type,value,require,remark,apiId);
+					else if(id=='success_data_list_'+apiId)
+						addSuccessDataRow(name,type,remark,apiId);
+					else if(id=='failuer_data_list_'+apiId)
+						addFailuerDataRow(name,type,remark,apiId);
 				}
 	        }catch(e){
 				console.log(e)
@@ -35,17 +37,7 @@
 	   	}
 	}
 
-    $("#body_type").change(function(){
-        var opt=$("#body_type").val();
-        if(opt=='json'){
-            $('.body-type-json').removeClass('layui-hide');
-            $('.form-data').addClass('layui-hide');
-        }else{
-            $('.body-type-json').addClass('layui-hide');
-            $('.form-data').removeClass('layui-hide');
-        }
-    });
-    
+        
     //textarea 自适应高度
     function autoHeight(ele, minHeight) {
         minHeight = minHeight || 16;
@@ -74,7 +66,7 @@
     		return '';
     }
 
-    function addBodyDataRow(name,type,require,remark){
+    function addBodyDataRow(name,type,require,remark,apiId){
     	var selected1=isSelected(type,1);
         var selected2=isSelected(type,2);
         var selected3=isSelected(type,3);
@@ -103,12 +95,14 @@
             '                                        </select>\n' +
             '                                    </td>\n' +
             '                                    <td><input type="text" class="form-data-param input-max"  name="remark" value="'+remark+'" placeholder="选填。参数描述，便于生成文档"/></td>\n' +
-            '                                    <td><button class="remove-btn" onclick="javascript:removeTr(this)" type="button"><i class="layui-icon layui-icon-close"></i></button></td>\n' +
+            '                                    <td class="td-btn"><button class="add-tr-btn" onclick="addTr(this)" type="button"><i class="layui-icon layui-icon-addition"></i></button>\n'+
+		    '                         				<button class="remove-btn" onclick="removeTr(this)" type="button"><i class="layui-icon layui-icon-subtraction"></i></button></td>\n' +
             '                                </tr>';
-        $("#body_data_list").append(tr);
+        $("#body_data_list_"+apiId).append(tr);
+        addBtnHover();
     }
 
-    function addFormDataRow(disabled,name,type,value,require,remark){
+    function addFormDataRow(disabled,name,type,value,require,remark,apiId){
     	var selected1=isSelected(type,1);
         var selected2=isSelected(type,2);
         var selected3=isSelected(type,3);
@@ -141,18 +135,22 @@
             '                                        </select>\n' +
             '                                    </td>\n' +
             '                                    <td><input type="text" class="form-data-param input-max"  name="remark" value="'+remark+'" placeholder="选填。参数描述，便于生成文档"/></td>\n' +
-            '                                    <td><button class="remove-btn" onclick="javascript:removeTr(this)" type="button"><i class="layui-icon layui-icon-close"></i></button></td>\n' +
+            '                                    <td class="td-btn"><button class="add-tr-btn" onclick="addTr(this)" type="button"><i class="layui-icon layui-icon-addition"></i></button>\n'+
+		    '                         				<button class="remove-btn" onclick="removeTr(this)" type="button"><i class="layui-icon layui-icon-subtraction"></i></button></td>\n' +
             '                                </tr>';
-        $("#form_data_list").append(tr);
+        $("#form_data_list_"+apiId).append(tr);
+        addBtnHover();
     }
 
-    function addQueryDataRow(name,type,value,require,remark){
+    function addQueryDataRow(disabled,name,type,value,require,remark,apiId){
     	var selected1=isSelected(type,1);
         var selected2=isSelected(type,2);
         var selected5=isSelected(type,5);
         var selected6=isSelected(require,6);
+        var checked=isSelected(disabled,7)
         var tr='<tr>\n' +
-            '                                  <td><input type="text" class="form-data-param input-max" oninput="appendParaUrl()" onporpertychange="appendParaUrl()" name="name" value="'+name+'" placeholder="参数名"/></td>\n' +
+            '								   <td class="move-row"><input type="checkbox" class="" lay-ignore  name="disable" value="" '+checked+'/></td>\n'+
+            '                                  <td><input type="text" class="form-data-param input-max" oninput="appendParaUrl(\''+apiId+'\')" onporpertychange="appendParaUrl(\''+apiId+'\')" name="name" value="'+name+'" placeholder="参数名"/></td>\n' +
             '                                  <td class="td-min">\n' +
             '                                      <select name="type" class="form-data-param input-max" lay-ignore>\n' +
             '                                          <option value="string" '+selected1+'>string</option>\n' +
@@ -163,7 +161,7 @@
             '                                          <option value="boolean" '+selected5+'>boolean</option>\n' +
             '                                      </select>\n' +
             '                                  </td>\n' +
-            '                                  <td><input type="text" class="form-data-param input-max" oninput="appendParaUrl()" onporpertychange="appendParaUrl()" name="value" value="'+value+'" placeholder="参数值"/></td>\n' +
+            '                                  <td><input type="text" class="form-data-param input-max" oninput="appendParaUrl(\''+apiId+'\')" onporpertychange="appendParaUrl(\''+apiId+'\')" name="value" value="'+value+'" placeholder="参数值"/></td>\n' +
             '                                  <td class="td-min">\n' +
             '                                      <select name="require" class="form-data-param input-max" lay-ignore>\n' +
             '                                          <option value="1">必填</option>\n' +
@@ -171,12 +169,47 @@
             '                                      </select>\n' +
             '                                  </td>\n' +
             '                                  <td><input type="text" class="form-data-param input-max"  name="remark" value="'+remark+'" placeholder="选填。参数描述，便于生成文档"/></td>\n' +
-            '                                  <td><button class="remove-btn" onclick="javascript:removeTr(this),appendParaUrl()" type="button"><i class="layui-icon layui-icon-close"></i></button></td>\n' +
+            '                                    <td class="td-btn"><button class="add-tr-btn" onclick="addTr(this)" type="button"><i class="layui-icon layui-icon-addition"></i></button>\n'+
+		    '                         				<button class="remove-btn" onclick="removeTr(this)" type="button"><i class="layui-icon layui-icon-subtraction"></i></button></td>\n' +
             '                              </tr>';
-        $("#query_data_list").append(tr);
+        $("#query_data_list_"+apiId).append(tr);
+        addBtnHover();
+    }
+    
+        function addPathDataRow(disabled,name,type,value,require,remark,apiId){
+    	var selected1=isSelected(type,1);
+        var selected2=isSelected(type,2);
+        var selected5=isSelected(type,5);
+        var selected6=isSelected(require,6);
+        var checked=isSelected(disabled,7)
+        var tr='<tr>\n' +
+            '								   <td class="move-row"><input type="checkbox" class="" lay-ignore  name="disable" value="" '+checked+'/></td>\n'+
+            '                                  <td><input type="text" class="form-data-param input-max" oninput="appendParaUrl(\''+apiId+'\')" onporpertychange="appendParaUrl(\''+apiId+'\')" name="name" value="'+name+'" placeholder="参数名"/></td>\n' +
+            '                                  <td class="td-min">\n' +
+            '                                      <select name="type" class="form-data-param input-max" lay-ignore>\n' +
+            '                                          <option value="string" '+selected1+'>string</option>\n' +
+            '                                          <option value="number" '+selected2+'>number</option>\n' +
+            '                                          <option value="int">int</option>\n' +
+            '                                          <option value="long">long</option>\n' +
+            '                                          <option value="date">date</option>\n' +
+            '                                          <option value="boolean" '+selected5+'>boolean</option>\n' +
+            '                                      </select>\n' +
+            '                                  </td>\n' +
+            '                                  <td><input type="text" class="form-data-param input-max" oninput="appendParaUrl(\''+apiId+'\')" onporpertychange="appendParaUrl(\''+apiId+'\')" name="value" value="'+value+'" placeholder="参数值"/></td>\n' +
+            '                                  <td class="td-min">\n' +
+            '                                      <select name="require" class="form-data-param input-max" lay-ignore>\n' +
+            '                                          <option value="1">必填</option>\n' +
+            '                                          <option value="0" '+selected6+'>选填</option>\n' +
+            '                                      </select>\n' +
+            '                                  </td>\n' +
+            '                                  <td><input type="text" class="form-data-param input-max"  name="remark" value="'+remark+'" placeholder="选填。参数描述，便于生成文档"/></td>\n' +
+            '                                    <td class="td-btn"></td>\n' +
+            '                              </tr>';
+        $("#path_data_list_"+apiId).append(tr);
+        addBtnHover();
     }
 
-    function addHeadersDataRow(disabled,name,type,value,require,remark){
+    function addHeadersDataRow(disabled,name,type,value,require,remark,apiId){
     	var selected1=isSelected(type,1);
         var selected2=isSelected(type,2);
         var selected6=isSelected(require,6);
@@ -198,18 +231,22 @@
             '                                      </select>\n' +
             '                                  </td>\n' +
             '                                  <td><input type="text" class="form-data-param input-max"  name="remark" value="'+remark+'" placeholder="选填。Headers描述，便于生成文档"/></td>\n' +
-            '                                  <td><button class="remove-btn" onclick="javascript:removeTr(this)" type="button">X</button></td>\n' +
+            '                                  <td class="td-btn"><button class="add-tr-btn" onclick="addTr(this)" type="button"><i class="layui-icon layui-icon-addition"></i></button>\n'+
+		    '                         				<button class="remove-btn" onclick="removeTr(this)" type="button"><i class="layui-icon layui-icon-subtraction"></i></button></td>\n' +
             '                              </tr>';
-        $("#headers_data_list").append(tr);
+        $("#headers_data_list_"+apiId).append(tr);
+        addBtnHover();
     }
 
-    function addCookiesDataRow(){
+    function addCookiesDataRow(apiId){
         var tr='<tr>\n' +
             '                                  <td><input type="text" class="form-data-param input-max"  name="name" value="" placeholder="cookies名"/></td>\n' +
             '                                  <td><input type="text" class="form-data-param input-max"  name="value" value="" placeholder="cookies值"/></td>\n' +
-            '                                  <td><button class="remove-btn" onclick="removeTr(this)"><i class="layui-icon layui-icon-close"></i></button></td>\n' +
+            '                                  <td class="td-btn"><button class="add-tr-btn" onclick="addTr(this)" type="button"><i class="layui-icon layui-icon-addition"></i></button>\n'+
+		    '                         				<button class="remove-btn" onclick="removeTr(this)" type="button"><i class="layui-icon layui-icon-subtraction"></i></button></td>\n' +
             '                              </tr>';
-        $("#cookies_data_list").append(tr);
+        $("#cookies_data_list_"+apiId).append(tr);
+        addBtnHover();
     }
 
 	function createTrHtml(name,type,remark){
@@ -219,7 +256,7 @@
 	    var	selected4=isSelected(type,4);
 	    var selected5=isSelected(type,5);
 		var tr='<tr>\n' +
-	     '                                  <td class="move-row"><i class="layui-icon layui-icon-template-1"></i></td>\n' +
+	     '                                  <td class="move-row"><i class="layui-icon layui-icon-template-1" title="可拖动排序"></i></td>\n' +
 	     '                                  <td><input type="text" class="form-data-param input-max"  name="name" value="'+name+'" placeholder="参数名"/></td>\n' +
 	     '                                  <td class="td-min">\n' +
 	     '                                      <select name="type" class="form-data-param input-max" lay-ignore>\n' +
@@ -234,25 +271,62 @@
 	     '                                      </select>\n' +
 	     '                                  </td>\n' +
 	     '                                  <td><input type="text" class="form-data-param input-max"  name="remark" value="'+remark+'" placeholder="选填。参数描述，便于生成文档"/></td>\n' +
-	     '                                  <td><button class="remove-btn" onclick="javascript:removeTr(this)" type="button"><i class="layui-icon layui-icon-close"></i></button></td>\n' +
+         '                                    <td class="td-btn"><button class="add-tr-btn" onclick="addTr(this)" type="button"><i class="layui-icon layui-icon-addition"></i></button>\n'+
+		 '                         				<button class="remove-btn" onclick="removeTr(this)" type="button"><i class="layui-icon layui-icon-subtraction"></i></button></td>\n' +
 	     '                              </tr>';
 	     return tr;
 	}
 
-    function addSuccessDataRow(name,type,remark){
+    function addSuccessDataRow(name,type,remark,apiId){
         var tr=createTrHtml(name,type,remark);
-        $('#success_data_list').append(tr);
+        $('#success_data_list_'+apiId).append(tr);
     }
 
-    function addFailuerDataRow(name,type,remark){
+    function addFailuerDataRow(name,type,remark,apiId){
         var tr=createTrHtml(name,type,remark);
-        $("#failuer_data_list").append(tr);
+        $("#failuer_data_list_"+apiId).append(tr);
     }
 
     function removeTr(obj){
         $(obj).parent().parent().remove();
     }
 
+	function addTr(obj){
+		// 获取当前行  
+	    var tr = $(obj).closest('tr');   
+	
+	    // 克隆当前行  
+	    var newRow = tr.clone();   
+	
+	    // 清空输入框和选择框的值  
+	    newRow.find('input').val('');  
+	    newRow.find('select').prop('selectedIndex', 0);  
+	
+	    // 将新行添加到当前行之后  
+	    tr.after(newRow);  
+	    addBtnHover();
+	}
+	
+	function addBtnHover(){
+		/*
+		$('.add-tr-btn').hover(function(){
+	        var title="插入行";
+	        layer.tips(title, this,{
+	            tips:1,
+	            time:1000
+	        });
+	    },function(){
+	    });
+	     $('.remove-btn').hover(function(){
+	        var title="删除行";
+	        layer.tips(title, this,{
+	            tips:1,
+	            time:1000
+	        });
+	    },function(){
+	    })
+	    */
+	}
       //鼠标拖拉tr上下移动
     function moveTableTr(tableBodyId) {
         $("#"+tableBodyId).sortable({
@@ -273,22 +347,36 @@
     /**
      * 发送请求
      */
-    function sendRequest(){
-        var url=$('input[name=requestUrl]').val();
-        var method=$('select[name=requestMode]').val();
-        var contentType=$('#body_type').val();
+    function sendRequest(apiId){debugger
+		appendParaUrl(apiId);
+        var url = $('#requestUrl_'+apiId).val();
+        var method=$('#requestMode_'+apiId).val();
+        var contentType=$('#body_type_'+apiId).val();
         
-        var bodyJson=$('textarea[name=bodyJson]').val();
+        var bodyJson=$('#bodyJson_'+apiId).val();
         //form-data方式发起请求
-        var data=getFormDataList();
+        var data=getFormDataList(apiId);
+        var pathData=getPathDataList(apiId);
+        if(pathData){
+			for (var key in pathData) {  
+		       	url=url.replace('{'+key+'}', encodeURIComponent(pathData[key] || ''));
+		    }  
+		}
+		$('#req_msg_method_'+apiId).html(method);
+		$('#req_msg_method_'+apiId).addClass(method);
+		$('#req_msg_content_type_'+apiId).html(contentType);
 		//json方式发起请求
-		if(contentType=='json')
+		if(contentType=='json'||contentType=='raw'||contentType=='xml'){
         	data=bodyJson;
+        }
+        
 		var startTime;
 		var origin=window.location.origin;
 		var str=url.split("/");
 		var host=str[0]+"//"+str[2];
-		if(origin==host){
+		if(origin==host||str[0]==""){
+			 $('#req_msg_body_json_'+apiId).val(formatJson(JSON.stringify(data)));
+			 $('#req_msg_url_'+apiId).html(origin+url);
 			 $.ajax({
 		            type: method,
 		            url: url,
@@ -297,41 +385,46 @@
 		                withCredentials: true,// 允许携带cookie
 		            },
 		            beforeSend: function(request) {
-		            	setRequestCookies();
-		                setRequestHeaders(request,contentType);
+		            	setRequestCookies(apiId);
+		                setRequestHeaders(request,contentType,apiId);
 		                startTime=new Date().getTime();
 		            },
 		            complete: function(xhr,data){
 		            	var endTime=new Date().getTime();
 		            	var time=endTime-startTime;
-		            	$('.response-info').removeClass('layui-hide');
-		            	$('#status').html(xhr.status);
+		            	$('#response_info_'+apiId).removeClass('layui-hide');
+		            	$('#status_'+apiId).html(xhr.status);
 		            	
 		            	if(time>1000)
 		            		time=time/1000 + ' s';
 		            	else
 		            		time+=' ms';
-		            	$('#time').html(time);
-
-		                $('#responseHeaders').val(xhr.getAllResponseHeaders());
+		            	$('#time_'+apiId).html(time);
+		            	
+		            	var contentLength = xhr.getResponseHeader('Content-Length'); 
+						$('#size_'+apiId).html(contentLength);
+						
+		                $('#responseHeaders_'+apiId).val(xhr.getAllResponseHeaders());
 
 		            	var contentType=xhr.getResponseHeader("content-type");
-		                setResponse(xhr.responseText,contentType);
+		                setResponse(xhr.responseText,contentType,apiId);
 		            }
 		        });
 		}else{
 			var body={
 					"url":url,
 					"body":bodyJson,
-					"queryPara":getFormDataList(),
-					"header":getHeaders(),
+					"queryPara":getFormDataList(apiId),
+					"header":getHeaders(apiId),
 					"method":method,
 					"contentType":contentType,
-					"cookies":setRequestCookies()
+					"cookies":setRequestCookies(apiId)
 			};
+			 $('#req_msg_url_'+apiId).html(origin+_path+"/apidev/api/sendRequest");
+			 $('#req_msg_body_json_'+apiId).val(formatJson(JSON.stringify(body)));
 			 $.ajax({
 		            type: 'post',
-		            url: _path+'/runapi/sendRequest',
+		            url: _path+'/apidev/api/sendRequest',
 		            data:JSON.stringify(body),
 		            dataType:'json',
 		            contentType:"application/json",
@@ -342,36 +435,39 @@
 		            complete: function(xhr,data){
 		            	var endTime=new Date().getTime();
 		            	var time=endTime-startTime;
-		            	$('.response-info').removeClass('layui-hide');
-		            	$('#status').html(xhr.status);
+		            	$('#response_info_'+apiId).removeClass('layui-hide');
+		            	$('#status_'+apiId).html(xhr.status);
 
 		            	var json=xhr.responseJSON;
 		            	if(json&&'fail'==json.state){
 		            		var msg=json.msg;
 		            		if(msg.indexOf('FileNotFoundException')!=-1||msg.indexOf('java.net.ConnectException')!=-1
 		            				||msg.indexOf('connect timed out'!=-1))
-		            			$('#status').html("404");
+		            			$('#status_'+apiId).html("404");
 		            		if(msg.indexOf('Server returned HTTP response code: 500')!=-1)
-		            			$('#status').html("500");
+		            			$('#status_'+apiId).html("500");
 		            	}
 		            	if(time>1000)
 		            		time=time/1000 + ' s';
 		            	else
 		            		time+=' ms';
-		            	$('#time').html(time);
+		            	$('#time_'+apiId).html(time);
 
-		                $('#responseHeaders').val(xhr.getAllResponseHeaders());
+						var contentLength = xhr.getResponseHeader('Content-Length'); 
+						$('#size_'+apiId).html(contentLength);
+						
+		                $('#responseHeaders_'+apiId).val(xhr.getAllResponseHeaders());
 
 		            	var contentType=xhr.getResponseHeader("content-type");
-		                setResponse(xhr.responseText,contentType);
+		                setResponse(xhr.responseText,contentType,apiId);
 		            }
 		        });
 		}
     }
 
-    function getFormDataList(){
+    function getFormDataList(apiId){
     	var formData = {};
-    	$("#form_data_list").find("tr").each(function(){
+    	$("#form_data_list_"+apiId).find("tr").each(function(){
 	        var tdArr = $(this).children();
 	    	var disabled = tdArr.eq(0).find("input:checkbox").prop('checked'); //  是否启用
 	        var formDataName = tdArr.eq(1).find("input").val(); //  参数名
@@ -383,14 +479,14 @@
 	    return formData;
     }
     
-    function setRequestCookies(){
+    function setRequestCookies(apiId){
 		var cookies="";
-    	$("#cookies_data_list").find("tr").each(function(){
+    	$("#cookies_data_list_"+apiId).find("tr").each(function(){
 	        var tdArr = $(this).children();
 	        var cookiesName = tdArr.eq(0).find("input").val(); //  参数名
 	        var cookiesValue = tdArr.eq(1).find("input").val();//  参数值
 			if(cookiesName&&cookiesValue){
-				setCookie(cookiesName,cookiesValue);
+				setCookie(apiId,cookiesName,cookiesValue);
 				cookies+=cookiesName+"="+cookiesValue+";"
 			}
 	    });
@@ -405,26 +501,43 @@
         document.cookie = name + "="+ escape (value) + ";path=/;expires=" + exp.toGMTString();
     }
     
-    function setRequestHeaders(request,contentType){
+    function setRequestHeaders(request,contentType,apiId){
     	if(contentType=='form-data')
-    		request.setRequestHeader("Content-type","multipart/"+contentType+"; charset=utf-8");
+    		request.setRequestHeader("Content-type","multipart/"+contentType+"; boundary=apidevcn; charset=utf-8");
+    	else if(contentType == 'raw')
+    		request.setRequestHeader("Content-type","text/plain; charset=utf-8");
     	else
     		request.setRequestHeader("Content-type","application/"+contentType+"; charset=utf-8");
-    	$("#headers_data_list").find("tr").each(function(){
+    	var cookies=setRequestCookies(apiId);
+    	$('#req_msg_header_'+apiId).children('tr').remove();
+    	if(cookies){
+			createReqMsgHeader(apiId,'Cookie',cookies);
+		}
+    	$("#headers_data_list_"+apiId).find("tr").each(function(){
 	        var tdArr = $(this).children();
 	        var disabled = tdArr.eq(0).find("input:checkbox").prop('checked'); //  是否启用
 	        var headerName = tdArr.eq(1).find("input").val(); //  参数名
 	        var headerValue = tdArr.eq(3).find("input").val();//  参数值
 			if(disabled&&headerName&&headerValue){
 				 request.setRequestHeader(headerName,headerValue);
+				 createReqMsgHeader(apiId,headerName,headerValue);
 			}
 	    });
 
     }
     
-    function getHeaders(){
+    function createReqMsgHeader(apiId,name,value){
+		const contentRow = `  
+		 <tr>  
+		 <td class="req-msg-header">${name}</td>  
+		 <td class="req-msg-header">${value}</td>  
+		 </tr>`; 
+		$('#req_msg_header_'+apiId).append(contentRow);		           	
+	}
+    
+    function getHeaders(apiId){
     	var headers={};
-    	$("#headers_data_list").find("tr").each(function(){
+    	$("#headers_data_list_"+apiId).find("tr").each(function(){
 	        var tdArr = $(this).children();
 	        var disabled = tdArr.eq(0).find("input:checkbox").prop('checked'); //  是否启用
 	        var headerName = tdArr.eq(1).find("input").val(); //  参数名
@@ -437,45 +550,45 @@
     }
 
     //处理请求结果
-    function setResponse(resText,contentType){
+    function setResponse(resText,contentType,apiId){
         if(contentType&&contentType.indexOf("application/json")!=-1){
         	var resJson={};
             try{
             	resJson=JSON.parse(resText);
-            	$('#responseBody1').hide();
-    	       	$('#responseBody1').val(JSON.stringify(resJson,null,4));
-    		   	$('#responseBodyJson').show();
-    	       	$('#responseBodyJson').jsonViewer(resJson);
-    	       	$('#responseBody2').val(resText);
+            	$('#responseBody1_'+apiId).hide();
+    	       	$('#responseBody1_'+apiId).val(JSON.stringify(resJson,null,4));
+    		   	$('#responseBodyJson_'+apiId).show();
+    	       	$('#responseBodyJson_'+apiId).jsonViewer(resJson);
+    	       	$('#responseBody2_'+apiId).val(resText);
             }catch(e){
-            	$('#responseBodyJson').hide();
-            	$('#responseBody1').show();
-                $('#responseBody1').val(resText);
-                $('#responseBody2').val(resText);
+            	$('#responseBodyJson_'+apiId).hide();
+            	$('#responseBody1_'+apiId).show();
+                $('#responseBody1_'+apiId).val(resText);
+                $('#responseBody2_'+apiId).val(resText);
             }
 	       	
         }else{
-        	$('#responseBodyJson').hide();
-        	$('#responseBody1').show();
-            $('#responseBody1').val(resText);
-            $('#responseBody2').val(resText);
+        	$('#responseBodyJson_'+apiId).hide();
+        	$('#responseBody1_'+apiId).show();
+            $('#responseBody1_'+apiId).val(resText);
+            $('#responseBody2_'+apiId).val(resText);
         }
 
         //美化
-        autoHeight(document.getElementById('responseBody1'),100)
+        autoHeight(document.getElementById('responseBody1_'+apiId),100)
 
         //原生
-        document.getElementById('responseBody1').style.maxHeight="300px";
+        document.getElementById('responseBody1_'+apiId).style.maxHeight="300px";
 
      	// 预览
-        reviewData()
+        reviewData(apiId)
     }
 
  	// 预览
-	function reviewData(){
-		var _iframe = document.getElementById('response_frame').contentWindow;
-	    var _div =_iframe.document.getElementById('responseBody3');
-		var requestResult=$('textarea[name=requestResult]').val();
+	function reviewData(apiId){
+		var _iframe = document.getElementById('response_frame_'+apiId).contentWindow;
+	    var _div =_iframe.document.getElementById('responseBody3_'+apiId);
+		var requestResult=$('#responseBody2_'+apiId).val();
 		try{
 			var resJson=JSON.parse(requestResult);
 	    	_div.innerHTML='<pre>'+JSON.stringify(resJson,null,4)+'</pre>';
@@ -484,16 +597,17 @@
 		}
 
 	}
-
+	
     //追加query参数追加到url中
-    function appendParaUrl(){
-        var url=$('input[name=requestUrl]').val();
+    function appendParaUrl(apiId){
+        var url = $('#requestUrl_'+apiId).val();
         url=url.split("?")[0];
-		$("#query_data_list").find("tr").each(function(){
+		$("#query_data_list_"+apiId).find("tr").each(function(){
 	        var tdArr = $(this).children();
-	        var paraName = tdArr.eq(0).find("input").val(); //  参数名
-	        var paraValue = tdArr.eq(2).find("input").val();//  参数值
-			if(paraName){
+	        var disabled = tdArr.eq(0).find("input:checkbox").prop('checked'); //  是否启用
+	        var paraName = tdArr.eq(1).find("input").val(); //  参数名
+	        var paraValue = tdArr.eq(3).find("input").val();//  参数值
+			if(disabled && paraName){
 				paraName+="=";
 				if(url.indexOf("?")!=-1){
 	                url+="&"+paraName+paraValue;
@@ -503,186 +617,142 @@
 		        }
 			}
 	    });
-		$('input[name=requestUrl]').val(url);
+		$('#requestUrl_'+apiId).val(url);
+		return url;
     }
 
     //从url中输入query参数生成参数列表
-    function createQueryDataRow(){
-    	var url=$('input[name=requestUrl]').val();
+    function createQueryDataRow(apiId){
+    	var url=$('#requestUrl_'+apiId).val();
     	if(url.split("?").length>1){
-    		$("#query_data_list").children('tr').remove();
+    		$("#query_data_list_"+apiId).children('tr').remove();
 	    	var paras=url.split("?")[1];
 			var queryParam=paras.split('&');
 			for(var i in queryParam){
 				var arr=queryParam[i].split('=');
 				if(arr[0])
-					addQueryDataRow(arr[0],'string',arr[1]||'','','');
+					addQueryDataRow(true,arr[0],'string',arr[1]||'','','',apiId);
 			}
+			
         }
-    	
+        
+		createPathDataRow(apiId); 	
     }
+    
+    // 从url中生成path参数变量
+    function createPathDataRow(apiId){
+	    var url=$('#requestUrl_'+apiId).val();
+	 	// 提取变量  
+		const variables = extractVariables(url);  
+		if (variables.length > 0) {  
+		   $("#path_data_list_"+apiId).children('tr').remove();
+			for(var i in variables){
+				var pkey=variables[i];
+				if(pkey){
+					addPathDataRow(true,pkey,'string','','','',apiId);
+					$('.path-data-'+apiId).removeClass('layui-hide');
+				}
+			}
+		} else {
+			$("#path_data_list_"+apiId).children('tr').remove();
+			$('.path-data-'+apiId).addClass('layui-hide');
+		}
+	}
+	
+	// 获取path参数变量
+	function getPathDataList(apiId){
+		var pathData = {};
+    	$("#path_data_list_"+apiId).find("tr").each(function(){
+	        var tdArr = $(this).children();
+	    	var disabled = tdArr.eq(0).find("input:checkbox").prop('checked'); //  是否启用
+	        var pathDataName = tdArr.eq(1).find("input").val(); //  参数名
+	        var pathDataValue = tdArr.eq(3).find("input").val();//  参数值
+			if(disabled&&pathDataName){
+				pathData[pathDataName]=pathDataValue;
+			}
+	    });
+	    return pathData;
+	}
+
+	function extractVariables(apiPath) {  
+	    // 使用正则表达式匹配大括号中的内容  
+	    const pattern = /\{(.*?)\}/g;  
+	    const variables = [];  
+	    let match;  
+	
+	    // 使用 exec 方法查找所有匹配  
+	    while ((match = pattern.exec(apiPath)) !== null) {  
+	        variables.push(match[1]); // match[1] 中包含变量名  
+	    }  
+	
+	    return variables;  
+	}  
 
 
 
   	//美化json数据
-    function formatSuccessJson(){
-        var jsonText=$('textarea[name=successDataJson]').val();
+    function formatSuccessJson(apiId){
+        var jsonText=$('#successDataJson_'+apiId).val();
         try {
             var json=JSON.parse(jsonText);
         }catch(e){
-            layer.tips(e, '#formatSuccessJson',{
+            layer.tips(e, '#formatSuccessJson_'+apiId,{
                 time:4000,
                 tips:3
             });
         }
         var jsonStr=JSON.stringify(JSON.parse(jsonText),null,4);
-        $('textarea[name=successDataJson]').val(jsonStr);
+        $('#successDataJson_'+apiId).val(jsonStr);
     }
 
 	
 
 	// 美化失败示例的json数据
-    function formatFailuerJson(){
-        var jsonText=$('textarea[name=failuerDataJson]').val();
+    function formatFailuerJson(apiId){
+        var jsonText=$('#failuerDataJson_'+apiId).val();
         try {
             var json=JSON.parse(jsonText);
         }catch(e){
-            layer.tips(e, '#formatFailuerJson',{
+            layer.tips(e, '#formatFailuerJson_'+apiId,{
                 time:4000,
                 tips:3
             });
         }
         var jsonStr=JSON.stringify(JSON.parse(jsonText),null,4);
-        $('textarea[name=failuerDataJson]').val(jsonStr);
+        $('#failuerDataJson_'+apiId).val(jsonStr);
     }
 
  	// 美化请求body的json数据
-    function formatBodyJson(){
-        var jsonText=$('textarea[name=bodyJson]').val();
+    function formatBodyJson(apiId){
+        var jsonText=$('#bodyJson_'+apiId).val();
         try {
             var json=JSON.parse(jsonText);
         }catch(e){
-            layer.tips(e, '#formatBodyJson',{
+            layer.tips(e, '#formatBodyJson_'+apiId,{
                 time:4000,
                 tips:3
             });
         }
 
-        var jsonStr=JSON.stringify(JSON.parse(jsonText),null,4);
-        $('textarea[name=bodyJson]').val(jsonStr);
+        var jsonStr=formatJson(jsonText);
+        $('#bodyJson_'+apiId).val(jsonStr);
     }
+    
+    function formatJson(jsonText){
+		return JSON.stringify(JSON.parse(jsonText),null,4);
+	}
 
- 	//展示说明信息
-    $('#formatBodyJson').hover(function(){
-        var index;
-        var title="如果下面输入框中是标准的json字符串，则可以点击这里自动格式化（美化）"
-            this.index=layer.tips(title, this,{
-                tips:1, //还可配置颜色
-            });
-         },function(){
-            layer.close(this.index);
-    })
-
-    $('#formatSuccessJson').hover(function(){
-        var index;
-        var title="如果下面输入框中是标准的json字符串，则可以点击这里自动格式化（美化）"
-        this.index=layer.tips(title, this,{
-            tips:1, //还可配置颜色
-        });
-    },function(){
-        layer.close(this.index);
-    })
-
-    $('#formatFailuerJson').hover(function(){
-        var index;
-        var title="如果下面输入框中是标准的json字符串，则可以点击这里自动格式化（美化）"
-        this.index=layer.tips(title, this,{
-            tips:1, //还可配置颜色
-        });
-    },function(){
-        layer.close(this.index);
-    })
-
-    $('#createJsonPara').hover(function(){
-        var index;
-        var title="如果上面面输入框中是标准的json字符串，则可以点击这里自动生成字段说明";
-        this.index=layer.tips(title, this,{
-            tips:1,
-        });
-        },function(){
-            layer.close(this.index);
-    })
-
-    $('#createSuccessPara').hover(function(){
-        var index;
-        var title="如果上面面输入框中是标准的json字符串，则可以点击这里自动生成参数行";
-        this.index=layer.tips(title, this,{
-            tips:1,
-        });
-    },function(){
-        layer.close(this.index);
-    })
-
-    $('#createFailuerPara').hover(function(){
-        var index;
-        var title="如果上面面输入框中是标准的json字符串，则可以点击这里自动生成参数行";
-        this.index=layer.tips(title, this,{
-            tips:1,
-        });
-    },function(){
-        layer.close(this.index);
-    })
-
-    $('#copyCode').hover(function(){
-        var index;
-        var title="从现有响应体快速复制到这里";
-        this.index=layer.tips(title, this,{
-            tips:1,
-        });
-    },function(){
-        layer.close(this.index);
-    })
-
-    $('#copyFailuerCode').hover(function(){
-        var index;
-        var title="从现有响应体快速复制到这里";
-        this.index=layer.tips(title, this,{
-            tips:1,
-        });
-    },function(){
-        layer.close(this.index);
-    })
-
-    $('#removeSuccessPara').hover(function(){
-        var index;
-        var title="把下面的返回参数说明一键清空";
-        this.index=layer.tips(title, this,{
-            tips:1,
-        });
-    },function(){
-        layer.close(this.index);
-    })
-
-    $('#removeFailuerPara').hover(function(){
-        var index;
-        var title="把下面的返回参数说明一键清空";
-        this.index=layer.tips(title, this,{
-            tips:1,
-        });
-    },function(){
-        layer.close(this.index);
-    })
 
 	//复制数据到成功返回示例中
-    function copySuccessJson(){
-        var json=$('#responseBody1').val();
-        $('textarea[name=successDataJson]').val(json);
+    function copySuccessJson(apiId){
+        var json=$('#responseBody1_'+apiId).val();
+        $('#successDataJson_'+apiId).val(json);
     }
 
     //复制数据到失败返回示例中
-    function copyFailuerJson(){
-        var json=$('#responseBody1').val();
-        $('textarea[name=failuerDataJson]').val(json);
+    function copyFailuerJson(apiId){
+        var json=$('#responseBody1_'+apiId).val();
+        $('#failuerDataJson_'+apiId).val(json);
     }
     
  	//记录已生成的参数，避免重复生成
@@ -697,7 +767,7 @@
     }
     
  	//生参数列表，回填历史数据 arr历史数据
-    function addOrUpdateDataRow(id,arr,key,type){
+    function addOrUpdateDataRow(id,arr,key,type,apiId){
 		var name='';
 		var remark='';
 		var require=1;
@@ -712,36 +782,36 @@
 			}
 		}
 	
-		if(id=='failuer_data_list' && !failueRow[key]){
-			addFailuerDataRow(key,type,remark);
+		if(id=='failuer_data_list_'+apiId && !failueRow[key]){
+			addFailuerDataRow(key,type,remark,apiId);
 			failueRow[key]=true;
-		}else if(id=='success_data_list' && !successRow[key]){
-			addSuccessDataRow(key,type,remark);
+		}else if(id=='success_data_list_'+apiId && !successRow[key]){
+			addSuccessDataRow(key,type,remark,apiId);
 			successRow[key]=true;
-	 	}else if(id=='body_data_list' && !bodyRow[key]){
-			addBodyDataRow(key,type,require,remark);
+	 	}else if(id=='body_data_list_'+apiId && !bodyRow[key]){
+			addBodyDataRow(key,type,require,remark,apiId);
 			bodyRow[key]=true;	
 	    }
  	}
 
     //    递归解析对象参数,obj当前对象数据，arr历史数据
-    function loadObjectPara(obj,parentKey,id,arr){
+    function loadObjectPara(obj,parentKey,id,arr,apiId){
     	if(obj.constructor==Array){
-    		addOrUpdateDataRow(id,arr,parentKey,"array")
+    		addOrUpdateDataRow(id,arr,parentKey,"array",apiId)
 			for (var i = 0, l = obj.length; i < l; i++) {
 				for(var key in obj[i]){
-					addOrUpdateDataRow(id,arr,parentKey+'.'+key,typeof(obj[key]))
+					addOrUpdateDataRow(id,arr,parentKey+'.'+key,typeof(obj[key]),apiId)
 					if(obj[i][key] != null && typeof(obj[i][key]) == 'object'){
-						loadObjectPara(obj[i][key],parentKey+'.'+key,id,arr);
+						loadObjectPara(obj[i][key],parentKey+'.'+key,id,arr,apiId);
 					}
 				}
 			}
 		}else if(obj.constructor==Object){
-			addOrUpdateDataRow(id,arr,parentKey,"object")
+			addOrUpdateDataRow(id,arr,parentKey,"object",apiId)
 			for (var key in obj) {
-				addOrUpdateDataRow(id,arr,parentKey+'.'+key,typeof(obj[key]))
+				addOrUpdateDataRow(id,arr,parentKey+'.'+key,typeof(obj[key]),apiId)
 				if(obj[key] != null && typeof(obj[key])=='object'){
-					loadObjectPara(obj[key],parentKey+'.'+key,id,arr);
+					loadObjectPara(obj[key],parentKey+'.'+key,id,arr,apiId);
 				}
 			}
 		}
@@ -792,3 +862,114 @@
 	    return JSON.stringify(arr);
 
     }
+    
+    // 保存为用例
+	function saveDemo(apiId,apiTitle){
+		layer.open({  
+		     btnAsync: true,  
+		     title: '保存为用例',  
+		     type: 1,  
+		     shadeClose: true,
+		     content: `  
+		         <div class="layui-form layui-form-pane" style="padding:15px;">  
+		             <div class="layui-form-item">  
+		                 <label class="layui-form-label">用例名称</label>  
+		                 <div class="layui-input-block layui-input-wrap">  
+			                 <div class="layui-input-prefix layui-input-split" style="width:150px;">
+			                	 <div style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;">${apiTitle}</div><span style="position: absolute;right:5px;top:0px">（</span>
+			               	 </div>
+		                     <input style="height:38px;padding-left:160px;" type="text" name="title" oninput="titleHeader(this)" placeholder="用例名称" lay-verify="required" autocomplete="off" class="layui-input" id="titleInput" value="">  
+		                     <div id="titleTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">名称为必填项，请填写名称</div>  
+		                     <div class="layui-input-suffix layui-input-split">）</div>
+				         </div>  
+		             </div>
+		         </div>`,  
+		 	     area: ['580px', height], 
+		 	     offset:'100px',
+		 	     resize:false,
+		 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
+		 	     btn: ['确定', '取消'],  
+		 	     btn1: function (index, layero) { 
+			 	     
+		 	         // 读取输入框内容  
+		 	         var title = layero.find('input[name="title"]').val();  
+		 	         var titleTip = layero.find('#titleTip');  
+
+		 	         // 验证名称是否填写  
+		 	         if (!title) {  
+		 	             titleTip.show(); // 显示提示信息  
+		 	             return false; // 阻止关闭弹出层  
+		 	         } else {  
+		 	             titleTip.hide(); // 隐藏提示信息  
+		 	         }  
+
+		 			// 保存为用例
+			 	    saveApi(apiId,title,'demo',apiId);
+			       
+		 	     },  
+		 	     btn2: function (index) {  
+		 	         layer.close(index); // 关闭弹出层  
+		 	     }  
+		 	});
+	}
+	
+	function saveAsApi(apiId){
+		layer.open({  
+		     btnAsync: true,  
+		     title: '保存为接口',  
+		     type: 1,  
+		     shadeClose: true,
+		     content: `  
+		         <div class="layui-form layui-form-pane" style="padding:15px;">  
+		             <div class="layui-form-item layui-form-text">  
+		                 <label class="layui-form-label">接口名称</label>  
+		                 <div class="layui-input-block">  
+		                     <input style="" type="text" name="title" oninput="titleHeader(this)" placeholder="接口名称" lay-verify="required" autocomplete="off" class="layui-input" id="titleInput" value="">  
+		                     <div id="titleTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">名称为必填项，请填写名称</div>  
+				         </div><br/>
+				         <div class="layui-form-item layui-form-text">  
+			                 <label class="layui-form-label">接口目录<font color="red">*</font></label>  
+			                 <div class="layui-input-block">  
+			                  	<input type="hidden" id="treeSelectId" name="parentId" value="1"/>
+			                  	<input type="text" id="treeSelect" name="parentName" value="根目录"  class="layui-input" autocomplete="off" onblur="searchMenuBlur(this,1)" oninput="searchMenu(this,1)"/> 
+			                    <div id="parentIdTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">请选择目录</div>
+			   	             </div>  
+			             </div>    
+		             </div>
+		         </div>`,  
+		 	     area: ['580px', height], 
+		 	     offset:'100px',
+		 	     resize:false,
+		 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
+		 	     btn: ['确定', '取消'],  
+		 	     btn1: function (index, layero) { 
+			 	     
+		 	         // 读取输入框内容  
+		 	         var title = layero.find('input[name="title"]').val();  
+		 	         var titleTip = layero.find('#titleTip');  
+					 var parentIdTip = layero.find('#parentIdTip');  
+	 	             var parentId = layero.find('input[name="parentId"]').val();  
+		 	         // 验证名称是否填写  
+		 	         if (!title && showType !='parentId') {  
+		 	             titleTip.show(); // 显示提示信息  
+		 	             return false; // 阻止关闭弹出层  
+		 	         } else {  
+		 	             titleTip.hide(); // 隐藏提示信息  
+		 	         }  
+		 	         
+		 	         if(!parentId){
+						parentIdTip.show();
+						return false;
+					 }else{
+						parentIdTip.hide();
+					 }
+
+		 			// 保存为用例
+			 	    saveApi(apiId,title,'api',parentId);
+			       
+		 	     },  
+		 	     btn2: function (index) {  
+		 	         layer.close(index); // 关闭弹出层  
+		 	     }  
+		 	});
+	}

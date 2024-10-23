@@ -6,9 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import javax.servlet.http.Cookie;
+
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
+import com.jfinal.kit.PathKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -84,5 +87,30 @@ public class ApidevBaseController extends Controller{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@NotAction
+	public void writeToHtml(String fileName,String text) {
+		File file = new File(PathKit.getWebRootPath() + getViewPath()+"/"+fileName);
+		try {
+			BufferedWriter writer = new BufferedWriter (new OutputStreamWriter(new FileOutputStream(file),"UTF-8"));		
+			writer.write(text);				
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@NotAction
+	public String getCookies(){
+		String str="";
+		Cookie[] cookies=getRequest().getCookies();
+    	for(int i=0;i<cookies.length;i++) {
+    		Cookie cookie=cookies[i];
+    		String s=cookie.getName()+"="+cookie.getValue()+";";
+    		str+=s;
+    	};
+    	return str;
 	}
 }

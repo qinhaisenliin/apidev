@@ -713,3 +713,17 @@ body .layui-util-face .layui-layer-content{background-color: var(--lay-color-bg-
 .layui-layer-tab .layui-layer-title span:first-child{border-left: none !important;}
 .layui-slider-input.layui-input,
 .layui-slider-input .layui-input {background-color: var(--lay-color-bg-2);}
+
+ #apiTable-toolbar-setRowChecked,#shortcutTable-toolbar-setRowChecked{
+ 	border: 1px solid #484849;
+ 	padding:10px;
+ 	border-bottom:none;
+ }
+.api-tab-header .layui-btn.layui-this{background:#6b69698c}
+.api-tab-header{
+	background:#353434fa
+}
+.layui-btn-container .layui-btn {
+    border-color:#353434fa;
+ }
+ 

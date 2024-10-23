@@ -1,104 +1,554 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Demo</title>
-  <!-- 请勿在项目正式环境中引用该 layui.css 地址 -->
-  <link href="//unpkg.com/layui@2.9.14/dist/css/layui.css" rel="stylesheet">
-</head>
-<body>
-<p><button type="button" class="layui-btn layui-btn-primary" lay-on="bs_alert">alert</button>
-<button type="button" class="layui-btn layui-btn-primary" lay-on="bs_confirm">confirm</button>
-<button type="button" class="layui-btn layui-btn-primary" lay-on="bs_msg">msg</button>
-<button type="button" class="layui-btn layui-btn-primary" lay-on="bs_open">open</button>
-<button type="button" class="layui-btn layui-btn-primary" lay-on="bs_prompt">prompt(不支持)</button></p>
-  
-<!-- 请勿在项目正式环境中引用该 layui.js 地址 -->
-<script src="//unpkg.com/layui@2.9.14/dist/layui.js"></script>
-<script>
-layui.use(function () {
-  var $ = layui.$
-  var util = layui.util;
-  var sleep = function (time) {
-    return $.Deferred(function (defer) {
-      setTimeout(function () {
-        defer.resolve();
-      }, time)
-    })
-  }
-  var enableBtnAsync = true;
-  util.on({
-    bs_alert: function () {
-      layer.alert('对话框内容', {
-        btnAsync: enableBtnAsync,
-      }, function (index, layero, that) {
-        var defer = $.Deferred();
-        that.loading(true);
-        sleep(1000).then(defer.resolve);
-        return defer.promise();
-      });
-    },
-    bs_confirm: function () {
-      layer.confirm('一个询问框的示例？', {
-        btnAsync: enableBtnAsync,
-        btn: ['确定', '关闭'] //按钮
-      }, function (index, layero, that) {
-        var defer = $.Deferred();
-        that.loading(true);
-        sleep(1000).then(defer.resolve);
-        return defer.promise();
-      });
-    },
-    bs_msg: function () {
-      layer.msg('第二个回调', {
-        btnAsync: enableBtnAsync,
-        time: 20000, // 20s 后自动关闭
-        btn: ['明白了', '知道了'],
-        btn1: function (index, layero, that) {
-          var defer = $.Deferred();
-          that.loading(true);
-          sleep(1000).then(defer.resolve);
-          return defer.promise();
-        }
-      });
-    },
-    bs_open: function () {
-      layer.open({
-        btnAsync: enableBtnAsync,
-        type: 1,
-        content:'<h2>123123</h2>',
-        area: ['500px', '300px'],
-        btn: ['确定', '关闭'],
-        btn1: function (index, layero, that) {
-          var defer = $.Deferred();
-          that.loading(true);
-          sleep(1000).then(defer.resolve);
-          return defer.promise();
-        },
-        btn2: function (index, layero, that) {
-          var defer = $.Deferred();
-          that.loading(true);
-          sleep(1000).then(defer.resolve);
-          return defer.promise();
-        }
-      })
-    },
-    // 不支持 btnAsync
-    bs_prompt: function () {
-      layer.prompt({
-        formType: 2,
-        value: '初始值',
-        title: '请输入值',
-        area: ['500px', '300px'] // 自定义文本域宽高
-      }, function (value, index, elem) {
-        alert(value);
-        layer.close(index);
-      });
-    }
-  })
-}); 
-</script>
 
-</body>
-</html>
+<div class="layui-tab ">  
+    <ul class="layui-tab-title menu-tab">  
+        <li>目录设置</li> 
+        <li class="layui-this">全部接口</li>  
+        <li>分享设置</li>
+    </ul>  
+    
+    <div class="layui-tab-content">  
+         <div class="layui-tab-item menu-#(menu.id??)"> 
+	         <div style="position: absolute;right:20px;margin-top:-50px;">
+		    	<button class="layui-btn layui-btn-radius" onclick="saveMenuData('#(menu.id??)')" style="font-size:16px;height:35px"> 保 存 </button>
+		     </div>
+         	<div class="layui-row">
+	        	<div class="layui-col-xs12 layui-col-md6"> 
+		        	 <div class="layui-form-item">
+						    <label class="layui-form-label">目录名称<font color="red" style="margin-left:5px;padding-top:2px;position: absolute;">*</font></label>
+						    <div class="layui-input-block">
+						     	 <input type="text" name="title" value="#(menu.title??)" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+						    </div>
+					 </div>
+				</div>
+			</div>
+			<div class="layui-row">
+	        	<div class="layui-col-xs12 layui-col-md6"> 
+		        	 <div class="layui-form-item">
+						    <label class="layui-form-label">父级目录</label>
+						    <div class="layui-input-block">
+						     	  <input type="hidden" id="treeSelect#(menu.id??2)Id" name="parentId" value="#(menu.parent_id??)"/>
+      			                  <input type="text" id="treeSelect#(menu.id??2)" name="parentName" value="#(menu.parentName??'根目录')"  class="layui-input" autocomplete="off" onblur="searchMenuBlur(this,'#(treeType)')" oninput="searchMenu(this,'#(treeType)')"/>  
+						    </div>
+					 </div>
+				</div>
+			</div>
+			<div class="layui-row">
+	        	<div class="layui-col-xs12 layui-col-md6"> 
+		        	 <div class="layui-form-item">
+						    <label class="layui-form-label">备注</label>
+						    <div class="layui-input-block">
+						     	  <textarea placeholder="请输入内容" name="remark" class="layui-textarea">#(menu.remark??)</textarea>
+						    </div>
+					 </div>
+				</div>
+			</div>
+			
+        </div>  
+        <div class="layui-tab-item  layui-show">  
+        	 <script type="text/html" id="apiTable-#(menu.id??)-toolbar-setRowChecked">
+               <div class="layui-btn-container-#(menu.id??)">
+                    #(menu.title??menu.action_key??) （接口<span class="apiNum-#(menu.id??)" style="padding:5px;">1</span>个）
+					<div class="layui-form-item1" style="float: right;padding-right: 75px;">
+   					 	<div class="layui-input-group">
+       						<input type="search" name="#(menu.id??)" autocomplete="off" placeholder="输入关键词搜索" onblur="searchTableData()" onkeydown="checkEnter(event)"  class="layui-input" style="height:33px">
+      						<div class="layui-input-split layui-input-suffix" style="cursor: pointer; height:30px" onclick="searchTableData()">
+        						<i class="layui-icon layui-icon-search"></i>
+     						 </div>
+    					</div>
+  					</div>
+               </div>
+				<div class="layui-btn-container-checked-#(menu.id??) layui-hide">
+                    已选 <span id="apiCheckedNum-#(menu.id??)" style="padding:5px;">1</span>/<span class="apiNum-#(menu.id??)" style="padding:5px;">1</span>项<a style="padding-left:25px;color:#1e9fff"lay-event="cancelCheckData#(menu.id??)">取消选择</a>
+					<div style="float:right;" class="table-select-btn">
+						<a lay-event="deleteData#(menu.id??)"><i class="layui-icon layui-icon-delete"></i>删除</a>
+						<a lay-event="updateData#(menu.id??)"><i class="layui-icon layui-icon-edit"></i>修改状态</a>
+						<a lay-event="visibleData#(menu.id??)"><i class="layui-icon layui-icon-eye"></i>显示隐藏</a>
+						###<a lay-event="addData#(menu.id??)"><i class="layui-icon layui-icon-addition"></i>增加标签</a>
+						###<a lay-event="deleteTag#(menu.id??)"><i class="layui-icon layui-icon-subtraction"></i>删除标签</a>
+						<a lay-event="exportData#(menu.id??)"><i class="layui-icon layui-icon-download-circle"></i>导出</a>
+						<a lay-event="moveData#(menu.id??)"><i class="layui-icon layui-icon-export"></i>移动</a>
+						<a lay-event="cancelCheckData#(menu.id??)"><i class="layui-icon layui-icon-close"></i></a>
+					</div>
+               </div>
+	        </script>  
+            <table class="layui-table layui-hide" id="apiTable-#(menu.id??)" lay-skin="line"></table>       
+        </div>  
+        <div class="layui-tab-item menu-link-#(menu.id??)">  
+	        	<div style="position: absolute;right:20px;margin-top:-50px;">
+			    	<button class="layui-btn layui-btn-radius" onclick="savePassword('#(menu.id??)')" style="font-size:16px;height:35px"> 保 存 </button>
+			    </div>
+				<div style="padding-left:30px;">
+					<h4>#(menu.title??)&nbsp;分享设置</h4>
+				</div>
+				<hr/>
+
+				<div class="layui-row access-password">
+		        	<div class="layui-col-xs12 layui-col-md6"> 
+			        	 <div class="layui-form-item">
+							    <label class="layui-form-label">访问密码<i class="layui-icon layui-icon-question" title="留空表示公开访问"></i></label>
+							    <div class="layui-input-block layui-input-group" style="min-height:32px;">
+							     	 <input type="search"name="password" value="#(menu.password??)" lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+							     	 <div class="layui-input-split layui-input-suffix" style="cursor: pointer;min-height:32px;" onclick="generateRandomPassword(8,'#(menu.id??)')">
+								        <i class="layui-icon layui-icon-vercode"></i>&nbsp;随机生成
+								      </div>
+							    </div>
+						 </div>
+					</div>
+				</div>
+				<div class="layui-row">
+					<div class="layui-col-xs12 layui-col-md6"> 
+				        	 <div class="layui-form-item">
+								    <label class="layui-form-label">过期时间<i class="layui-icon layui-icon-question" title="留空表示永不过期"></i></label>
+								    <div class="layui-input-block layui-input-group">
+								     	 <input type="search" name="expiretTime" value="#(menu.expiret_time??)" class="layui-input layui-date" autocomplete="off" placeholder="">
+								    </div>
+							 </div>
+						</div>
+				</div>
+				<div class="layui-row">
+					<div class="layui-col-xs12 layui-col-md6"> 
+			        	 <div class="layui-form-item">
+							<label class="layui-form-label">分享链接</label>
+							<div class="layui-input-block" style="padding:6px 10px;">
+						       <a  href="javascript:copyLink('#(menu.id??)')" style="color:#1e9fff" title="本链接可以查看该目录下的接口"><i class="layui-icon layui-icon-link"></i>复制</a>
+						    </div>
+					    </div>
+				    </div>
+				</div>
+			
+        </div>
+    </div>  
+</div>
+
+<script>  
+    var tipsIndex=0;
+    getMenuTree('#treeSelect#(menu.id??2)', '#(treeType)');
+    
+    lay('.layui-date').each(function(){
+		layui.laydate.render({
+		    elem: this
+		    ,trigger:'click'
+		});		  
+	});
+
+    layui.form.render();
+
+   
+    //保存
+    function saveMenuData(menuId){
+    	var menuDom=$('.menu-'+menuId);
+    	var title=menuDom.find('input[name=title]').val();
+    	var parentId=menuDom.find('input[name=parentId]').val();
+    	var remark=menuDom.find('textarea[name=remark]').val();
+    	updateMenu(menuId,title,parentId,remark,'#(treeType)');
+    }
+
+    // 保存访问设置
+    function savePassword(menuId){
+    	var menuDom=$('.menu-link-'+menuId);
+    	var password=menuDom.find('input[name=password]').val();
+    	var expiretTime=menuDom.find('input[name=expiretTime]').val();
+    	updatePassword(menuId,password,expiretTime);
+    }
+
+    function generateRandomPassword(length = 8,menuId) {  
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";  
+        let randomPassword = "";  
+
+        for (let i = 0; i < length; i++) {  
+            const randomIndex = Math.floor(Math.random() * charset.length);  
+            randomPassword += charset[randomIndex];  
+        }  
+        var menuDom=$('.menu-link-'+menuId);
+    	menuDom.find('input[name=password]').val(randomPassword);
+    }  
+    
+    loadTable#(menu.id??)(null);
+    function loadTable#(menu.id??)(keyword) {
+    	$.ajax({
+			 url:'#(path)/apidev/api/getMenuData',
+		 	 type:"POST",
+		 	 data:{id:'#(menu.id??)',keyword:keyword,treeType:'#(treeType)'},
+		 	 success:function(ret){
+		 		layui.table.render({
+		 		     elem: '#apiTable-#(menu.id??)',
+		 		     cols: [[ //标题栏
+		 		       {field: 'id', title: 'ID', width: 50, checkbox: true},
+		 		       {field: 'title', title: '接口名称'},
+		 		       {field: 'request_mode', title: '请求类型',width:100,templet:function(obj){
+								return `<span class="${obj.request_mode||'GET'}">${obj.request_mode||'GET'}</span>`;
+			 		       }},
+		 		       {field: 'action_key', title: '接口路径',},
+		 		       {field: 'parentNames', title: '接口分组',sort:true },
+		 		       {field: 'interface_status', title: '接口状态',sort:true,width:105,templet:function(obj){
+			 		       var status=obj.interface_status;
+							if(status=='开发中')
+								return `<i class="layui-badge-dot layui-bg-blue" style="margin-right:10px;"></i>`+status;
+							else if(status=='测试中')
+								return `<i class="layui-badge-dot layui-bg-red" style="margin-right:10px;"></i>`+status;
+							else if(status=='已完成')
+								return `<i class="layui-badge-dot layui-bg-green" style="margin-right:10px;"></i>`+status;
+							else if(status=='需修改')
+								return `<i class="layui-badge-dot layui-bg-orange" style="margin-right:10px;"></i>`+status;
+							else if(status=='已废弃')
+								return `<i class="layui-badge-dot layui-bg-purple" style="margin-right:10px;"></i>`+status;
+							else
+								return status || `<i class="layui-badge-dot layui-bg-blue" style="margin-right:10px;"></i>开发中`;
+			 		       }},
+		 		       {field: 'controller', title: '控制器',sort:true,hide:true},
+		 		       {field: 'visible', title: '显示隐藏',width:105,sort:true,templet:function(obj){
+								return `<input type="checkbox" name="status" value="${obj.id}" title="显示|隐藏" lay-skin="switch" lay-filter="visible-status" ${ obj.visible == 1 ? "checked" : "" }>`;
+			 		       }},
+		 		       {field: 'create_time', title: '创建时间',sort:true,hide:false},
+		 		       {field: 'update_time', title: '修改时间',sort:true,hide:true},
+		 		     ]],
+		 		     data: ret.data.menuApiData,
+		 		     toolbar: '#apiTable-#(menu.id??)-toolbar-setRowChecked',
+		 		     defaultToolbar: [
+		 		    	  'filter', 'exports'
+		 		    	],
+		 		     height: 'full-140',
+		 		     skin: 'line', // 表格风格
+		 		     page: false, // 是否显示分页
+		 		     done:function(){
+		 		    	 $('.apiNum-#(menu.id??)').html(ret.data.menuApiData.length);
+		 		    	 $("input[name=#(menu.id??)]").val(keyword);
+		 			 }
+		 		 });
+		 	 }
+  		});
+    }
+
+    layui.form.on('switch(visible-status)', function(obj){
+        var id = this.value;
+        var checked = obj.elem.checked?1:0;
+        updateVisible(id,checked);
+      });
+
+    function checkEnter(event) {  
+        if (event.key === 'Enter') {  
+            searchTableData();  
+        }  
+    }  
+    
+    function searchTableData(){
+        var keyword = $("input[name=#(menu.id??)]").val();
+    	loadTable#(menu.id??)(keyword);
+    }
+   // 删除
+   function deleteData#(menu.id??)(id) {
+	   $.ajax({
+			 url:'#(path)/apidev/api/delete',
+		 	 type:"POST",
+		 	 data:{id:id},
+		 	 success:function(ret) {
+			 	if (ret.state=='ok') { 
+			 		$.ajax({
+						 url:'#(path)/apidev/api/getMenuData',
+					 	 type:"POST",
+					 	 data:{id:'#(menu.id??)'},
+					 	 success:function(ret){
+					 		layui.table.reload('apiTable-#(menu.id??)', {data:ret.data.menuApiData}, false);
+					 		$('.apiNum-#(menu.id??)').html(ret.data.menuApiData.length);
+					 	 }
+					});
+			 		getApiTreeList("#(treeType)");
+			 	}
+			 	showMsg(ret.msg);	
+		 	}
+		 });  
+	   layer.close(tipsIndex);	
+  }
+   
+   // 头工具栏事件
+   layui.table.on('toolbar(apiTable-#(menu.id??))', function(obj){
+     var checkStatus = layui.table.checkStatus(obj.config.id); //获取选中行状态
+     switch(obj.event){
+       case 'deleteData#(menu.id??)':// 删除数据
+         var selectedData = checkStatus.data;  // 获取选中行数据
+         var selectedIds = selectedData.map(function(item) {  
+             return item.id;  
+         });  
+         // 将 IDs 转换为字符串  
+         var selectedIdsString = selectedIds.join(',');  
+         if(tipsIndex==0){	   	   	   	 
+     	   	var dataId=$(this).attr("data-id");
+     	   var content=`确定删除 ${selectedData.length} 条记录吗？<br/>
+   		   		删除的记录将移至回收站，30 天后自动彻底删除。`;
+	   	    layer.confirm(content, {icon: 0, title:'提示',offset:'100px',}, function(index){
+	   	    	deleteData#(menu.id??)(selectedIdsString);
+	   	    });
+  	   	  }
+       	 break;
+       case 'cancelCheckData#(menu.id??)' : 
+    	   var selectedData = checkStatus.data;  // 获取选中行数据
+    	   // 取消选中  
+           if (selectedData.length > 0) {  
+        	   // 重新渲染表格，清空选中状态  
+               $.ajax({
+      			 url:'#(path)/apidev/api/getMenuData',
+      		 	 type:"POST",
+      		 	 data:{id:'#(menu.id??)'},
+      		 	 success:function(ret){
+      		 		layui.table.reload('apiTable-#(menu.id??)', {data:ret.data.menuApiData}, false);
+      		 	 }
+      		});
+           }
+         break;
+       case 'updateData#(menu.id??)' : //修改状态
+    	   var selectedData = checkStatus.data;  
+    	   // 取消选中  
+           if (selectedData.length > 0) { 
+        	   var selectedIds = selectedData.map(function(item) {  
+                   return item.id;  
+               });  
+               // 将 IDs 转换为字符串  
+               var selectedIdsString = selectedIds.join(',');  
+        	   layer.open({  
+        		     btnAsync: true,  
+        		     title: '修改接口状态',  
+        		     type: 1,  
+        		     shadeClose: true,
+        		     content: `  
+        		         <div class="layui-form layui-form-pane" style="padding:15px;">  
+        		             <div class="layui-form-item layui-form-text">   
+        		                 <div class="layui-input-block">  
+        		                 	<i class="layui-badge-dot input-dot layui-hide" style="position: absolute;top: 16px;left: 10px;"></i>
+        		                 	<input style="padding-left:25px" name="status"  readonly placeholder="修改接口状态" class="layui-input status-dropdown">
+        		                 	<div id="statusTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">请选择接口状态</div>
+        		                 </div>  
+        		             </div> 
+        		         </div>`,  
+        		 	     area: ['450px', height], 
+        		 	     offset:'100px',
+        		 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
+        		 	     btn: ['确定', '取消'],  
+        		 	     btn1: function (index, layero) {
+        		 	           // 读取输入框内容  
+        		 	          var status = layero.find('input[name="status"]').val();   
+        		 	          var statusTip = layero.find('#statusTip');  
+        		 	           if(!status){
+        		 	        	    statusTip.show();
+									return false;
+            		 	        }    
+        		 	     		// 重新渲染表格，清空选中状态  
+	       		               $.ajax({
+	       		      			 url:'#(path)/apidev/api/updateStatus',
+	       		      		 	 type:"POST",
+	       		      		 	 data:{id:selectedIdsString,status:status},
+	       		      		 	 success:function(ret){
+	       		          		 	   showMsg(ret.msg);
+	       		      		 		   loadTable#(menu.id??)();
+	       		      		 	 	}
+	       		      			});
+        		 	     },  
+        		 	     btn2: function (index) {  
+        		 	         layer.close(index); // 关闭弹出层  
+        		 	     }  
+        		 	});
+
+	        	   layui.dropdown.render({
+	        		    elem: '.status-dropdown',
+	        		    templet: function(d){
+	        		    	  return `<i class="layui-badge-dot ${d.color}" style="margin-right:10px;"></i>` + d.title;
+	        		    	},
+	        		    data: [{
+	        		      title: '开发中',
+	        		      id: '开发中',
+	        		      color:'layui-bg-blue'
+	        		    },{
+	        		      title: '测试中',
+	        		      id: '测试中',
+	        		      color:'layui-bg-red'
+	        		    },{
+	        		      title: '已完成',
+	        		      id: '已完成',
+	        		      color:'layui-bg-green'
+	        		    },{
+	        		      title: '需修改',
+	        		      id: '需修改',
+	        		      color:'layui-bg-orange'
+	        		    },{
+	        		      title: '已废弃',
+	        		      id: '已废弃',
+	        		      color:'layui-bg-purple'
+	        		    }],
+	        		    click: function(obj){
+	        		        this.elem.val(obj.title);
+	        		        var colorClass='layui-badge-dot input-dot '+obj.color
+	            		    $('.input-dot').removeClass().addClass(colorClass);
+	            		    $('#titleTip').hide();
+	        		    },
+	        		    style: 'min-width: 420px;'
+	        	});
+           }
+         break;
+       case 'exportData#(menu.id??)' : //导出
+           var parentId='#(menu.id??)';
+           var selectedData = checkStatus.data;  
+           if (selectedData.length > 0) { 
+        	   var selectedIds = selectedData.map(function(item) {  
+                   return item.id;  
+               });  
+               // 将 IDs 转换为字符串  
+               var selectedIdsString = selectedIds.join(',');  
+               downloadSelectIds(parentId,selectedIdsString);
+           }
+         break;
+       case 'moveData#(menu.id??)' : //移动到
+    	   var selectedData = checkStatus.data;  
+    	   menuTreeSelectId='';
+    	   // 取消选中  
+           if (selectedData.length > 0) { 
+        	   var selectedIds = selectedData.map(function(item) {  
+                   return item.id;  
+               });  
+               // 将 IDs 转换为字符串  
+               var selectedIdsString = selectedIds.join(',');  
+        	   layer.open({  
+        		     btnAsync: true,  
+        		     title: '移动到',  
+        		     type: 1,  
+        		     shadeClose: true,
+        		     content: `  
+        		         <div class="layui-form layui-form-pane" style="padding:15px;">  
+        		             <div class="layui-form-item">  
+        		                 <label class="layui-form-label">目标目录</label>  
+        		                 <div class="layui-input-block"> 
+        		                 		<input type="hidden" id="treeSelect3Id" name="parentId" value=""/>
+        			                  	<input type="text" style="height:38px;" id="treeSelect3" name="parentName" placeholder="移动到..."  class="layui-input" autocomplete="off" onblur="searchMenuBlur(this,'#(treeType)')" oninput="searchMenu(this,'#(treeType)')"/>
+        			                  	<div id="titleTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">请选择目标目录</div>   
+        		                 </div>  
+        		             </div> 
+        		         </div>`,  
+        		 	     area: ['588px', height], 
+        		 	     offset:'100px',
+        		 	     resize:false,
+        		 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
+        		 	     btn: ['确定', '取消'],  
+        		 	     btn1: function (index, layero) {
+        		 	           // 读取输入框内容  
+        		 	           var parentId = layero.find('input[name="parentId"]').val();  
+        		 	           var titleTip = layero.find('#titleTip');  
+        		 	           if(parentId=='') {
+        		 	        	  titleTip.show();
+            		 	           return false;
+        		 	           }
+        		 	     		// 重新渲染表格，清空选中状态  
+	       		               $.ajax({
+	       		      			 url:'#(path)/apidev/api/moveTo',
+	       		      		 	 type:"POST",
+	       		      		 	 data:{id:selectedIdsString,parentId:parentId},
+	       		      		 	 success:function(ret){
+	       		          		 	   showMsg(ret.msg);
+	       		      		 		   loadTable#(menu.id??)();
+	       		      		 		   getApiTreeList("#(treeType)");
+	       		      		 	 	}
+	       		      			});
+        		 	     },  
+        		 	     btn2: function (index) {  
+        		 	         layer.close(index); // 关闭弹出层  
+        		 	     }  
+        		 	});
+
+				getMenuTree('#treeSelect3', '#(treeType)');
+
+           }
+         break;
+       case 'visibleData#(menu.id??)' : //显示隐藏
+    	   var selectedData = checkStatus.data;  
+    	   // 取消选中  
+           if (selectedData.length > 0) { 
+        	   var selectedIds = selectedData.map(function(item) {  
+                   return item.id;  
+               });  
+               // 将 IDs 转换为字符串  
+               var selectedIdsString = selectedIds.join(',');  
+        	   layer.open({  
+        		     btnAsync: true,  
+        		     title: '显示或隐藏接口',  
+        		     type: 1,  
+        		     shadeClose: true,
+        		     content: `  
+        		         <div class="layui-form layui-form-pane" style="padding:15px;">  
+        		             <div class="layui-form-item layui-form-text">   
+        		                 <div class="layui-input-block">  
+        		                 	<i class="layui-icon icon-visible layui-hide" style="position: absolute;top: 12px;left: 10px;"></i>
+        		                 	<input style="padding-left:40px" name="visible"  readonly placeholder="修改显示隐藏状态" class="layui-input status-dropdown">
+        		                 	<div id="visibleTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">请选择显示隐藏状态</div>
+        		                 </div>  
+        		             </div> 
+        		         </div>`,  
+        		 	     area: ['450px', height], 
+        		 	     offset:'100px',
+        		 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
+        		 	     btn: ['确定', '取消'],  
+        		 	     btn1: function (index, layero) {
+        		 	           // 读取输入框内容  
+        		 	          var visible = layero.find('input[name="visible"]').val();   
+        		 	          var visibleTip = layero.find('#visibleTip');  
+        		 	           if(!visible){
+        		 	        	    visibleTip.show();
+									return false;
+            		 	        }    
+        		 	     		// 重新渲染表格，清空选中状态  
+	       		               $.ajax({
+	       		      			 url:'#(path)/apidev/api/updateVisible',
+	       		      		 	 type:"POST",
+	       		      		 	 data:{id:selectedIdsString,visible:visible=='显示'?1:0},
+	       		      		 	 success:function(ret){
+	       		          		 	   showMsg(ret.msg);
+	       		      		 		   loadTable#(menu.id??)();
+	       		      		 	 	}
+	       		      			});
+        		 	     },  
+        		 	     btn2: function (index) {  
+        		 	         layer.close(index); // 关闭弹出层  
+        		 	     }  
+        		 	});
+
+	        	   layui.dropdown.render({
+	        		    elem: '.status-dropdown',
+	        		    templet: function(d){
+	        		    	  return `<i class="layui-icon ${d.color}" style="margin-right:10px;"></i>` + d.title;
+	        		    	},
+	        		    data: [{
+	        		      title: '显示',
+	        		      id: '1',
+	        		      color:'layui-icon-eye'
+	        		    },{
+	        		      title: '隐藏',
+	        		      id: '0',
+	        		      color:'layui-icon-eye-invisible'
+	        		    }],
+	        		    click: function(obj){
+	        		        this.elem.val(obj.title);
+	        		        var colorClass='layui-icon icon-visible '+obj.color
+	            		    $('.icon-visible').removeClass().addClass(colorClass);
+	            		    $('#visibleTip').hide();
+	        		    },
+	        		    style: 'min-width: 420px;'
+	        	});
+           }
+         break;
+     };
+   });
+
+
+   // 监听工具条的选中事件  
+   layui.table.on('checkbox(apiTable-#(menu.id??))', function(obj){
+       var checkData = layui.table.checkStatus('apiTable-#(menu.id??)').data; //获取选中行状态\
+
+       if(checkData.length>0){
+			$('.layui-btn-container-#(menu.id??)').hide();
+			$('.layui-table-tool-self').hide();
+			$('.layui-btn-container-checked-#(menu.id??)').removeClass('layui-hide');
+	  }else{
+	  		$('.layui-btn-container-#(menu.id??)').show();
+	  		$('.layui-table-tool-self').show();
+	  		$('.layui-btn-container-checked-#(menu.id??)').addClass('layui-hide');
+	  }
+       $('#apiCheckedNum-#(menu.id??)').html(checkData.length);
+   });  
+
+</script>  

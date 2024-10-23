@@ -22,19 +22,110 @@
 	content="一个非常适合IT团队的API开发工具、技术文档开发工具。Apidev专注于开发者所需的接口工具，支持开发者的创新">
 <link rel="stylesheet" href="#(path)/assets/lib/layui_exts/mouseRightMenu/mouseRightMenu.css" />
 <link rel="stylesheet" href="#(path)/assets/lib/layui-v2.9.14/layui/css/layui.css" media="all" />
-<script src="#(path)/assets/lib/layui-v2.9.14/layui/layui.js" type="text/javascript"></script>
+<link href="#(path)/assets/lib/ddlsql/codemirror.min.css" rel="stylesheet">
+<link rel="stylesheet" href="#(path)/assets/css/runapi/debug.css" />
+
+<script src="#(path)/assets/lib/jquery/jquery-2.1.4.min.js"></script>
+<script src="#(path)/assets/lib/jquery/jquery.form.js" type="text/javascript" ></script>
+<script src="#(path)/assets/lib/layui-v2.9.18/layui/layui.js" type="text/javascript"></script>
+<!-- codemirror -->
+<script src="#(path)/assets/lib/ddlsql/codemirror.min.js" type="text/javascript"></script>
+<script src="#(path)/assets/lib/ddlsql/sql.min.js" type="text/javascript"></script>
+<!-- jquery 表格移动需要 -->
+	<script src="#(path)/assets/lib/jquery/jquery-migrate-1.2.1.js"></script>
+	<script src="#(path)/assets/lib/jquery/jquery-ui.min.js" type="text/javascript" ></script>
+	<!-- jquery json美化插件 -->
+	<script src="#(path)/assets/lib/jquery/jquery.json-viewer.min.js"></script>
+	<link rel="stylesheet" href="#(path)/assets/lib/jquery/jquery.json-viewer.min.css"/>
+	<!-- debug 业务代码 -->
+	<script src="#(path)/assets/js/runapi/debug.js"></script>
+	
 <style type="text/css">
 	.layui-colla-content {
 	    color: #333333eb;
 	}
-	.layui-colla-content, .layui-colla-item1 {
+	.layui-colla-content, .layui-colla-item1{
 		border-color: #eee;
     	border-top-width: 1px;
     	border-top-style: solid;
  }
+ #apiTable-toolbar-setRowChecked,#shortcutTable-toolbar-setRowChecked{
+ 	border: 1px solid #eee;
+ 	padding:10px;
+ 	border-bottom:none;
+ }
+/* api css start*/
+.api-tab-header{
+	width:265px;
+	background:#ececee;
+}
+.api-tab-header .layui-btn.layui-this{background:#ffffff;border:1px solid #ccc;}
+.api-tab-body>div{display: none;padding-top:10px}
+.layui-btn-container .layui-btn {
+    margin-right: 0px;
+    padding-right:10px;
+    padding-left:12px;
+    border-color:#ececee;
+ }
+ .layui-anim dd{  
+  color:#11ab11;
+}
+
+.layui-anim dd:nth-child(2) {  
+   color:#ed5d11;
+}  
+
+.layui-anim dd:nth-child(3) {  
+  color: #0f85df;   
+}  
+
+.layui-anim dd:nth-child(4) {  
+  color: #c50101;
+}  
+
+.layui-anim dd:nth-child(5) {  
+  color: #0f85df;  
+}  
+
+.layui-anim dd:nth-child(6) {  
+  color: #0f85df;  
+}  
+
+.layui-anim dd:nth-child(7) {    
+	color: #0f85df;  
+}  
+
+input[value="GET"],
+input[value="TRACE"],
+input[value="PATCH"] {   
+  color: #11ab11;  
+}  
+
+/* POST 请求 */   
+input[value="POST"] {  
+  color: #ed5d11;  
+}  
+
+/* DELETE 请求 */  
+input[value="DELETE"]{
+	color:#c50101;
+}
+
+input[value="PULL"],
+input[value="HEAD"],
+input[value="CONNECT"],
+input[value="OPTIONS"] {  
+  color: #0f85df; 
+}  
+#title-input:focus {
+	border: none; 
+	border-bottom: 1px solid #ccc!important;
+    background-color: #ccc;
+}
 </style>
 <link id="layui_theme_css" rel="stylesheet">
 <style type="text/css">
+
 .layui-row {
 		 border-radius: 10px;
 }
@@ -102,13 +193,13 @@ iframe {
 
 .body-left {
 	border-right: 1px solid #ccc;
-	height: calc(100vh - 3px);
+	height: calc(100vh - 5px);
 	overflow-y: auto;
 	overflow-x: none;
 }
 
 .body-right {
-	height: calc(100vh - 3px);
+	height: calc(100vh - 5px);
 	overflow: auto;
 }
 
@@ -146,11 +237,11 @@ iframe {
 
 .layui-form-onswitch, .layui-form-switch {
 	border-color: #d2d2d2;
-	background-color: #2f363c;
+	/* background-color: #2f363c; */
 }
 
 .POST {
-	color: #c50101;
+	color: #ed5d11;
 	padding: 0px 2px 0px 0px;
 }
 
@@ -188,7 +279,7 @@ ul {
 	cursor: pointer;
 }
 
-.children,.layui-table-tool {
+.children {
 	display: none; /* 初始隐藏子节点 */
 }
 
@@ -239,11 +330,16 @@ ul {
 {
 	background-color: #607d8b54 !important; /* 活动节点样式 */
 }
-ul.layui-dropdown-menu i:hover,a:hover{
+ul.layui-dropdown-menu i:hover,a:hover,i.layui-icon-template-1:hover{
 	cursor: pointer; /* 设置鼠标光标为手形 */
 }
-.layui-menu-body-title{
+ .layui-menu-body-title{
 	padding-left: 30px;
+	white-space: nowrap; /* 不允许换行 */
+	overflow: hidden; /* 隐藏超出部分 */
+	text-overflow: ellipsis; /* 超出部分显示省略号 */
+	max-width: 400px;
+	min-width:130px;
 }
 
 .layui-menu-body-title>.layui-icon {
@@ -262,11 +358,40 @@ ul.layui-dropdown-menu i:hover,a:hover{
 .layui-table-tool-temp {
     padding-right: 0px;
 }
-
+.table-select-btn{
+	float:right;
+}
+.table-select-btn a{
+	padding:8px;
+}
+.layui-btn-radius {
+    border-radius: 8px;
+}
+ul.menu-tab>span{
+	display:none;
+}
+.layui-tab-content {
+    padding: 8px 10px 0px 10px;
+}
+.layui-btn+.layui-btn {
+    margin-left: 0px;
+}
+.layui-input, .layui-select, .layui-textarea {
+    height: 32px;
+}
+#copy_value{
+	left: -200px;
+	position: fixed;
+}
+.layui-icon-log::before{
+	color: #a605e5!important;
+    padding-right: 5px!important;
+}
 </style>
 
 </head>
 <body>
+<textarea id="copy_value"></textarea>
 	<div class="layui-layout layui-layout-admin">
 		<div class="layui-header">
 			<div class="layui-logo layui-bg-black">
@@ -320,7 +445,7 @@ ul.layui-dropdown-menu i:hover,a:hover{
 									<div class="layui-input-prefix">
 										<i class="layui-icon layui-icon-search"></i>
 									</div>
-									<input type="text" name="keyword" lay-affix="clear"
+									<input type="text" name="keyword" lay-affix="clear" autocomplete="off"
 										class="layui-input" onblur="search()" oninput="search()">
 								</div>
 								<div class="add-btn">
@@ -332,7 +457,7 @@ ul.layui-dropdown-menu i:hover,a:hover{
 							<div class="layui-collapse">
 
 								<div class="layui-colla-item1 project">
-									<div class="layui-colla-title active">
+									<div class="layui-colla-title active" data-id="project">
 										项目概况<i class="layui-icon layui-icon-layouts layui-colla-icon"></i>
 									</div>
 								</div>
@@ -368,7 +493,7 @@ ul.layui-dropdown-menu i:hover,a:hover{
 								</div>
 								
 								<div class="layui-colla-item1 recycle">
-									<div class="layui-colla-title">
+									<div class="layui-colla-title" data-id="recycle">
 										回收站<i class="layui-icon layui-icon-delete layui-colla-icon"></i>
 									</div>
 								</div>
@@ -377,15 +502,10 @@ ul.layui-dropdown-menu i:hover,a:hover{
 							<!-- 折叠面板 end -->
 						</div>
 						<div class="layui-col-xs12 layui-col-sm8 layui-col-md9 body-right">
-							<div class="layui-tab" lay-filter="tab-handle"
-								lay-allowclose="true">
-								<ul class="layui-tab-title">
+							<div class="layui-tab" lay-filter="tab-handle"lay-allowclose="true">
+								<ul class="layui-tab-title tab-handle">
 								</ul>
-								<!-- <span class="tab-icon">
-						<i class="layui-icon layui-icon-addition"></i>
-					  	<i class="layui-icon layui-icon-more"></i>
-					  </span> -->
-								<div class="layui-tab-content"></div>
+								<div class="layui-tab-content" style="padding-bottom:5px;"></div>
 							</div>
 						</div>
 					</div>
@@ -402,32 +522,47 @@ ul.layui-dropdown-menu i:hover,a:hover{
 
 //JS 
   // 缓存接口数据，用于查询
+  // 接口树数据
   var treeData = [];
   var linkData = [];
+  // 目录树数据
   var menuData = []; 
+  var menuDataLink = []; 
+  
   // 回收站数据
   var apiData = [];  
   var shortcutData = [];  
-  var titleKeyword = '';
+    
   var element = layui.element;
   var layer = layui.layer;
   var util = layui.util;
-  var $ = layui.$;
+
   var mouseRightMenu;
   var form = layui.form;
   var height=window.innerHeight-80;
   var openAll = false;
   var openAllLink = false;
+  var   _path = "#(path)";
+  var titleKeyword = '';
+  // 记录当前树节点
+  var thisId='';
+  // 记录目录树选中id
+  var menuTreeSelectId='';
 
+  // 右键菜单组件
   layui.config({base: '#(path)/assets/lib/layui_exts/mouseRightMenu/'});
   layui.use(['mouseRightMenu'], function(){
   	mouseRightMenu = layui.mouseRightMenu;
 	 // 接口树
-  	 getApiTreeList("-1");
+  	 getApiTreeList("1");
 	 // 快捷请求树
-  	 getApiTreeList("-2");
+  	 getApiTreeList("2");
 
   	project();
+
+	// 初始化目录数据
+  	getMenuTree(null,'1');
+  	getMenuTree(null,'2');
   });
   
   // 设置主题
@@ -440,10 +575,17 @@ ul.layui-dropdown-menu i:hover,a:hover{
 	  localStorage.setItem("layui_theme_css",this.checked);	
 	  tabTheme(this.checked);
  });
+
+ layui.element.on('tab(tab-handle)', function(data){
+	  thisId=data.id;
+	  const activeNodes = document.querySelectorAll('.active');  
+      activeNodes.forEach(node => node.classList.remove('active'));  
+      $('div[data-id='+thisId+']').addClass('active');
+});
   
   
   // 获取接口数
-  function getApiTreeList(parentId){
+  function getApiTreeList(parentId,isLoadTree=true){
 	$.ajax({
 		url:'#(path)/apidev/api/getTreeList',
 		type:'POST',
@@ -451,13 +593,15 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		success:function(ret){
 			if(ret.state=='ok'){
 			  var divId="tree-container";
-			  if(parentId=="-1"){
+			  if(parentId=="1"){
 				  treeData = ret.data; 
+				  if(isLoadTree)
 				  loadTree(treeData,true,divId);
 			  }else {
 				  linkData = ret.data;
 				  divId="link-container";
-				  loadTree(linkData[0].children,false,divId);
+				  if(isLoadTree)
+				  	loadTree(linkData[0].children,false,divId);
 			  }				  
 			  
 			}
@@ -493,33 +637,36 @@ ul.layui-dropdown-menu i:hover,a:hover{
         // 循环节点
         data.forEach(node => {  
         	var hasChildren = node.children && node.children.length > 0;  
-            var iconClass = hasChildren && !isFirst ? 'icon right' : 'icon down';  
+            var iconClass = hasChildren && !node.children[0].isopen ? 'icon right' : 'icon down';  
             if(openAll  && divId=='tree-container')
             	iconClass = 'icon down';
         	if(openAllLink && divId=='link-container')
         		iconClass = 'icon down';
         	// 创建节点
-            html += `<li class="tree-node"><div title="${node.title} ${node.type=='api' ? node.action_key : ''}" onclick="toggleNode(event, this,'${divId}')" data-id="${node.id}" class="tree-node-title">`; 
+            html += `<li class="tree-node"><div title="${node.type=='api' ? node.action_key : ''} ${node.tips||''} "  data-id="${node.id}"
+                onclick="toggleNode(event, this,'${divId}')" class="tree-node-title ${thisId == node.id?'active':''}">`; 
             // 子节点数量    		
             var subNodeNum = node.children && node.children.length>0 ?  '（'+node.children.length+'）' : '';
             // 节点前面图标
             if(node.type=='menu'){ // 目录
                 if(hasChildren)
-            		html += `<i class=" layui-icon layui-icon-right ${iconClass}" onclick="toggleRightIcon(event, this)"></i>`; 
+            		html += `<i class=" layui-icon layui-icon-right ${iconClass}" onclick="toggleRightIcon(event, this)"></i>`;
             	html += `<i class="layui-icon layui-icon-export" style="padding-right:2px"></i>`;
             	if(subNodeNum=='')
             		subNodeNum='（0）';
             } else if(node.type=='api' || node.type == 'link'){ // 接口
+            	if(hasChildren)
+            		html += `<i class=" layui-icon layui-icon-right ${iconClass}" onclick="toggleRightIcon(event, this)"></i>`;
                  if(node.request_mode){
 	             	html += `<span class="${node.request_mode}">${node.request_mode}</span>`;
 	             } else {
 	    			html += `<span class="GET">GET</span>`;
 	    		 }
             } else if(node.type=='demo'){ // 用例
-            	html += `<i class="layui-icon layui-icon-link"></i>`;
+            	html += `<i class="layui-icon layui-icon-log"></i>`;
             }
             // 节点名称、更多图标
-            html +=`<span>${node.title}${subNodeNum}</span><i data-id="${node.id}" class="layui-icon layui-icon-more tree-menu-more  ${divId}-${node.id=='-1' ? 'root' : node.type}"></i></div>`;  
+            html +=`<span>${node.title}${subNodeNum}</span><i data-id="${node.id}" class="layui-icon layui-icon-more tree-menu-more  ${divId}-${node.id=='1' ? 'root' : node.type}"></i></div>`;  
 			// 递归创建子节点
             if (hasChildren) {
                 html += createTree(node.children,false,divId);  
@@ -543,13 +690,14 @@ ul.layui-dropdown-menu i:hover,a:hover{
         }else{
         	html = `<ul class="children" style="display: ${display}">`;  
          }
-        var iconClass = isFirst ? 'layui-icon-down' : 'layui-icon-right';  
      // 循环节点
         data.forEach(node => {  
         	var hasChildren = node.children && node.children.length > 0;  
+        	var iconClass = hasChildren && node.children[0].isopen ? 'layui-icon-down' : 'layui-icon-right';  
             
         	// 创建节点
-            html += `<li class="layui-menu-item-group" id="${node.id}"><div class="layui-menu-body-title" data-id="${node.id}">`; 	
+            html += `<li class="layui-menu-item-group" id="${node.id}">
+                <div class="layui-menu-body-title ${menuTreeSelectId==node.id?'active':''}" data-id="${node.id}">`; 	
             // 节点前面图标
             if(node.type=='menu'){ // 目录
                 if(hasChildren)
@@ -571,7 +719,7 @@ ul.layui-dropdown-menu i:hover,a:hover{
     }
 
    // 切换节点显示和隐藏  
-    function toggleNode(event,_this,divId) {  
+    function toggleNode(event,_this,divId) {
         event.stopPropagation(); 
      	// 移除其他节点的活动样式  
         const activeNodes = document.querySelectorAll('.active');  
@@ -586,21 +734,26 @@ ul.layui-dropdown-menu i:hover,a:hover{
         // 获取节点 ID 并显示  
         const nodeId = _this.getAttribute('data-id');
         var nodeData;
+        var treeType = '1';
         if(divId=='tree-container') {
         	nodeData = findNodeById(treeData[0], nodeId);
         }else{
         	nodeData = findNodeById(linkData[0], nodeId);
+        	treeType = '2';
         }
         
         var title = '';  
         if(nodeData.type=='menu'){
 			title='<i class="layui-icon layui-icon-export"></i>';
+        }else if(nodeData.type=='demo'){
+        	title='<i class="layui-icon layui-icon-log"></i>';
         }else{
             var mode=nodeData.request_mode||'GET';
         	title='<span class="'+mode+'">'+mode+'</span>'
         }
         
         var li=$('li[lay-id='+nodeId+']');
+        thisId = nodeId;
 		if(li.length>0){
 			element.tabChange('tab-handle', nodeId); // 切换到标签
 			if (childrenUl) {
@@ -610,8 +763,12 @@ ul.layui-dropdown-menu i:hover,a:hover{
 	            icon.classList.toggle('down', !isExpanded);  
 	        }  
 		}else{
-			// 显示在右侧tab
-	        clickMenu(nodeData.id,title+nodeData.title); 
+			if(nodeData.type=='menu'){
+				menu(nodeData.id,title+nodeData.title,treeType);
+			}else{
+				// 显示在右侧tab
+		        apiDetail(nodeData.id,title+nodeData.title); 
+			}
 		}
     }  
 
@@ -698,7 +855,7 @@ ul.layui-dropdown-menu i:hover,a:hover{
   // 接口菜单点击事件
   function clickMenu(id,title,content){
 	  if(!content)
-		  content=`<iframe width="100%" height="${height}px"  src="${id}"></iframe>`;
+		  content=`<iframe width="100%" height="${height}px"  src="#(path)/apidev/api/detail?id=${id}"></iframe>`;
 		// 定义要查找的lay-id值
 		var li=$('li[lay-id='+id+']');
 		if(li.length>0){
@@ -714,11 +871,23 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		bindTabRightMenu();
 	}
 
+  	// api详情
+	function apiDetail(id,title){
+		$.ajax({
+			url:'#(path)/apidev/api/detail',
+			type:'POST',
+			data:{id:id,title:title},
+			success:function(html){
+				clickMenu(id,title,html);
+			}
+		});
+    }
+
   	// tab导航右键菜单
 	function bindTabRightMenu(){
-		$('.layui-tab-title li').off("contextmenu");
+		$('.tab-handle li').off("contextmenu");
 		//右键目录菜单
-		$('.layui-tab-title li').bind("contextmenu",function(e){
+		$('.tab-handle li').bind("contextmenu",function(e){
 			var id=$(this).attr('lay-id');
 			var data = {menuId:id}
 			var menu_data=[
@@ -769,11 +938,17 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		      title: '添加子目录',
 		      id: 'addApiSubMenu',
 		      templet: function(d){
-		    	  return '<i class="layui-icon layui-icon-file"></i> ' + d.title;
+		    	  return '<i class="layui-icon layui-icon-export" style="margin-left:-15px"></i> ' + d.title;
 		      }
 		    },{
 		      title: '添加接口',
 		      id: 'addApi',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-file"></i> ' + d.title;
+		      }
+		    },{
+		      title: '复制链接',
+		      id: 'copyLink',
 		      templet: function(d){
 		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
 		      }
@@ -781,24 +956,20 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		      title: '导出',
 		      id: 'export',
 		      templet: function(d){
-		    	  return '<i class="layui-icon layui-icon-export" style="margin-left:-15px"></i> ' + d.title;
+		    	  return '<i class="layui-icon layui-icon-download-circle"></i> ' + d.title;
 		      }
 		    }],
 		    click: function(obj){
 		      	var type=obj.id;
 		      	var title = obj.title;
 		      	var id=new Date().getTime();
- 	 			var parentId="-1";
+ 	 			var parentId="1";
  	 			if(type=='addApiSubMenu'){
- 	 				addMenu(parentId,'-1');
+ 	 				addMenu(parentId,'1');
  	 	 	 	} else 	if(type=='addApi'){
- 	 				element.tabAdd('tab-handle', {
- 	 			        title: '<span class="GET">GET</span>新建接口',
- 	 			        content: '<iframe width="100%" height="'+height+'px"  src="'+id+'"></iframe>',
- 	 			        id: id,
- 	 			        change: true // 是否添加完毕后即自动切换
- 	 			    });
- 	 				bindRightMenu();
+ 	 				addApi(id,'<span class="GET">GET</span>新建接口',parentId,'api');
+ 	 	 	 	}else if(type=='copyLink'){
+					copyLink('1');
  	 	 		} else if(type=='export'){
  	 	 			download(parentId)
  	 	 	 	}
@@ -815,7 +986,7 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		      title: '添加接口',
 		      id: 'addApi',
 		      templet: function(d){
-		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
+		    	  return '<i class="layui-icon layui-icon-file"></i> ' + d.title;
 		      }
 		    },{
 			      title: '重命名',
@@ -842,6 +1013,12 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		    	  return '<i class="layui-icon layui-icon-export" style="margin-left:-15px"></i> ' + d.title;
 		      }
 		    },{
+		      title: '复制链接',
+		      id: 'copyLink',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
+		      }
+		    },{
 		      title: '导出',
 		      id: 'export',
 		      templet: function(d){
@@ -861,25 +1038,21 @@ ul.layui-dropdown-menu i:hover,a:hover{
 				var id=new Date().getTime();
 				// 添加接口
 				if(type=='addApi'){
- 	 	 	 		element.tabAdd('tab-handle', {
-	 			        title: '<span class="GET">GET</span>新建接口',
-	 			        content: '<iframe width="100%" height="'+height+'px"  src="'+id+'"></iframe>',
-	 			        id: id,
-	 			        change: true // 是否添加完毕后即自动切换
-	 			    });
- 	 	 	 		bindTabRightMenu();
+ 	 	 	 		addApi(id,'<span class="GET">GET</span>新建接口',dataId,'api');
 	 	 	 	} else if(type=='rename'){
-	 	 	 		rename(dataId,'-1');
+	 	 	 		rename(dataId,'1');
 	 	 	 	} else if(type=='copy'){
- 	 	 	 		copy(dataId,'-1');
+ 	 	 	 		copy(dataId,'1');
 	 	 	 	} else if(type=='moveTo'){
- 	 	 	 		moveTo(dataId,'-1');
+ 	 	 	 		moveTo(dataId,'1');
 				}else if(type=='addApiSubMenu'){
- 	 				addMenu(dataId,'-1');
+ 	 				addMenu(dataId,'1');
+				}else if(type=='copyLink'){
+					copyLink(dataId);
  	 	 	 	} else if(type=='export'){
  	 	 	 		download(dataId)
 	 	 	 	} else if(type=='del'){
-	 	 	 		del(dataId,'-1');
+	 	 	 		del(dataId,'1');
  	 	 	 	} 
 		    }
 		  });
@@ -893,7 +1066,7 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		      title: '添加用例',
 		      id: 'addDemo',
 		      templet: function(d){
-		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
+		    	  return '<i class="layui-icon layui-icon-log"></i> ' + d.title;
 		      }
 		    },{
 			      title: '重命名',
@@ -938,24 +1111,61 @@ ul.layui-dropdown-menu i:hover,a:hover{
 				var treeNode=findNodeById(treeData[0],dataId);
 				var id=new Date().getTime();
 				if(type=='addDemo'){
-	 	 	 		layer.alert("添加用例")
+	 	 	 		addApi(id,'<i class="layui-icon layui-icon-log"></i>添加用例',dataId,'demo');
 	 	 	 	} else  if(type=='rename'){
-	 	 	 	 	rename(dataId,'-1');
+	 	 	 	 	rename(dataId,'1');
 	 	 	 	} else if(type=='copy'){
-	 	 	 		copy(dataId,'-1');
+	 	 	 		copy(dataId,'1');
 	 	 	 	} else if(type=='moveTo'){
-	 	 	 		moveTo(dataId,'-1');
+	 	 	 		moveTo(dataId,'1');
  	 	 	 	} else if(type=='copyLink'){
- 	 	 	 		layer.alert("复制链接")
+ 	 	 	 		copyLink(dataId);
 	 	 	 	} else if(type=='addApiSubMenu'){
- 	 				addMenu(parentId,'-1');
- 	 			}else if(type=='coypLink'){
- 	 				//addMenu(dataId,'-2');
+ 	 				addMenu(parentId,'1');
  	 	 	 	} else if(type=='export'){
  	 	 	 		download(dataId)
 	 	 	 	} else if(type=='del'){
-	 	 	 		del(dataId,'-1');
+	 	 	 		del(dataId,'1');
 	 	 	 	}
+		    }
+		  });
+
+		// 接口用例更多操作
+		layui.dropdown.render({
+		    elem: '.tree-container-demo', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+		    trigger:'hover',
+		    data: [
+			{
+			      title: '重命名',
+			      id: 'rename',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-edit"></i> ' + d.title;
+			      }
+		    },{
+			      title: '复制',
+			      id: 'copy',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-templeate-1"></i> ' + d.title;
+			      }
+		    },{
+			      title: '删除',
+			      id: 'del',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-delete"></i> ' + d.title;
+			      }
+		    }],
+		    click: function(obj){
+		      	var type=obj.id;
+		      	var dataId=$(this.elem).attr('data-id');
+				var treeNode=findNodeById(treeData[0],dataId);
+				var id=new Date().getTime();
+				if(type=='copy'){
+					copy(dataId,'1');
+	 	 	 	} else if(type=='rename'){
+	 	 	 	 	rename(dataId,'1');
+	 	 	 	} else if(type=='del'){
+	 	 	 		del(dataId,'1');
+ 	 	 	 	} 
 		    }
 		  });
 
@@ -968,7 +1178,7 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		      title: '新建快捷请求',
 		      id: 'addLink',
 		      templet: function(d){
-		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
+		    	  return '<i class="layui-icon layui-icon-senior"></i> ' + d.title;
 		      }
 		    },{
 			      title: '编辑',
@@ -1002,21 +1212,15 @@ ul.layui-dropdown-menu i:hover,a:hover{
 				var id=new Date().getTime();
 				
 				if(type=='addLink'){
-	 	 	 	 	element.tabAdd('tab-handle', {
-	 			        title: '<i class="layui-icon layui-icon-link"></i>快捷请求',
-	 			        content: '<iframe width="100%" height="'+height+'px"  src="'+id+'"></iframe>',
-	 			        id: id,
-	 			        change: true // 是否添加完毕后即自动切换
-	 			    });
- 	 	 	 		bindTabRightMenu();
+	 			    addApi(id,'<i class="layui-icon layui-icon-senior"></i>快捷请求',dataId,'link');
 	 	 	 	}else if(type=='addLinkSubMenu'){
- 	 				addMenu(dataId,'-2');
+ 	 				addMenu(dataId,'2');
 	 	 	 	} else if(type=='editMenu'){
-	 	 	 	 	editMenu(dataId,'-2')
+	 	 	 	 	editMenu(dataId,'2')
 	 	 	 	} else if(type=='copy'){
-	 	 	 		copy(dataId,'-2');
+	 	 	 		copy(dataId,'2');
 	 	 	 	} else if(type=='del'){
-	 	 	 		del(dataId,'-2');
+	 	 	 		del(dataId,'2');
  	 	 	 	} 
 		    }
 		  });
@@ -1058,13 +1262,13 @@ ul.layui-dropdown-menu i:hover,a:hover{
 				var treeNode=findNodeById(linkData[0],dataId);
 				var id=new Date().getTime();
 				if(type=='copy'){
-					copy(dataId,'-2');
+					copy(dataId,'2');
 	 	 	 	} else if(type=='rename'){
-	 	 	 	 	rename(dataId,'-2');
+	 	 	 	 	rename(dataId,'2');
 	 	 	 	} else if(type=='moveTo'){
-	 	 	 		moveTo(dataId,'-2');
+	 	 	 		moveTo(dataId,'2');
 	 	 	 	} else if(type=='del'){
-	 	 	 		del(dataId,'-2');
+	 	 	 		del(dataId,'2');
  	 	 	 	} 
 		    }
 		  });
@@ -1082,7 +1286,7 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		      title: '快捷请求',
 		      id: 'addRequest',
 		      templet: function(d){
-		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
+		    	  return '<i class="layui-icon layui-icon-senior"></i> ' + d.title;
 		      }
 		    },{
 		      title: '新建接口目录',
@@ -1095,25 +1299,13 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		      	var type=obj.id;
 		      	var title = obj.title;
 		      	var id=new Date().getTime();
- 	 			var parentId="-1";
+ 	 			var parentId="1";
  	 			if(type=='addApi'){
- 	 				element.tabAdd('tab-handle', {
- 	 			        title: '<span class="GET">GET</span>新建接口',
- 	 			        content: '<iframe width="100%" height="'+height+'px"  src="'+id+'"></iframe>',
- 	 			        id: id,
- 	 			        change: true // 是否添加完毕后即自动切换
- 	 			    });
- 	 				bindRightMenu();
+ 	 				addApi(id,'<span class="GET">GET</span>新建接口',parentId,'api');
  	 	 		} else if(type=='addRequest'){
- 	 	 			element.tabAdd('tab-handle', {
- 	 			        title: '<i class="layui-icon layui-icon-link"></i>快捷请求',
- 	 			        content: '<iframe width="100%" height="'+height+'px"  src="'+id+'"></iframe>',
- 	 			        id: id,
- 	 			        change: true // 是否添加完毕后即自动切换
- 	 			    });
- 	 				bindRightMenu();
+ 	 	 			addApi(id,'<i class="layui-icon layui-icon-senior"></i>快捷请求',"2",'link');
  	 	 	 	} else if(type=='addApiMenu'){
- 	 	 	 		addMenu(parentId,'-1');
+ 	 	 	 		addMenu(parentId,'1');
  	 	 	 	}
 		    }
 		  });
@@ -1145,35 +1337,26 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		    	var type=obj.id;
 		      	var title = obj.title;
 		      	var id=new Date().getTime();
- 	 			var parentId="-1";
+ 	 			var parentId="1";
 
  	 			// 更新接口
  	 			if(type=='syncApi'){
- 	 				var loadIndex = layer.msg('正在同步中...', {
- 	 			        icon: 16,
- 	 			        shade: 0.01
- 	 			      });
+ 	 				var loadIndex=layer.load(0);
  	 				$.ajax({
  	 					url:'#(path)/apidev/api/sync',
  	 					type:'POST',
  	 					success:function(ret){
  	 						layer.close(loadIndex)
- 	 						layer.msg(ret.msg);
+ 	 						showMsg(ret.msg);
  	 						if(ret.msg.indexOf("共更新接口")!=-1){
- 	 							getApiTreeList();
+ 	 							getApiTreeList('1',true);
  	 						}
  	 					}
  	 				});
  	 	 	 	} else if(type=='addApi'){
- 	 	 	 		element.tabAdd('tab-handle', {
-	 			        title: '<span class="GET">GET</span>新建接口',
-	 			        content: '<iframe width="100%" height="'+height+'px"  src="'+id+'"></iframe>',
-	 			        id: id,
-	 			        change: true // 是否添加完毕后即自动切换
-	 			    });
- 	 	 	 		bindRightMenu();
+	 			    addApi(id,'<span class="GET">GET</span>新建接口',parentId,'api');
  	 	 	 	} else if(type=='addApiMenu'){
- 	 	 	 		addMenu(parentId,'-1');
+ 	 	 	 		addMenu(parentId,'1');
  	 	 	 	}
  			}
  		});
@@ -1185,7 +1368,7 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		      title: '新建快捷请求',
 		      id: 'addRequest',
 		      templet: function(d){
-		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
+		    	  return '<i class="layui-icon layui-icon-senior"></i> ' + d.title;
 		      }
 		    },{
 		      title: '新建目录',
@@ -1198,18 +1381,12 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		    	var type=obj.id;
 		      	var title = obj.title;
 		      	var id=new Date().getTime();
- 	 			var parentId="-2";
+ 	 			var parentId="2";
 
 				if(type=='addRequest'){
- 	 	 	 		element.tabAdd('tab-handle', {
-	 			        title: '<i class="layui-icon layui-icon-link"></i>快捷请求',
-	 			        content: '<iframe width="100%" height="'+height+'px"  src="'+id+'"></iframe>',
-	 			        id: id,
-	 			        change: true // 是否添加完毕后即自动切换
-	 			    });
- 	 	 	 		bindRightMenu();
+	 			    addApi(id,'<i class="layui-icon layui-icon-senior"></i>'+title,parentId,'link');
  	 	 	 	} else if(type=='addMenu'){
- 	 	 	 		addMenu(parentId,'-2');
+ 	 	 	 		addMenu(parentId,'2');
  	 	 	 	}
  			}
 		});
@@ -1221,27 +1398,89 @@ ul.layui-dropdown-menu i:hover,a:hover{
 		});
 
 		// 项目概况
-		$('.project').on("click", function(e) { 
+		$('.project').off('click').on("click", function(e) { 
 			project();
 		});
 
 		// 回收站
-		$('.recycle').on("click", function(e) { 
+		$('.recycle').off('click').on("click", function(e) { 
 			recycle();
 		});
 	}
 
-	
+	// 复制链接
+	function copyLink(id){
+		var protocol=window.location.protocol;
+		var host=window.location.host;
+		var location=protocol+"//"+host;
+		var node = findNodeById(treeData[0],id);
+		if(!node){
+			node=findNodeById(linkData[0],id);
+		}
+		var title = '分享目录：'+node.title;
+		var url=location+"/apidev/api/share/"+id;
+		if(node.password){
+			var password='访问密码：'+node.password;
+			var msg='访问地址：'+url+'<br/>'+password;
+			layer.alert(msg,{
+		        title:title,
+		        offset:'100px',
+		        btn: ['复制地址和密码','打开链接','取消'],
+		        btn1: function(){
+		        	copyText('访问地址：'+url+'\r\n'+password);
+		        },
+		        btn2: function(){
+		        	window.open(url);
+			    },
+			    btn3:function(){
 
+				}
+		     });
+		}else{
+			layer.alert('访问地址：'+url,{
+		        title:title,
+		        offset:'100px',
+		        btn: ['复制链接','打开链接','取消'],
+		        btn1: function(){
+		        	copyText(url);
+		        },
+		        btn2: function(){
+		        	window.open(url);
+		        },
+		        btn3:function(){
+	
+			    }
+		     });
+		}
+	}	
+
+	//复制
+	function copyText(text){
+		const inputElement = document.querySelector('#copy_value');
+		inputElement.value=text;
+		inputElement.select();
+		try{
+			document.execCommand('copy');
+			showMsg("已复制到粘贴板")
+		}catch(e){
+			showMsg("复制失败")
+		}
+	}
 
 // 搜索
 function search(){
 	titleKeyword = $("input[name=keyword]").val();
 	 // 接口树
-	var filteredData = treeData.map(filterByTitleKeyword).filter(item => item !== null);
+	var filteredData = treeData.map(node => filterByTitleKeyword(node, titleKeyword)).filter(item => item !== null); 
+	if(titleKeyword==''){
+		filteredData=treeData;
+	}
 	loadTree(filteredData,true,'tree-container');
 	 // 快捷请求树
-	var filteredDataLink = linkData[0].children.map(filterByTitleKeyword).filter(item => item !== null);
+	var filteredDataLink = linkData[0].children.map(node => filterByTitleKeyword(node, titleKeyword)).filter(item => item !== null); 
+	if(titleKeyword==''){
+		filteredDataLink=linkData;
+	}
 	loadTree(filteredDataLink,false,'link-container');
 }
 
@@ -1262,19 +1501,23 @@ function tabTheme(checked){
 }
 
 // 通过关键词过滤
-function filterByTitleKeyword(node) {  
+function filterByTitleKeyword(node, titleKeyword, isParentOpened = false) {  
     if (!node || typeof node !== 'object') return null;  
 
+    // 初始化当前节点的 isOpen 属性  
+    const currentIsOpen = isParentOpened || (node.title && node.title.includes(titleKeyword) && titleKeyword !='');
+    
     // 过滤子节点  
     if (Array.isArray(node.children)) {  
         const filteredChildren = node.children  
-            .map(filterByTitleKeyword)  
+            .map(child => filterByTitleKeyword(child, titleKeyword, currentIsOpen))  
             .filter(child => child !== null);  
 
-        // 检查当前节点的子节点是否有匹配标题的  
-        if (filteredChildren.length > 0 || (node.title && node.title.includes(titleKeyword))) {  
+        // 如果当前节点有匹配标题的子节点，或者当前节点的标题包含关键词  
+        if (filteredChildren.length > 0 || currentIsOpen) {  
             return {  
                 ...node,  
+                isopen: titleKeyword==''?false:true, // 设置当前节点的 isOpen 属性为 true  
                 children: filteredChildren.length > 0 ? filteredChildren : undefined,  
             };  
         }  
@@ -1282,7 +1525,10 @@ function filterByTitleKeyword(node) {
 
     // 返回当前节点本身如果它的标题包含关键词  
     if (node.title && node.title.includes(titleKeyword)) {  
-        return node;  
+        return {  
+            ...node,  
+            isopen: titleKeyword==''?false:true, // 设置当前节点的 isOpen 属性为 true  
+        };  
     }  
 
     return null; // 返回 null，如果没有匹配的条目  
@@ -1310,14 +1556,27 @@ function findNodeById(node, id) {
     return null; // 没有找到，返回 null  
 }  
 
+// 添加接口
+function addApi(id,title,parentId,type){
+	$.ajax({
+		url:'#(path)/apidev/api/detail',
+		type:'POST',
+		data:{id:id,title:title,parentId:parentId,type:type},
+		success:function(html){
+			clickMenu(id,title,html);
+		}
+	});
+}
+
+
 /**
- * 新建目录，parentId,treeType:-1、-2
+ * 新建目录，parentId,treeType:1、2
  */
 function addMenu(parentId,treeType){
 	 var treeNode={id:parentId,title:'根目录'};
-	 if(treeType=='-1' && parentId!='-1'){
+	 if(treeType=='1' && parentId!='1'){
 		 treeNode=findNodeById(treeData[0],parentId);
-	 }else if(treeType=='-2' && parentId!='-2'){
+	 }else if(treeType=='2' && parentId!='2'){
 		 treeNode=findNodeById(linkData[0],parentId);
      }
 		 
@@ -1326,7 +1585,7 @@ function addMenu(parentId,treeType){
 }
 
 
-// 重命名,treeType:-1,-2
+// 重命名,treeType:1,2
 function rename(id,treeType){
 	openMenuTree(id,'重命名',treeType);
 }
@@ -1349,72 +1608,135 @@ function copy(id,treeType){
 	 	 	 	type:"POST",
 	 	 	 	data:{'id':id},
 	 	 	 	success:function(ret){
-		 	 	 	layer.msg(ret.msg);
+		 	 	 	showMsg(ret.msg);
 		 	 	 	if(ret.state=='ok'){
-		 	 	 	   getApiTreeList(treeType);
+		 	 	 	   getApiTreeList(treeType,true);
 		 	 	 	}  
 	 	 	 	}
 		 });
 	} else {
-		layer.msg("id is null");
+		showMsg("id is null");
  	}
 }
 
 // 导出
 function download(id){
 	if(id){ 
-		var node=findNodeById(treeData[0],id);
-		var url='#(path)/apidev/api/download?id='+id+'&title='+node.title;
-		window.open(url);
+		 var node=findNodeById(treeData[0],id);
+		 var title=`确定导出【${node.title}】目录下的所有接口？`;
+		 if(node.type=='api'){
+			 title=`确定导出【${node.title}】接口？`;
+		 }
+		 var index=layer.confirm(title, {icon: 3,title:'导出',offset:'100px'}, function(){
+			 var url='#(path)/apidev/api/download?id='+id+'&title='+node.title;
+			 window.open(url);
+			 layer.close(index);
+	      }, function(){
+
+	      });
 	} else {
-		layer.msg("id is null");
+		showMsg("id is null");
 	}
 }
 
-// 删除 id,treeType:-1、-2
+// 导出选中的接口
+function downloadSelectIds(id,selectedIds){
+	if(selectedIds){ 
+		var node=findNodeById(treeData[0],id);
+		var index=layer.alert(`确定导出【${node.title}】目录下的接口？`,{
+	        title:'导出',
+	        offset:'100px',
+	        btn: ['导出已选','导出所有','取消'],
+	        btn1: function(){
+	        	var url='#(path)/apidev/api/download';
+				 var params={'selectedIds':selectedIds,'id':id,'title':node.title};
+				 openWindowWithPost(url,params);
+				 layer.close(index);
+	        },
+	        btn2: function(){
+	        	var url='#(path)/apidev/api/download?id='+id+'&title='+node.title;
+				 window.open(url);
+	        },
+	        btn3:function(){
+
+		    }
+	     });
+	} else {
+		showMsg("id is null");
+	}
+}
+
+function openWindowWithPost(url, params) {  
+	  const form = document.createElement('form');  
+	  form.method = 'POST';  
+	  form.action = url;  
+	  form.target = '_blank'; // 在新窗口中打开  
+
+	  for (const key in params) {  
+	    if (params.hasOwnProperty(key)) {  
+	      const input = document.createElement('input');  
+	      input.type = 'hidden';  
+	      input.name = key;  
+	      input.value = params[key];  
+	      form.appendChild(input);  
+	    }  
+	  }  
+
+	  document.body.appendChild(form);  
+	  form.submit();  
+	  document.body.removeChild(form);  
+}  
+
+// 删除 id,treeType:1、2
 function del(id,treeType) {
 	if(id){
 		var treeNode=treeNode=findNodeById(treeData[0],id);
 		if(!treeNode){
 			treeNode=findNodeById(linkData[0],id);
 	    }
+	    if(!nodeType)
+		    return;
 	    var nodeType = treeNode.type;
 	    var title = treeNode.title;
 	    var typeName={menu:'目录',api:'接口',demo:'实例',link:'快捷请求',}
 	    var content=`删除${typeName[nodeType]}【${title}】?<br/>
-		    ${nodeType=='menu'?`该${typeName[nodeType]}及该${typeName[nodeType]}下的${treeType == '-1' ? '接口和实例':'快捷请求'}`:`该${typeName[nodeType]}`}将移至回收站，30 天后自动彻底删除。`;
+		    ${nodeType=='menu'?`该${typeName[nodeType]}及该${typeName[nodeType]}下的${treeType == '1' ? '接口和实例':'快捷请求'}`:`该${typeName[nodeType]}`}将移至回收站，30 天后自动彻底删除。`;
 	    layer.confirm(content, {icon: 0, title:'提示',offset:'100px',}, function(index){
 	    	$.ajax({
 				 url:'#(path)/apidev/api/delete',
 		 	 	 	type:"POST",
 		 	 	 	data:{'id':id},
 		 	 	 	success:function(ret){
-			 	 	 	layer.msg(ret.msg,{icon:1,offset:'b',anim: 'slideUp'});
+			 	 	 	showMsg(ret.msg,{icon:1,offset:'calc(100vh - 200px)',anim: 'slideUp'});
 			 	 	 	if(ret.state=='ok'){
-			 	 	 	   getApiTreeList(treeType);
+			 	 	 	   getApiTreeList(treeType,true);
 			 	 	 	}  
 		 	 	 	}
 			 });
 	    	layer.close(index);
 	    });
 	} else {
-		layer.msg("id is null");
+		showMsg("id is null");
 	}
 }
 
 //打目录树开对话框
 function openMenuTree(id,title,treeType){
-	var treeNode=findNodeById(treeType=='-1' ? treeData[0] : linkData[0], id);
+	var treeNode=findNodeById(treeType=='1' ? treeData[0] : linkData[0], id);
 	openMenu(treeNode,title, treeType);
-	if(title!='重命名')
+	if(title=='移动到...')
+		getMenuTree('#treeSelect2', treeType);
+	else if(title!='重命名')
 	    getMenuTree('#treeSelect', treeType);
 }
 
 // 目录对话框
 function openMenu(treeNode,title,treeType){
-	var parentNode=findNodeById(treeType=='-1' ? treeData[0] : linkData[0], treeNode.parent_id);
+	var parentNode=findNodeById(treeType=='1' ? treeData[0] : linkData[0], treeNode.parent_id);
 	var showType = 'addData';
     var height="350px";
+    var value="";
+    var placeholder="根目录";
 	if(title=='重命名'){
 		showType = 'title';
 		height="250px";
@@ -1423,8 +1745,13 @@ function openMenu(treeNode,title,treeType){
 		 height="250px";
 	 }else if(title =='修改目录'){
 		 showType = 'updateData';
+		 placeholder=parentNode.title;
+		 value=parentNode.id;
+	 }else if(showType=='addData'){
+		value=treeNode.id;
+		placeholder=treeNode.title;
 	 }
-     
+	menuTreeSelectId = showType == 'updateData' ? parentNode.id:value;
 	layer.open({  
 	     btnAsync: true,  
 	     title: title,  
@@ -1435,20 +1762,22 @@ function openMenu(treeNode,title,treeType){
 	             <div class="layui-form-item layui-form-text ${showType == 'parentId' ? 'layui-hide':''}">  
 	                 <label class="layui-form-label">名称&nbsp;<font color="red">*</font></label>  
 	                 <div class="layui-input-block">  
-	                     <input type="text" name="title" placeholder="请输入..." lay-verify="required" autocomplete="off" class="layui-input" id="titleInput" value="${showType == 'addData' ? '' : treeNode.title}">  
+	                     <input type="text" name="title" oninput="titleHeader(this)" placeholder="请输入..." lay-verify="required" autocomplete="off" class="layui-input" id="titleInput" value="${showType == 'addData' ? '' : treeNode.title}">  
 	                     <div id="titleTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">名称为必填项，请填写名称</div>  
 	                 </div>  
 	             </div>  
 	             <div class="layui-form-item layui-form-text ${showType == 'title' ? 'layui-hide':''}">  
-	                 <label class="layui-form-label">${showType=='parentId'?'目标':'父级'}目录</label>  
+	                 <label class="layui-form-label">${showType=='parentId'?'目标':'父级'}目录<font color="red">*</font></label>  
 	                 <div class="layui-input-block">  
-	                  	<input type="hidden" id="treeSelectId" name="parentId" value="${showType == 'updateData' ? parentNode.id:treeNode.id}"/>
-	                  	<input type="text" id="treeSelect" name="parentName" placeholder="${showType == 'updateData' ? parentNode.title : treeNode.title}"  class="layui-input" autocomplete="off" onblur="searchMenuBlur()" oninput="searchMenu()"/> 
-	                 </div>  
+	                  	<input type="hidden" id="${showType=='parentId'?'treeSelect2Id':'treeSelectId'}" name="parentId" value="${showType == 'updateData' ? parentNode.id:value}"/>
+	                  	<input type="text" id="${showType=='parentId'?'treeSelect2':'treeSelect'}" name="parentName" value="${showType == 'updateData' ? parentNode.title : placeholder}"  class="layui-input" autocomplete="off" onblur="searchMenuBlur(this,${treeType})" oninput="searchMenu(this,${treeType})"/> 
+	                    <div id="parentIdTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">请选择目录</div>
+	   	             </div>  
 	             </div>  
 	         </div>`,  
-	 	     area: ['450px', height], 
+	 	     area: ['480px', height], 
 	 	     offset:'100px',
+	 	     resize:false,
 	 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
 	 	     btn: ['确定', '取消'],  
 	 	     btn1: function (index, layero) { 
@@ -1456,7 +1785,8 @@ function openMenu(treeNode,title,treeType){
 	 	         // 读取输入框内容  
 	 	         var title = layero.find('input[name="title"]').val();  
 	 	         var titleTip = layero.find('#titleTip');  
-
+	 	         var parentIdTip = layero.find('#parentIdTip');  
+	 	         var parentId = layero.find('input[name="parentId"]').val();  
 	 	         // 验证名称是否填写  
 	 	         if (!title && showType !='parentId') {  
 	 	             titleTip.show(); // 显示提示信息  
@@ -1465,14 +1795,28 @@ function openMenu(treeNode,title,treeType){
 	 	             titleTip.hide(); // 隐藏提示信息  
 	 	         }  
 
-	 	     	parentId = layero.find('input[name="parentId"]').val();  
+	 	     	
 				if(showType=='addData'){
+					if(!parentId){
+						parentIdTip.show();
+						return false;
+					}
 		 	    	saveData(title,parentId,'menu',treeType);
 				}else if(showType=='title'){
 					updateTitle(treeNode.id,title,treeType);
 				} else if(showType=='parentId'){
+					
+		 	     	if(!parentId){
+						parentIdTip.show();
+						return false;
+					}
 					updateParentId(treeNode.id,parentId,treeType);
 				} else if(showType == 'updateData') {
+					parentId = layero.find('input[name="parentId"]').val();  
+		 	     	if(!parentId){
+						parentIdTip.show();
+						return false;
+					}
 					updateData(treeNode.id,title,parentId,treeType);
 				}
 		       
@@ -1483,7 +1827,13 @@ function openMenu(treeNode,title,treeType){
 	 	});
 }
 
-
+function titleHeader(_this){
+	var title=$(_this).val();
+	if(title)
+		$('#titleTip').hide();
+	else
+		$('#titleTip').show();
+}
 
 // 保存目录
 function saveData(title,parentId,type,treeType){
@@ -1494,14 +1844,15 @@ function saveData(title,parentId,type,treeType){
 	 	 	 	type:"POST",
 	 	 	 	data:{'parent_id':parentId,title:title,type:type},
 	 	 	 	success:function(ret){
-		 	 	 	layer.msg(ret.msg);
+		 	 	 	showMsg(ret.msg);
 		 	 	 	if(ret.state=='ok'){
-		 	 	 	   getApiTreeList(treeType);
+		 	 	 	    getApiTreeList(treeType,true);
+		 	 	 		getMenuTree(null,treeType)
 		 	 	 	}  
 	 	 	 	}
 		 });
 	} else {
-		layer.msg("title is null");
+		showMsg("title is null");
     }
 }
 
@@ -1510,7 +1861,7 @@ function updateTitle(id,title,treeType){
 	if(id && title){
 		updateData(id,title,null,treeType);
 	} else {
-		layer.msg("id or title is null");
+		showMsg("id or title is null");
    }
 }
 
@@ -1519,29 +1870,92 @@ function updateParentId(id,parentId,treeType){
 	if(id && parentId){
 		updateData(id,null,parentId,treeType);
 	} else {
-		layer.msg("id or parentId is null");
+		showMsg("id or parentId is null");
    }
 }
 
 // 修改数据
 function updateData(id,title,parentId,treeType){
 	if(id){
-		 // 这里可以添加进一步的逻辑，比如提交表单  
 		 $.ajax({
 			 url:'#(path)/apidev/api/update',
 	 	 	 	type:"POST",
 	 	 	 	data:{'id':id,'title':title,'parent_id':parentId},
 	 	 	 	success:function(ret){
-		 	 	 	layer.msg(ret.msg);
+		 	 	 	showMsg(ret.msg);
 		 	 	 	if(ret.state=='ok'){
-		 	 	 	   getApiTreeList(treeType);
+		 	 	 	   getApiTreeList(treeType,true);
 		 	 	 	}  
 	 	 	 	}
 		 });
 	} else {
-		layer.msg("id is null");
+		showMsg("id is null");
   }
 	
+}
+
+/**
+ * 修改目录
+ */
+function updateMenu(id,title,parentId,remark,treeType){
+	if(id){
+		 $.ajax({
+			 url:'#(path)/apidev/api/update',
+	 	 	 	type:"POST",
+	 	 	 	data:{'id':id,'title':title,'parent_id':parentId,'remark':remark},
+	 	 	 	success:function(ret){
+		 	 	 	showMsg(ret.msg);
+		 	 	 	if(ret.state=='ok'){
+		 	 	 	   getApiTreeList(treeType,true);
+		 	 	 	}  
+	 	 	 	}
+		 });
+	} else {
+		showMsg("id is null");
+  }
+}
+
+/**
+ * 修改状态
+ */
+function updateVisible(id,visible){
+	if(id){
+		 $.ajax({
+			 url:'#(path)/apidev/api/update',
+	 	 	 	type:"POST",
+	 	 	 	data:{'id':id,'visible':visible},
+	 	 	 	success:function(ret){
+		 	 	 	showMsg(ret.msg);
+		 	 	 	if(ret.state=='ok'){
+		 	 	 	   getApiTreeList('1',false);
+		 	 	 	}  
+	 	 	 	}
+		 });
+	} else {
+		showMsg("id is null");
+ 	}
+}
+
+/**
+ * 修改访问设置
+ */
+function updatePassword(id,password,expiretTime){
+	if(id){
+		 // 这里可以添加进一步的逻辑，比如提交表单  
+		 $.ajax({
+			 url:'#(path)/apidev/api/update',
+	 	 	 	type:"POST",
+	 	 	 	data:{'id':id,'password':password,'expiret_time':expiretTime},
+	 	 	 	success:function(ret){
+		 	 	 	showMsg(ret.msg);
+		 	 	 	if(ret.state=='ok'){
+		 	 	 	   getApiTreeList('1',false);
+		 	 	 	}  
+	 	 	 	}
+		 });
+	} else {
+		showMsg("id is null");
+ 	}
 }
 
  // ele:#treeSelect
@@ -1552,72 +1966,124 @@ function getMenuTree(elemId,treeType){
 	 	 	data:{'parentId':treeType,type:'menu'},
 	 	 	success:function(ret){
 	 	 		if(ret.state=='ok'){
-	 	 			menuData = ret.data;
-	 	 			loadMenuTree(menuData,elemId);
+	 	 			if(treeType==1){
+	 	 				menuData = ret.data;
+		 	 		}else{
+		 	 			menuDataLink = ret.data;
+			 	 	}
+	 	 			if(elemId){
+	 	 			   loadMenuTree(ret.data,elemId,treeType);
+	 	 			}
 	 	 		}
 	 	 	}
 	 });
 }
 
-function loadMenuTree(menuData,elemId){
-	var html=createDownMenuTree(menuData,true);		
+function loadMenuTree(data,elemId,treeType){
+	var html=createDownMenuTree(data,true);	
+	var treeId = $(elemId+'Id').val();
+	var treeTitle = $(elemId).val();
 	  // 绑定输入框
 	  layui.dropdown.render({
 	    elem: elemId,
 	    content:`<div style="max-height:380px;overflow:auto">${html}</div>`,
+	    ready: function(elemPanel, elem){
+	    	  //console.log(elemPanel); // 组件面板元素对象
+	    	  //console.log(elem); // 当前组件绑定的目标元素对象
+	    	  if(elem.selector!='#treeSelect'){
+			       var html=`<div style="padding:0px 15px 15px 20px;"><hr/><a href="javascript:addMenuFromDropdown('${elem}','${treeType}')"><i class="layui-icon layui-icon-export"></i>添加目录</a></div>`;
+			       elemPanel.append(html);
+	    	  }
+	    },
+	    style: 'width: 450px;',
 	    click: function(obj,othis){
 	      var nodeId=othis[0].id;
-	      var nodeData = findNodeById(menuData[0], nodeId);
+	      var nodeData = findNodeById(data[0], nodeId);
+	      menuTreeSelectId=nodeId;
 	      $(elemId).val(nodeData.title);
-	      $('#treeSelectId').val(nodeId);
-	    },
-	    style: 'min-width: 420px;'
+	      $(elemId+'Id').val(nodeId);
+	      // 隐藏提示信息
+	      $('#titleTip').hide();
+	      $('#parentIdTip').hide();
+	    }
 	}); 
 }
 
-function searchMenu() {
-	titleKeyword = $("input[name=parentName]").val();
-	console.log(titleKeyword)
-	var filteredData = menuData.map(filterByTitleKeyword).filter(item => item !== null);
-	var html=createDownMenuTree(filteredData,true);		
-	layui.dropdown.reloadData('treeSelect',{
+function addMenuFromDropdown(elem,treeType){
+	layui.dropdown.close(elem.id)
+	addMenu(treeType,treeType)
+}
+
+function searchMenu(_this,treeType) {
+	titleKeyword = $(_this).val();
+	var filteredData = menuData.map(node => filterByTitleKeyword(node, titleKeyword)).filter(item => item !== null); 
+	if(titleKeyword==''){
+		filteredData=menuData;
+	}
+	if(treeType=='2'){
+		filteredData = menuDataLink.map(node => filterByTitleKeyword(node, titleKeyword)).filter(item => item !== null); 
+		if(titleKeyword==''){
+			filteredData=menuDataLink;
+		}
+	}
+	var html=createDownMenuTree(filteredData,true);	
+	var id=$(_this).attr('id');	
+	layui.dropdown.reloadData(id,{
 		content:`<div style="max-height:380px;overflow:auto">${html}</div>`
 	});
 }
 
-function searchMenuBlur(){
-	loadMenuTree(menuData,'#treeSelect');
+function searchMenuBlur(_this,treeType){
+	var id=$(_this).attr('id');
+	if(treeType=='1'){
+		loadMenuTree(menuData,'#'+id,treeType);
+	}else{
+		loadMenuTree(menuDataLink,'#'+id,treeType);
+	}
+	
+	$('#'+id).val("");
+    $('#'+id+'Id').val("");
 }
 
 // 项目概况
 function project(){
-	$.ajax({
-		 url:'#(path)/apidev/api/getProjectData',
+    var id = 'project';
+    var li=$('li[lay-id='+id+']');
+    if(li.length>0){
+    	element.tabChange('tab-handle', id); // 切换到标签
+	}else{
+	    $.ajax({
+			 url:'#(path)/apidev/api/project',
+		 	 type:"POST",
+		 	 success:function(ret){
+		 	 	 var contentHtml=ret;
+				clickMenu(id,'<i class="layui-icon layui-icon-layouts"></i>项目概况',contentHtml);
+		 	 }
+		});
+	}
+}
+
+// 目录 
+function menu(id,title,treeType){ 
+    $.ajax({
+		 url:'#(path)/apidev/api/menu',
 	 	 type:"POST",
+	 	 data:{id:id,treeType:treeType},
 	 	 success:function(ret){
-	 		apiData = ret.data.apiData;  
-	 	    shortcutData = ret.data.shortcutData;  
-	 	    // 读取html
-	 	    $.ajax({
-	 			 url:'#(path)/apidev/api/project',
-	 		 	 type:"POST",
-	 		 	 success:function(ret){
-	 		 	 	 var contentHtml=ret;
-	 				clickMenu('project','<i class="layui-icon layui-icon-layouts"></i>项目概况',contentHtml);
-	 		 	 }
-	 		});
+	 	 	 var contentHtml=ret;
+			clickMenu(id,title,contentHtml);
 	 	 }
 	});
 }
 
 // 回收站
 function recycle(){
-	$.ajax({
+	 $.ajax({
 		 url:'#(path)/apidev/api/getRecycleList',
 	 	 type:"POST",
 	 	 success:function(ret){
 	 		apiData = ret.data.apiData;  
-	 	    shortcutData = ret.data.shortcutData;  
+	 	    shortcutData = ret.data.shortcutData;
 	 	    // 读取html
 	 	    $.ajax({
 	 			 url:'#(path)/apidev/api/recycle',
@@ -1628,20 +2094,33 @@ function recycle(){
 	 		 	 }
 	 		});
 	 	 }
-	});
+	 });
 }
 
-function reloadRecycleList(){
-	$.ajax({
-		 url:'#(path)/apidev/api/getRecycleList',
-	 	 type:"POST",
-	 	 success:function(ret){
-	 		apiData = ret.data.apiData;  
-	 	    shortcutData = ret.data.shortcutData;  
-	 	 }
-	});
+	
+function showMsg(msg){
+	layer.msg(msg,{icon:1,offset:'calc(100vh - 200px)',anim: 'slideUp'});
 }
 
+	var ddlSqlId=document.getElementById("ddlSql");
+	if(ddlSqlId){
+		/**
+	    * 初始化 table sql 3
+	    */
+	   var ddlSql = CodeMirror.fromTextArea(ddlSqlId, {
+	       lineNumbers: true,
+	       matchBrackets: true,
+	       mode: "text/x-sql",
+	       lineWrapping:false,
+	       readOnly:false,
+	       foldGutter: true,
+	       gutters:["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+	   });
+	   ddlSql.setSize('auto','auto');		
+	}
+
+//	ddlSql.getValue();//取文本域值
+//	ddlSql.setValue(...);//给文本域赋值
 </script>
 </body>
 </html>
