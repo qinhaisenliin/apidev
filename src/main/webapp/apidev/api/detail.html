@@ -1,68 +1,4 @@
-<style>
-.resizable-row {  
-  display: flex;  
-  flex-direction: column;  
-  height: auto;  
-  min-height: 50px;  
-  /* resize: vertical;   */
-  overflow: auto;  
-  height: 440px;
-}  
 
-.bottom{
-	position: absolute;
-	bottom:5px;
-}
-
-.line-height{
-	line-height: 25px;
-	height:25px;
-}
-.title-input{
-	height: 23px;
-	border: none;
-	border-bottom: 1px solid var(--lay-color-bg-2);
-	background-color: var(--lay-color-bg-2); 
-	min-width:100px;
-}
-.response-tab {
-	padding: 10px 20px;
-}
-.response-this{
-	color:var(--lay-color-primary);
-    border-bottom: 2px solid #409EFF!important;
-}
-.response-tab-content {
-	display: none;
-	min-height:300px;
-}
-.respones-tab-show{
-	display: block;
-}
-p{
-	padding:3px;
-}
-.layui-form-radio>.lay-skin-tag,
-  .layui-form-checkbox>.lay-skin-tag {
-    font-size: 13px;
-    border-radius: 100px;
-  }
-  .layui-form-checked>.lay-skin-tag,
-  .layui-form-radioed>.lay-skin-tag {
-    color: #fff !important;
-    background-color: #16b777 !important;
-  }
- .body-none{
-  	width:100%;
-  	text-align: center;
-    padding-top: 20px;
-    color: #898383;
- }
- .req-msg-header{
- 	width:200px;
- 	border:1px solid #9e9292;
- }
-</style>
 <div class="layui-form layui-row layui-col-space4 form-#(api.id??)">
 	<div class="layui-col-xs12 layui-col-sm2 layui-col-md1">
    		<select id="requestMode_#(api.id??)" name="requestMode" class=" status" #(api.type=='demo'?'disabled ':'') lay-filter="requestMode#(api.id??)" style="width:10%">
@@ -79,15 +15,15 @@ p{
   </div>
   <div class="layui-col-xs12 layui-col-sm10 layui-col-md11">
 	  <div style="width:calc(100% - 225px)">
-		  <input id="requestUrl_#(api.id??)" #if(api.treeType=='2')oninput="requestUrlHeader(this,'#(api.id??)')"#end type="text" name="requestUrl"
-		   oninput="createQueryDataRow('#(api.id??)')" onporpertychange="createQueryDataRow('#(api.id??)')" 
+		  <input id="requestUrl_#(api.id??)" type="text" name="requestUrl"
+		   oninput="createQueryDataRow('#(api.id??)');requestUrlHeader(this,'#(api.id??)')" onporpertychange="createQueryDataRow('#(api.id??)')" 
 		  placeholder="#(api.type=='link'?'输入 http 或 https 起始的完整 URL':'接口路径 “/”起始')" class="layui-input" value="#(api.request_url??)">
-		  <span  id="requestUrl_tips_#(api.id??)" style="color:red;display:none">#(api.type=='link'?'输入 http 或 https 起始的完整 URL':'接口路径 “/”起始')</span>
+		  <span  id="requestUrl_tips_#(api.id??)" class="request-url-span">#(api.type=='link'?'输入 http 或 https 起始的完整 URL':'接口路径 “/”起始')</span>
 	 </div>
 	  <div style="width:220px;position:absolute;margin-left:calc(100% - 225px);margin-top:-31px">
 		  <button type="button" onclick="sendRequest('#(api.id??)')" class="layui-btn layui-btn-sm layui-bg-green send-#(api.id??)" style="width:80px;">发送</button>
 		  <div class="layui-input-group" style="position: absolute;margin-left: 85px;margin-top: -30px;">
-	  	  	  <button type="button" onclick="saveApi('#(api.id??)',null)" class="layui-btn layui-btn-sm layui-btn-primary save-#(api.id??)">保存</button>
+	  	  	  <button type="button" onclick="saveApi#(api.id??)('#(api.id??)',null)" class="layui-btn layui-btn-sm layui-btn-primary save-#(api.id??)">保存</button>
 		  	  <div class="layui-input-split layui-input-suffix save-suffix-#(api.id??) #(api.type=='demo'||api.isAdd?'layui-hide':'')" style="cursor: pointer;" lay-on="save-#(api.type??)-#(api.id??)">
 		        <i class="layui-icon layui-icon-down"></i>
 		      </div>
@@ -113,7 +49,8 @@ p{
 	<span  id="title_input_tips_#(api.id??)" style="color:red;display:none">请输入#(api.type=='demo'?'用例':'接口')名称</span>
 </div>
 <div class="api-tab-body resizable-row" id="apiTabBody#(api.id??)" style="overflow-y: auto;overflow-x:hidden;border-bottom:1px solid #d2d2d26b;">
-  <div class="layui-show">
+  <!-- 请求参数 -->
+  	<div class="layui-show">
 	  	<div class="layui-tab layui-tab-brief">
 		  <ul class="layui-tab-title">
 		    <li class="layui-this">Params</li>
@@ -186,7 +123,7 @@ p{
                           <i class="layui-icon layui-icon-download-circle"></i>json极速美化</a> -->
                       
                       <div class="body-type-json-#(api.id??) layui-hide">
-                          <textarea id="bodyJson_#(api.id??)" name="bodyJson" onkeyup="autoHeight(this, 30)" class="layui-textarea">#(api.request_body??)</textarea>
+                          <textarea id="bodyJson_#(api.id??)" name="bodyJson" class="layui-textarea">#(api.request_body??)</textarea>
                           <p><span>json字段说明</span>
 	                          <a id="formatBodyJson_#(api.id??)" onclick="formatBodyJson('#(api.id??)')" class="body-type-json-#(api.id??) json-format layui-hide">
                           		<i class="layui-icon layui-icon-download-circle"></i>json美化</a>
@@ -200,38 +137,8 @@ p{
                       <div class="layui-row task-row body-type-form-data">
                           <table class="body-type-json-#(api.id??) layui-hide">
                               <tbody id="body_data_list_#(api.id??)">
-                                <!-- <tr>
-                                    <td><input type="text" class="form-data-param input-max"  name="name" value="" placeholder="参数名"/></td>
-                                    <td class="td-min">
-                                        <select name="type" class="form-data-param input-max" lay-ignore>
-                                            <option value="string">string</option>
-                                            <option value="number">number</option>
-                                            <option value="file">file</option>
-                                            <option value="array">array</option>
-                                            <option value="object">object</option>
-                                            <option value="int">int</option>
-                                            <option value="long">long</option>
-                                            <option value="date">date</option>
-                                            <option value="boolean">boolean</option>
-                                        </select>
-                                    </td>
-                                    <td class="td-min1">
-                                        <select name="require" class="form-data-param input-max" lay-ignore>
-                                            <option value="1">必填</option>
-                                            <option value="0">选填</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="text" class="form-data-param input-max"  name="remark" value="" placeholder="选填。参数描述，便于生成文档"/></td>
-                                    <td class="td-btn">
-                                        <button class="add-tr-btn" onclick="addTr(this)" type="button"><i class="layui-icon layui-icon-addition"></i></button>
-                                    	<button class="remove-btn" onclick="removeTr(this)" type="button"><i class="layui-icon layui-icon-subtraction"></i></button>
-                                    </td>
-                                </tr> -->
                               </tbody>
                           </table>
-                          <!-- <div class="add-row body-type-json-#(api.id??) layui-hide">
-                              <a href="javascript:addBodyDataRow('','','','','#(api.id??)')"><i class="layui-icon layui-icon-add-circle"></i>增加一行</a>
-                          </div> -->
                           <table>
                               <tbody id="form_data_list_#(api.id??)" class="form-data-#(api.id??)">
                                 <tr>
@@ -325,6 +232,7 @@ p{
 		</div>
   	
   </div>
+  <!-- 响应示例 -->
   <div>
   		<!-- 响应体 -->
   		<div class="layui-row layui-col-space1 task-row ">
@@ -341,7 +249,7 @@ p{
                   <div class="layui-tab-item layui-show">
                   	 <p>
                       <a id="copySuccessJson_#(api.id??)" onclick="copySuccessJson('#(api.id??)')" class="json-format"><i class="layui-icon layui-icon-templeate-1"></i>复制到这里</a>
-                      <a id="formatSuccessJson_#(api.id??)" onclick="formatSuccessJson('#(api.id??)')" class="json-format"><i class="layui-icon layui-icon-download-circle"></i>json极速美化</a>
+                      <a id="formatSuccessJson_#(api.id??)" onclick="formatSuccessJson('#(api.id??)')" class="json-format"><i class="layui-icon layui-icon-download-circle"></i>json美化</a>
                     </p>
                       <div class="success-data-json" >
                           <textarea id="successDataJson_#(api.id??)" name="successDataJson" class="layui-textarea">#(api.success_demo??)</textarea>
@@ -387,7 +295,7 @@ p{
                   <div class="layui-tab-item">
                   	<p>
                       <a id="copyFailuerJson_#(api.id??)" onclick="copyFailuerJson('#(api.id??)')" class="json-format"><i class="layui-icon layui-icon-templeate-1"></i>复制到这里</a>
-                      <a id="formatFailuerJson_#(api.id??)" onclick="formatFailuerJson('#(api.id??)')" class="json-format"><i class="layui-icon layui-icon-download-circle"></i>json极速美化</a>
+                      <a id="formatFailuerJson_#(api.id??)" onclick="formatFailuerJson('#(api.id??)')" class="json-format"><i class="layui-icon layui-icon-download-circle"></i>json美化</a>
                     </p>
                       <div class="failuer-data-json">
                           <textarea id="failuerDataJson_#(api.id??)" name="failuerDataJson" class="layui-textarea">#(api.failuer_demo??)</textarea>
@@ -445,6 +353,8 @@ p{
       </div>
   	<!-- 响应体 -->
   </div>
+
+  <!-- 接口说明 -->
   <div>
 		<div class="layui-row">
         	<div class="layui-col-xs12 layui-col-md6"> 
@@ -452,7 +362,7 @@ p{
 					    <label class="layui-form-label">接口状态</label>
 					    <div class="layui-input-block">
 					     	 <select id="interfaceStatus_#(api.id??)" name="interfaceStatus" class="layui-input" >
-				                <option value="">接口状态</option>
+				                <option value="">---选择---</option>
 				                <option value="开发中" #if(api.interface_status??=='开发中') selected="selected" #end>开发中</option>
 				                <option value="测试中" #if(api.interface_status??=='测试中') selected="selected" #end>测试中</option>
 				                <option value="已完成" #if(api.interface_status??=='已完成') selected="selected" #end>已完成</option>
@@ -469,7 +379,9 @@ p{
 						    <label class="layui-form-label">父级目录</label>
 						    <div class="layui-input-block">
 						     	  <input type="hidden" id="treeSelect#(api.id??2)Id" name="parentId" value="#(api.parent_id??)"/>
-      			                  <input type="text" id="treeSelect#(api.id??2)" name="parentName" value="#(api.parentName??'根目录')"  class="layui-input" autocomplete="off" onblur="searchMenuBlur(this,'#(api.treeType??1)')" oninput="searchMenu(this,'#(api.treeType??1)')"/>  
+      			                  <input type="text" id="treeSelect#(api.id??2)" name="parentName" value="#(api.parentName??'根目录')"
+      			                    class="layui-input" autocomplete="off" onblur="searchMenuBlur(this,'#(api.treeType??1)')" 
+      			                    placeholder="#(api.parentName??'根目录')" oninput="searchMenu(this,'#(api.treeType??1)')"/>  
 						    </div>
 					 </div>
 				</div>
@@ -485,8 +397,10 @@ p{
 				</div>
 			</div>
   </div>
-  <div>文档预览</div>
-   
+
+  <!-- 文档预览 -->
+  <div id="doc_review_#(api.id??)"></div>
+
 </div>
 
 <!-- 返回响应 -->
@@ -494,7 +408,8 @@ p{
 <div class="layui-collapse">
   <div class="layui-colla-item">
     <div class="layui-colla-title resopnse-title-#(api.id??)" style="padding-left:3px;" >
-    	<span onclick="showAndHideResponse('#(api.id??)')"><i class="layui-icon layui-icon-down title-icon-#(api.id??)"></i>&nbsp;返回响应</span>
+    	<span onclick="showAndHideResponse('#(api.id??)',true)">
+    	<i class="layui-icon layui-icon-down title-icon-#(api.id??)"></i>&nbsp;返回响应</span>
 		<span class="response-tab response-tab-#(api.id??) response-this" onclick="setActive(this,1,'#(api.id??)')">Body</span>
 		<span class="response-tab response-tab-#(api.id??)" onclick="setActive(this,2,'#(api.id??)')">Header</span>
 		<span class="response-tab response-tab-#(api.id??)" onclick="setActive(this,3,'#(api.id??)')">实际请求</span>
@@ -504,7 +419,7 @@ p{
 			###大小：<span id="size_#(api.id??)" style="color:red;padding-right:10px;"></span>
 		</span>
     </div>
-    <div class="layui-colla-content response-row-#(api.id) layui-show" style="padding:0px;">
+    <div class="layui-colla-content response-row-#(api.id) " style="padding:0px;">
 	      <div class="response-tab-content response-tab-content-#(api.id??) respones-tab-show" id="respones_content_1_#(api.id??)">
 		      <div class="layui-tab layui-tab-brief">
 		        <ul class="layui-tab-title menu-tab">
@@ -543,8 +458,12 @@ p{
 		           <div><span id="req_msg_method_#(api.id??)"></span>&nbsp;<span id="req_msg_url_#(api.id??)"></span></div>
 		           <h3>Header:</h3>
 		           <div >
-		           	<table>
-		           		<thead>
+		           <table class="layui-table">
+						<colgroup>
+						    <col width="250">
+						    <col>
+						  </colgroup>
+						<thead>
 		           			<tr>
 		           				<th class="req-msg-header">名称</th>
 				           		<th class="req-msg-header">值</th>
@@ -565,8 +484,13 @@ p{
   </div>
 </div>
 </div>
-<!-- 返回响应 -->
+
 <script>  
+	//标记发送按钮是否被点击
+	apiIdSendReq['#(api.id??)'] = false;
+	// 标记点击时间次数
+	apiClick['#(api.id??)'] = 0;
+	
 	 // 绑定自定义的 tab 元素
 	layui.element.tab({
 	    headerElem: '#apiTabHeader#(api.id??)>.layui-btn',
@@ -575,42 +499,17 @@ p{
 
 	layui.form.render();
 
+	// 代码预览组件
 	layui.code({
-	    elem: '.code-demo',
+	    elem: '.code-demo-#(api.id??)',
 	    langMarker:true
 	  });
 	  
 	addBtnHover();
 	
 	getMenuTree('#treeSelect#(api.id??2)', '#(api.treeType??)');
-	
-	function showAndHideResponse(id){
-		  var $responseRows = $('.response-row-'+id);  
-		  var $sresizableRow = $('.resizable-row-'+id);
-		  var $apiTabBody=$('#apiTabBody'+id);
-		  var $responseTitle = $('.resopnse-title-'+id);
-		  var $titleIcon=$('.title-icon-'+id);
-		  var $responseTab=$('.response-tab-'+id)
-		  var $responseInfo=$('#response_info_'+id);
-		  if ($responseRows.hasClass('layui-show')) {  
-			  	$apiTabBody.height("calc(100vh - 160px)");
-		    	$responseRows.removeClass('layui-show');  
-		    	$responseTitle.addClass('line-height');
-		    	$sresizableRow.addClass("bottom");
-		    	$titleIcon.addClass('layui-icon-up').removeClass("layui-icon-down");
-		    	$responseTab.hide();
-		    	$responseInfo.hide();
-		  } else {
-				$apiTabBody.height("440px");
-		    	$responseRows.addClass('layui-show'); 
-		    	$sresizableRow.removeClass("bottom");
-		    	$responseTitle.removeClass('line-height');
-		    	$titleIcon.addClass("layui-icon-down").removeClass('layui-icon-up');
-		    	$responseTab.show();
-		    	$responseInfo.show();
-		  }  
-   }
 
+		
 	// 获取 input 元素  
 	  var titleInput = document.getElementById('title_input_#(api.id??)');  
 
@@ -629,10 +528,8 @@ p{
 	  // 初次设置宽度  
 	  setInputWidth();  
 	
-		
-	    init();
-
-	   //移动表格行排序
+	
+	    //移动表格行排序
 	    moveTableTr("success_data_list_#(api.id??)");
 	    
 	    moveTableTr("failuer_data_list_#(api.id??)");
@@ -647,16 +544,6 @@ p{
 	        layui.form.render();
 	    });
 	    
-	   /*  $("#body_type_#(api.id??)").change(function(){
-	        var opt=$("#body_type_#(api.id??)").val();
-	        if(opt=='json'){
-	            $('.body-type-json-#(api.id??)').removeClass('layui-hide');
-	            $('.form-data-#(api.id??)').addClass('layui-hide');
-	        }else{
-	            $('.body-type-json-#(api.id??)').addClass('layui-hide');
-	            $('.form-data-#(api.id??)').removeClass('layui-hide');
-	        }
-	    }); */
 	    layui.form.on('radio(body_type_#(api.id??))', function(data){
 	        var elem = data.elem; // 获得 radio 原始 DOM 对象
 	        var checked = elem.checked; // 获得 radio 选中状态
@@ -679,6 +566,8 @@ p{
 	        $("#body_type_#(api.id??)").val(value);
 	    });
 	    
+	init();
+	        
 	function init(){
 	    var bodyType='#(api.request_body_type??)';
 	    if(bodyType=='json'){
@@ -704,7 +593,7 @@ p{
 		var requestPathExplain='#(api.request_path_explain??)';
 		var successDemoExplain='#(api.success_demo_explain??)';
 		var failuerDemoExplain='#(api.failuer_demo_explain??)';
-		if(requestPathExplain){
+		if(requestPathExplain && requestPathExplain!='[]'){
 			$('.path-data-#(api.id??)').removeClass('layui-hide');
 		}
 		createTableRow('body_data_list_#(api.id??)',requestBodyExplain,'#(api.id??)');
@@ -714,11 +603,14 @@ p{
 		createTableRow('path_data_list_#(api.id??)',requestPathExplain,'#(api.id??)');
 		createTableRow('success_data_list_#(api.id??)',successDemoExplain,'#(api.id??)');
 		createTableRow('failuer_data_list_#(api.id??)',failuerDemoExplain,'#(api.id??)');	
+
+		// 初始化文档页
+		getDoc('#(api.id??)');
 	}
 
 	var isAdd = "#(api.isAdd??false)";
 	//保存接口参数
-	function saveApi(apiId,demoTitle,saveType,selectParentId){
+	function saveApi#(api.id??)(apiId,demoTitle,saveType,selectParentId){
 	    var id="#(api.id??)";
 	    var actionKey="#(api.action_key??)";
 	    var controller="#(api.controller??)";
@@ -729,7 +621,7 @@ p{
 		var parentId = $('#treeSelect#(api.id??2)Id').val();
 		var requestUrl=$('#requestUrl_#(api.id??)').val();
 		// 快捷请求
-		if(requestUrl=='' && treeType == '2'){
+		if(requestUrl==''){
 			$('#requestUrl_tips_#(api.id??)').show();
 			return;
 		}
@@ -807,7 +699,7 @@ p{
 		
 		var jsonText=JSON.stringify(formData);
 	
-		var url='#(path)/apidev/api/saveApi'
+		var url='#(path)/apidev/api/saveApi';
 		$.ajax({
 	        type: 'POST',
 	        url: url,
@@ -818,6 +710,10 @@ p{
 	        	getApiTreeList(treeType);
 	        	isAdd = false;
 	        	showMsg(ret.msg);
+	        	// 刷新文档页
+	        	if(type=='api'){
+	        		getDoc(id)
+		        }
 	        }
 	    });
 	}
@@ -899,6 +795,117 @@ p{
 		
     }
 
+ // 保存为用例
+	function saveDemo#(api.id??)(apiId,apiTitle){
+		layer.open({  
+		     btnAsync: true,  
+		     title: '保存为用例',  
+		     type: 1,  
+		     shadeClose: true,
+		     content: `  
+		         <div class="layui-form layui-form-pane" style="padding:15px;">  
+		             <div class="layui-form-item">  
+		                 <label class="layui-form-label">用例名称</label>  
+		                 <div class="layui-input-block layui-input-wrap">  
+			                 <div class="layui-input-prefix layui-input-split" style="width:150px;">
+			                	 <div style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;">${apiTitle}</div><span style="position: absolute;right:5px;top:0px">（</span>
+			               	 </div>
+		                     <input style="height:38px;padding-left:160px;" type="text" name="title" oninput="titleHeader(this)" placeholder="用例名称" lay-verify="required" autocomplete="off" class="layui-input" id="titleInput" value="">  
+		                     <div id="titleTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">名称为必填项，请填写名称</div>  
+		                     <div class="layui-input-suffix layui-input-split">）</div>
+				         </div>  
+		             </div>
+		         </div>`,  
+		 	     area: ['580px', height], 
+		 	     offset:'100px',
+		 	     resize:false,
+		 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
+		 	     btn: ['确定', '取消'],  
+		 	     btn1: function (index, layero) { 
+			 	     
+		 	         // 读取输入框内容  
+		 	         var title = layero.find('input[name="title"]').val();  
+		 	         var titleTip = layero.find('#titleTip');  
+
+		 	         // 验证名称是否填写  
+		 	         if (!title) {  
+		 	             titleTip.show(); // 显示提示信息  
+		 	             return false; // 阻止关闭弹出层  
+		 	         } else {  
+		 	             titleTip.hide(); // 隐藏提示信息  
+		 	         }  
+
+		 			// 保存为用例
+			 	    saveApi#(api.id??)(apiId,title,'demo',apiId);
+			       
+		 	     },  
+		 	     btn2: function (index) {  
+		 	         layer.close(index); // 关闭弹出层  
+		 	     }  
+		 	});
+	}
+	
+	function saveAsApi#(api.id??)(apiId){
+		layer.open({  
+		     btnAsync: true,  
+		     title: '保存为接口',  
+		     type: 1,  
+		     shadeClose: true,
+		     content: `  
+		         <div class="layui-form layui-form-pane" style="padding:15px;">  
+		             <div class="layui-form-item layui-form-text">  
+		                 <label class="layui-form-label">接口名称</label>  
+		                 <div class="layui-input-block">  
+		                     <input style="" type="text" name="title" oninput="titleHeader(this)" placeholder="接口名称" lay-verify="required" autocomplete="off" class="layui-input" id="titleInput" value="">  
+		                     <div id="titleTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">名称为必填项，请填写名称</div>  
+				         </div><br/>
+				         <div class="layui-form-item layui-form-text">  
+			                 <label class="layui-form-label">接口目录<font color="red">*</font></label>  
+			                 <div class="layui-input-block">  
+			                  	<input type="hidden" id="treeSelectId" name="parentId" value="1"/>
+			                  	<input type="text" id="treeSelect" name="parentName" value="根目录"  class="layui-input" autocomplete="off" placeholder="根目录" onblur="searchMenuBlur(this,1)" oninput="searchMenu(this,1)"/> 
+			                    <div id="parentIdTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">请选择目录</div>
+			   	             </div>  
+			             </div>    
+		             </div>
+		         </div>`,  
+		 	     area: ['580px', height], 
+		 	     offset:'100px',
+		 	     resize:false,
+		 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
+		 	     btn: ['确定', '取消'],  
+		 	     btn1: function (index, layero) { 
+			 	     
+		 	         // 读取输入框内容  
+		 	         var title = layero.find('input[name="title"]').val();  
+		 	         var titleTip = layero.find('#titleTip');  
+					 var parentIdTip = layero.find('#parentIdTip');  
+	 	             var parentId = layero.find('input[name="parentId"]').val();  
+		 	         // 验证名称是否填写  
+		 	         if (!title) {  
+		 	             titleTip.show(); // 显示提示信息  
+		 	             return false; // 阻止关闭弹出层  
+		 	         } else {  
+		 	             titleTip.hide(); // 隐藏提示信息  
+		 	         }  
+		 	         
+		 	         if(!parentId){
+						parentIdTip.show();
+						return false;
+					 }else{
+						parentIdTip.hide();
+					 }
+
+		 			// 保存为接口
+			 	    saveApi#(api.id??)(apiId,title,'api',parentId);
+			       
+		 	     },  
+		 	     btn2: function (index) {  
+		 	         layer.close(index); // 关闭弹出层  
+		 	     }  
+		 	});
+	}
+
     document.querySelectorAll('.resizable-row').forEach((row) => {  
     	  row.addEventListener('mousedown', (event) => {
     	    if (event.target.classList.contains('row-resize-handle')) {  
@@ -911,19 +918,6 @@ p{
     	  });  
     	});
 
-    var ddlSqlId=document.getElementById("ddlSql");
-	if(ddlSqlId){
-	   var ddlSql = CodeMirror.fromTextArea(ddlSqlId, {
-	       lineNumbers: true,
-	       matchBrackets: true,
-	       mode: "text/x-sql",
-	       lineWrapping:false,
-	       readOnly:false,
-	       foldGutter: true,
-	       gutters:["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-	   });
-	   //ddlSql.setSize('auto','auto');		
-	}
 	
 	$("#body_type_#(api.id??)").change(function(){
         var opt=$("#body_type_#(api.id??)").val();
@@ -1040,14 +1034,14 @@ p{
         
 	layui.util.on('lay-on', {
     	'save-api-#(api.id??)': function(){
-        	var content =`<a onclick="saveDemo('#(api.id??)','#(api.title??)')">保存为用例</a>`;
+        	var content =`<a onclick="saveDemo#(api.id??)('#(api.id??)','#(api.title??)')">保存为用例</a>`;
 		      layer.tips(content, this, {
 		        tips: 3,
 		        scrollbar:false
 		      });
     	},
     	'save-link-#(api.id??)': function(){
-        	var content =`<a onclick="saveAsApi('#(api.id??)')">保存为接口</a>`;
+        	var content =`<a onclick="saveAsApi#(api.id??)('#(api.id??)')">保存为接口</a>`;
 		      layer.tips(content, this, {
 		        tips: 3,
 		        scrollbar:false

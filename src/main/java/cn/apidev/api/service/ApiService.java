@@ -182,9 +182,9 @@ public class ApiService extends ApidevBaseService {
 		List<Record> list;
 		if (type != null) {
 			sql += " and type = ?";
-			list = Db.find(sql + " order by type desc", parentId, type);
+			list = Db.find(sql + " order by type desc,create_time asc", parentId, type);
 		} else {
-			list = Db.find(sql + " order by type desc", parentId);
+			list = Db.find(sql + " order by type desc,create_time asc", parentId);
 		}
 
 		for (Record rd : list) {
@@ -287,7 +287,7 @@ public class ApiService extends ApidevBaseService {
 			// 如果有父级名称，进行拼接
 			if (parentName != null) {
 				titleBuilder.append(parentName);
-				if(api.get("type").equals("menu"))
+				//if(api.get("type").equals("menu"))
 					titleBuilder.append(" / ").append(title);
 			}
 
@@ -313,7 +313,7 @@ public class ApiService extends ApidevBaseService {
 			// 如果有父级名称，进行拼接
 			if (parentIds != null) {
 				parentIdBuilder.append(parentIds);
-				if(api.get("type").equals("menu"))
+				//if(api.get("type").equals("menu"))
 					parentIdBuilder.append(" / ").append(id);
 			}
 
@@ -509,7 +509,7 @@ public class ApiService extends ApidevBaseService {
 		List<Record> childrenList = new ArrayList<>();
 		Record api = findById(id);
 		List<Record> childrenTreeList = getTreeList(id, null);
-		if (!"-1".equals(id) && "api".equals(api.getStr("type"))) {
+		if (!"1".equals(id) && "api".equals(api.getStr("type"))) {
 			childrenList.add(api);
 		}
 		flattenTree(childrenTreeList, childrenList, true);
@@ -688,10 +688,11 @@ public class ApiService extends ApidevBaseService {
 		page.getList().forEach(rd -> {
 			// 判断数据是否可以恢复
 			String parentId=rd.get("parent_id");
+			String type = rd.get("type");
 			int status=0;
 			if(!"1".equals(parentId)&&!"2".equals(parentId)) {
 				Record parent=findById(parentId);
-				if("demo".equals(rd.get("type"))){
+				if("demo".equals(type)){
 					if(parent==null|parent.getInt("del")!=0) {
 						status = 1;
 					}
@@ -708,10 +709,10 @@ public class ApiService extends ApidevBaseService {
 	        rd.set("diffInDays", (29-diffInDays)+" 天");
 	        // 区分接口和快捷请求
 	        String parentIds=rd.get("parentIds");
-			if(parentIds!=null && parentIds.contains("1")) {
-				apiData.add(rd);
-			} else if(parentIds!=null && parentIds.contains("2")){
-				shortcutData.add(rd);
+	        if("api".equals(type)||"demo".equals(type)) {
+	        	apiData.add(rd);
+	        }else if("link".equals(type) || parentIds.startsWith("2")) {
+	        	shortcutData.add(rd);
 			}else{
 				apiData.add(rd);
 			}

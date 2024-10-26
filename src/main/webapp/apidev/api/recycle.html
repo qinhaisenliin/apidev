@@ -82,8 +82,10 @@
 	       {field: 'id', title: 'ID', width: 50, checkbox: true},
 	       {field: 'title', title: '文件名',templet:function(obj){
 				return `${obj.type=='menu'? `<i class="layui-icon layui-icon-export"></i>`
-                        :`<span class="${obj.request_mode||'GET'}">${obj.request_mode||'GET'}</span>`}
-          		 		${obj.title}<span class="td-title">${obj.action_key||''}</span>
+                        :obj.type=='demo'?'<i class="layui-icon layui-icon-log"></i>'
+                                :obj.type == 'link'?'<i class="layui-icon layui-icon-senior" style="color:#409EFF"></i>'
+                                        :`<span class="${obj.request_mode||'GET'}">${obj.request_mode||'GET'}</span>`}
+          		 		${obj.title||obj.action_key||''}<span class="td-title" title="所属目录：${obj.parentNames||''}">${obj.parentNames||''}</span>
           		 		`;
 		     }},
 	       //{field: 'update_by', title: '操作人', width: 100,align:'center'},

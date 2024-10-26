@@ -347,12 +347,16 @@
     /**
      * 发送请求
      */
-    function sendRequest(apiId){debugger
+    function sendRequest(apiId){
+
 		appendParaUrl(apiId);
         var url = $('#requestUrl_'+apiId).val();
         var method=$('#requestMode_'+apiId).val();
         var contentType=$('#body_type_'+apiId).val();
-        
+        if(url==''){
+			$('#requestUrl_tips_'+apiId).show();
+			return;
+		}
         var bodyJson=$('#bodyJson_'+apiId).val();
         //form-data方式发起请求
         var data=getFormDataList(apiId);
@@ -369,6 +373,9 @@
 		if(contentType=='json'||contentType=='raw'||contentType=='xml'){
         	data=bodyJson;
         }
+        // 标记发送状态
+        apiIdSendReq[apiId] = true;
+        showAndHideResponse(apiId,false);
         
 		var startTime;
 		var origin=window.location.origin;
@@ -529,8 +536,8 @@
     function createReqMsgHeader(apiId,name,value){
 		const contentRow = `  
 		 <tr>  
-		 <td class="req-msg-header">${name}</td>  
-		 <td class="req-msg-header">${value}</td>  
+		 <td>${name}</td>  
+		 <td>${value}</td>  
 		 </tr>`; 
 		$('#req_msg_header_'+apiId).append(contentRow);		           	
 	}
@@ -863,113 +870,37 @@
 
     }
     
-    // 保存为用例
-	function saveDemo(apiId,apiTitle){
-		layer.open({  
-		     btnAsync: true,  
-		     title: '保存为用例',  
-		     type: 1,  
-		     shadeClose: true,
-		     content: `  
-		         <div class="layui-form layui-form-pane" style="padding:15px;">  
-		             <div class="layui-form-item">  
-		                 <label class="layui-form-label">用例名称</label>  
-		                 <div class="layui-input-block layui-input-wrap">  
-			                 <div class="layui-input-prefix layui-input-split" style="width:150px;">
-			                	 <div style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;">${apiTitle}</div><span style="position: absolute;right:5px;top:0px">（</span>
-			               	 </div>
-		                     <input style="height:38px;padding-left:160px;" type="text" name="title" oninput="titleHeader(this)" placeholder="用例名称" lay-verify="required" autocomplete="off" class="layui-input" id="titleInput" value="">  
-		                     <div id="titleTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">名称为必填项，请填写名称</div>  
-		                     <div class="layui-input-suffix layui-input-split">）</div>
-				         </div>  
-		             </div>
-		         </div>`,  
-		 	     area: ['580px', height], 
-		 	     offset:'100px',
-		 	     resize:false,
-		 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
-		 	     btn: ['确定', '取消'],  
-		 	     btn1: function (index, layero) { 
-			 	     
-		 	         // 读取输入框内容  
-		 	         var title = layero.find('input[name="title"]').val();  
-		 	         var titleTip = layero.find('#titleTip');  
-
-		 	         // 验证名称是否填写  
-		 	         if (!title) {  
-		 	             titleTip.show(); // 显示提示信息  
-		 	             return false; // 阻止关闭弹出层  
-		 	         } else {  
-		 	             titleTip.hide(); // 隐藏提示信息  
-		 	         }  
-
-		 			// 保存为用例
-			 	    saveApi(apiId,title,'demo',apiId);
-			       
-		 	     },  
-		 	     btn2: function (index) {  
-		 	         layer.close(index); // 关闭弹出层  
-		 	     }  
-		 	});
-	}
+    
 	
-	function saveAsApi(apiId){
-		layer.open({  
-		     btnAsync: true,  
-		     title: '保存为接口',  
-		     type: 1,  
-		     shadeClose: true,
-		     content: `  
-		         <div class="layui-form layui-form-pane" style="padding:15px;">  
-		             <div class="layui-form-item layui-form-text">  
-		                 <label class="layui-form-label">接口名称</label>  
-		                 <div class="layui-input-block">  
-		                     <input style="" type="text" name="title" oninput="titleHeader(this)" placeholder="接口名称" lay-verify="required" autocomplete="off" class="layui-input" id="titleInput" value="">  
-		                     <div id="titleTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">名称为必填项，请填写名称</div>  
-				         </div><br/>
-				         <div class="layui-form-item layui-form-text">  
-			                 <label class="layui-form-label">接口目录<font color="red">*</font></label>  
-			                 <div class="layui-input-block">  
-			                  	<input type="hidden" id="treeSelectId" name="parentId" value="1"/>
-			                  	<input type="text" id="treeSelect" name="parentName" value="根目录"  class="layui-input" autocomplete="off" onblur="searchMenuBlur(this,1)" oninput="searchMenu(this,1)"/> 
-			                    <div id="parentIdTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">请选择目录</div>
-			   	             </div>  
-			             </div>    
-		             </div>
-		         </div>`,  
-		 	     area: ['580px', height], 
-		 	     offset:'100px',
-		 	     resize:false,
-		 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
-		 	     btn: ['确定', '取消'],  
-		 	     btn1: function (index, layero) { 
-			 	     
-		 	         // 读取输入框内容  
-		 	         var title = layero.find('input[name="title"]').val();  
-		 	         var titleTip = layero.find('#titleTip');  
-					 var parentIdTip = layero.find('#parentIdTip');  
-	 	             var parentId = layero.find('input[name="parentId"]').val();  
-		 	         // 验证名称是否填写  
-		 	         if (!title && showType !='parentId') {  
-		 	             titleTip.show(); // 显示提示信息  
-		 	             return false; // 阻止关闭弹出层  
-		 	         } else {  
-		 	             titleTip.hide(); // 隐藏提示信息  
-		 	         }  
-		 	         
-		 	         if(!parentId){
-						parentIdTip.show();
-						return false;
-					 }else{
-						parentIdTip.hide();
-					 }
+	// 显示隐藏响应信息
+	function showAndHideResponse(apiId,isClick){
+		  var $responseRows = $('.response-row-'+apiId);  
+		  var $sresizableRow = $('.resizable-row-'+apiId);
+		  var $apiTabBody=$('#apiTabBody'+apiId);
+		  var $responseTitle = $('.resopnse-title-'+apiId);
+		  var $titleIcon=$('.title-icon-'+apiId);
+		  var $responseTab=$('.response-tab-'+apiId)
+		  var $responseInfo=$('#response_info_'+apiId);
+		  
+		  if ($responseRows.hasClass('layui-show') && isClick ||(!apiIdSendReq[apiId] && apiClick[apiId]%2==0)) {  
+			  	$apiTabBody.height("calc(100vh - 160px)");
+		    	$responseRows.removeClass('layui-show');  
+		    	$responseTitle.addClass('line-height');
+		    	$sresizableRow.addClass("bottom");
+		    	$titleIcon.addClass('layui-icon-up').removeClass("layui-icon-down");
+		    	$responseTab.hide();
+		    	$responseInfo.hide();
+		  } else {
+				$apiTabBody.height("440px");
+		    	$sresizableRow.removeClass("bottom");
+		    	$responseTitle.removeClass('line-height');
+		    	$titleIcon.addClass("layui-icon-down").removeClass('layui-icon-up');
+		    	if(apiIdSendReq[apiId]){
+		    		$responseRows.addClass('layui-show'); 
+			    	$responseTab.show();
+			    	$responseInfo.show();
+		    	}
+		  }  
 
-		 			// 保存为用例
-			 	    saveApi(apiId,title,'api',parentId);
-			       
-		 	     },  
-		 	     btn2: function (index) {  
-		 	         layer.close(index); // 关闭弹出层  
-		 	     }  
-		 	});
-	}
+		apiClick[apiId]=apiClick[apiId]+1;
+   }

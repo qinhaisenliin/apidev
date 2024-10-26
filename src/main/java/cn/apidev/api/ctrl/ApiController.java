@@ -171,7 +171,15 @@ public class ApiController extends ApidevBaseController{
 	 * 接口文档
 	 */
 	public void doc() {
-		
+		Record api=apiService.findById(getPara("id"));
+		if(api!=null) {
+			apiService.toApiJson(api);
+		}else {
+			api=new Record();
+			api.set("id", getPara("id"));
+		}
+		set("api",api);
+		render("doc.html");
 	}
 	
 	/**
@@ -256,8 +264,6 @@ public class ApiController extends ApidevBaseController{
 	
 	public void share() {
 		String id = getPara(0);
-		if("1".equals(id))
-			id="-1";
 		List<Record> list = apiService.getExportApiList(id);
 		
 		set("apiList", list);

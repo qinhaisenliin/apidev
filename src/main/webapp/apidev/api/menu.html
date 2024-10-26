@@ -27,7 +27,7 @@
 						    <label class="layui-form-label">父级目录</label>
 						    <div class="layui-input-block">
 						     	  <input type="hidden" id="treeSelect#(menu.id??2)Id" name="parentId" value="#(menu.parent_id??)"/>
-      			                  <input type="text" id="treeSelect#(menu.id??2)" name="parentName" value="#(menu.parentName??'根目录')"  class="layui-input" autocomplete="off" onblur="searchMenuBlur(this,'#(treeType)')" oninput="searchMenu(this,'#(treeType)')"/>  
+      			                  <input type="text" id="treeSelect#(menu.id??2)" name="parentName" value="#(menu.parentName??'根目录')" placeholder="#(menu.parentName??'根目录')"  class="layui-input" autocomplete="off" onblur="searchMenuBlur(this,'#(treeType)')" oninput="searchMenu(this,'#(treeType)')"/>  
 						    </div>
 					 </div>
 				</div>

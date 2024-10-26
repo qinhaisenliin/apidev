@@ -142,6 +142,30 @@
 				overflow: hidden; /* 隐藏超出部分 */
 				text-overflow: ellipsis; /* 超出部分显示省略号 */
 			}
+			.POST {
+				color: #ed5d11;
+				padding: 0px 2px 0px 0px;
+			}
+			
+			.DEL {
+				color: #c50101;
+				padding: 0px 12px 0px 0px;
+			}
+			
+			.GET {
+				color: #11ab11;
+				padding: 0px 11px 0px 0px;
+			}
+			
+			.PUT, .OPT {
+				color: #0f85df;
+				padding: 0px 11px 0px 0px;
+			}
+			
+			.HEAD {
+				color: #0f85df;
+				padding: 0px 2px 0px 0px;
+			}
 		</style>
 	</head>
 
@@ -215,7 +239,7 @@
 												<span class="header-link octicon octicon-link"></span>请求方式
 											</h5>
 											<ul>
-												<li>#(api.request_mode??)</li>
+												<li class="#(api.request_mode??)">#(api.request_mode??)</li>
 											</ul>
 											#end
 											#if(api.headersJson && api.headersJson.size()>0)
@@ -412,14 +436,16 @@
 												</table>
 											</div>
 											#end
+											#if(api.request_remark)
 											<h5 id="h5-u5907u6CE8">
 												<a name="备注" class="reference-link"></a>
 												<span class="header-link octicon octicon-link"></span>备注
 											</h5>
 											<p>#(api.request_remark??)</p>
+											#end
 										</div>
 									</div>
-
+									
 								</div>
 							</div>
 							#else
