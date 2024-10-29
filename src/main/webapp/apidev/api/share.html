@@ -6,8 +6,8 @@
 <meta name="description"
 	content="一个非常适合IT团队的API开发工具、技术文档开发工具。Apidev专注于开发者所需的接口工具，支持开发者的创新">
  <title>Apidev</title>  
- <link rel="stylesheet" href="#(path)/assets/lib/layui_exts/mouseRightMenu/mouseRightMenu.css" />
-<link rel="stylesheet" href="#(path)/assets/lib/layui-v2.9.18/layui/css/layui.css" media="all" /> 
+ <link rel="stylesheet" href="#(path)/assets/apidev/lib/layui_exts/mouseRightMenu/mouseRightMenu.css" />
+<link rel="stylesheet" href="#(path)/assets/apidev/lib/layui-v2.9.18/layui/css/layui.css" media="all" /> 
 
 <style type="text/css">
 	.layui-colla-content {
@@ -97,7 +97,7 @@ input[value="OPTIONS"] {
 }
 </style>
 <link id="layui_theme_css" rel="stylesheet">
-<link rel="stylesheet" href="#(path)/assets/css/runapi/index.css" />
+<link rel="stylesheet" href="#(path)/assets/apidev/css/index.css" />
 <style>
 	.tree-node-title .layui-icon-more {
 		right:15px;
@@ -214,14 +214,10 @@ function tabTheme(checked){
 		  // 设置为深色主题
 		  document.getElementById('layui_theme_css').setAttribute('href','#(path)/assets/lib/layui-theme-dark/layui-theme-dark.css');
 		  document.getElementById("switchTheme").checked = true; 
-		  document.getElementById("themeIcon").classList.remove('layui-icon-light');
-		  document.getElementById("themeIcon").classList.add('layui-icon-moon');
 		  layui.form.render(); 
 	  }else{
 		  // 恢复浅色主题
 		  document.getElementById('layui_theme_css').removeAttribute('href');
-		  document.getElementById("themeIcon").classList.remove('layui-icon-moon');
-		  document.getElementById("themeIcon").classList.add('layui-icon-light');
 	 }
 }
 
