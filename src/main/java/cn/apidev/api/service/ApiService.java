@@ -95,6 +95,7 @@ public class ApiService extends ApidevBaseService {
 			root.set("title", "根目录");
 			root.set("type", "menu");
 			root.set("parent_id", "root");
+			root.set("password", System.currentTimeMillis());
 			root.set("create_time", new Date());
 			root.set("update_time", new Date());
 			save(root);
@@ -105,6 +106,7 @@ public class ApiService extends ApidevBaseService {
 			root2.set("title", "快捷请求");
 			root2.set("type", "menu");
 			root2.set("parent_id", "root");
+			root.set("password", System.currentTimeMillis());
 			root2.set("create_time", new Date());
 			root2.set("update_time", new Date());
 			save(root2);
@@ -128,6 +130,7 @@ public class ApiService extends ApidevBaseService {
 				api.set("action_key", actionKey);
 				api.set("request_url", actionKey);
 				api.set("controller", controller);
+				api.set("title", actionKey);
 				api.set("parent_id", "1");
 				api.set("type", "api");
 				api.set("request_mode", "GET");
@@ -171,12 +174,13 @@ public class ApiService extends ApidevBaseService {
 	 * 查询api接口
 	 * 
 	 * @param parentId
-	 * @param type
+	 * @param type 接口类型：menu、api、demo、link,null
+	 * @param isFirst 
 	 * @return
 	 */
-	public List<Record> getTreeList(String parentId, String type) {
+	public List<Record> getTreeList(String parentId, String type,boolean isFirst) {
 		String sql = "select id,type,request_mode,parent_id,action_key,interface_status,controller,"
-				+ " title,password,visible,create_time,update_time  "
+				+ " title,password,visible,share_id,create_time,update_time  "
 				+ " from "+ tableName 
 				+ " where del = 0 and parent_id=?";
 		List<Record> list;
@@ -186,19 +190,14 @@ public class ApiService extends ApidevBaseService {
 		} else {
 			list = Db.find(sql + " order by type desc,create_time asc", parentId);
 		}
-
+		
 		for (Record rd : list) {
 			String id = rd.get("id");
-			if ("1".equals(parentId) || "2".equals(parentId)) {
-				rd.set("isopen", true);
-			} else {
-				rd.set("isopen", false);
-			}
+			rd.set("isopen", isFirst);
 			if(rd.get("title")==null) {
 				rd.set("title", rd.getStr("action_key"));
-				rd.set("tips", "api".equals(rd.get("type")) ? "接口未调试" : "");
 			}
-			List<Record> children = getTreeList(id, type);
+			List<Record> children = getTreeList(id, type, false);
 			if (children.size() > 0)
 				rd.set("children", children);
 		}
@@ -226,9 +225,47 @@ public class ApiService extends ApidevBaseService {
 		}
 		return list;
 	}
+	
+	/**
+	 * 查询api接口
+	 * 
+	 * @param parentId
+	 * @param type 接口类型：menu、api、demo、link,null
+	 * @param isFirst 
+	 * @return
+	 */
+	public List<Record> getShareTreeList(String parentId,boolean isFirst) {
+		String sql = "select id,type,request_mode,parent_id,action_key,interface_status,controller,"
+				+ " title,password,visible,share_id,create_time,update_time  "
+				+ " from "+ tableName 
+				+ " where del = 0 and parent_id=? and visible = 1";
+		List<Record> list = Db.find(sql + " order by type desc,create_time asc", parentId);
+		
+		for (Record rd : list) {
+			String id = rd.get("id");
+			rd.set("isopen", isFirst);
+			if(rd.get("title")==null) {
+				rd.set("title", rd.getStr("action_key"));
+			}
+			List<Record> children = getShareTreeList(id, false);
+			if (children.size() > 0)
+				rd.set("children", children);
+		}
+		return list;
+	}
 
 	public Record findById(String id) {
 		return Db.findById(tableName, id);
+	}
+	
+	/**
+	 * 查询分享id对应的数据
+	 * @param shareId
+	 * @return
+	 */
+	public Record findByShareId(String shareId) {
+		String sql="select * from "+tableName+" where share_id=? limit 1";
+		return Db.findFirst(sql, shareId);
 	}
 
 	/**
@@ -287,8 +324,7 @@ public class ApiService extends ApidevBaseService {
 			// 如果有父级名称，进行拼接
 			if (parentName != null) {
 				titleBuilder.append(parentName);
-				//if(api.get("type").equals("menu"))
-					titleBuilder.append(" / ").append(title);
+				titleBuilder.append(" / ").append(title);
 			}
 
 			return titleBuilder.toString();
@@ -313,8 +349,7 @@ public class ApiService extends ApidevBaseService {
 			// 如果有父级名称，进行拼接
 			if (parentIds != null) {
 				parentIdBuilder.append(parentIds);
-				//if(api.get("type").equals("menu"))
-					parentIdBuilder.append(" / ").append(id);
+				parentIdBuilder.append(" / ").append(id);
 			}
 
 			return parentIdBuilder.toString();
@@ -425,7 +460,7 @@ public class ApiService extends ApidevBaseService {
 			}
 			api.set("parent_id", parentId == null ? api.getStr("parent_id") : parentId);
 			save(api);
-			List<Record> childrenList = getTreeList(id, null);
+			List<Record> childrenList = getTreeList(id, null,true);
 			if (childrenList.size() > 0) {
 				for (Record rd : childrenList) {
 					copy(rd.getStr("id"), newId);
@@ -451,7 +486,7 @@ public class ApiService extends ApidevBaseService {
 		boolean b = Db.tx(() -> {
 			try {
 				Db.update(tableName, api);
-				List<Record> childrenTreeList = getTreeList(id, null);
+				List<Record> childrenTreeList = getTreeList(id, null, true);
 				// 获取列表
 				List<Record> childrenList = new ArrayList<>();
 				flattenTree(childrenTreeList, childrenList, false);
@@ -508,7 +543,7 @@ public class ApiService extends ApidevBaseService {
 		// 获取列表
 		List<Record> childrenList = new ArrayList<>();
 		Record api = findById(id);
-		List<Record> childrenTreeList = getTreeList(id, null);
+		List<Record> childrenTreeList = getTreeList(id, null, true);
 		if (!"1".equals(id) && "api".equals(api.getStr("type"))) {
 			childrenList.add(api);
 		}
@@ -533,6 +568,26 @@ public class ApiService extends ApidevBaseService {
 			}
 		}
 		return list;
+	}
+	
+	/**
+	 * 导出分享的接口
+	 * @param id
+	 * @return
+	 */
+	public List<Record> getExportShareApiList(String id){
+		// 获取列表
+		List<Record> childrenList = new ArrayList<>();
+		Record api = findById(id);
+		List<Record> childrenTreeList = getShareTreeList(id, true);
+		if (api.getInt("visible")==1 && "api".equals(api.getStr("type"))) {
+			childrenList.add(api);
+		}
+		flattenTree(childrenTreeList, childrenList, true);
+		childrenList.forEach(rd -> {
+			toApiJson(rd);
+		});
+		return childrenList;
 	}
 
 	/**
@@ -603,10 +658,10 @@ public class ApiService extends ApidevBaseService {
 			} else if(parentApi==null || (parentApi != null && parentApi.getInt("del") != 0)){
 				msg="原目录已删除，文件还原到根目录";
 				String parentIds=getParentIds(id);
-				if(parentIds.contains("1"))
-					api.set("parent_id", "1");
-				else
+				if(parentIds.startsWith("2"))
 					api.set("parent_id", "2");
+				else
+					api.set("parent_id", "1");
 			}			
 		}
 		Db.tx(() -> {
@@ -642,7 +697,7 @@ public class ApiService extends ApidevBaseService {
 		if("2".equals(treeType)) {
 			type = "link";
 		}
-		List<Record> treeList=getTreeList(id, type);
+		List<Record> treeList=getTreeList(id, type, true);
 		List<Record> apiList=new ArrayList<>();
 		flattenTree(treeList, apiList, true);
 		if(keyword!=null) {
@@ -674,7 +729,13 @@ public class ApiService extends ApidevBaseService {
 		list.forEach(record -> {
 			result.set(record.get("type"), record.get("count"));
 		});
-		
+		String sql2="select id,title,password,expiret_time,share_id from "+tableName+" where del=0 and share_id is not null";
+		List<Record> shareList = Db.find(sql2);
+		shareList.forEach(rd->{
+			rd.set("parentNames", getParantNames(rd.get("id")));
+		});
+
+		result.set("shareList",shareList);
 		return result;
 	}
 	

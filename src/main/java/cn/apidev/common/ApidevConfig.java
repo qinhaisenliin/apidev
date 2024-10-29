@@ -42,6 +42,7 @@ public class ApidevConfig extends JFinalConfig {
 		loadConfig();
 		me.setDevMode(p.getBoolean("devMode", false));
 		me.setJsonFactory(FastJsonFactory.me());
+		me.setError403View("/apidev/error/403.html");
 		//开启依赖注入
 		me.setInjectDependency(true);
 	}
@@ -65,7 +66,6 @@ public class ApidevConfig extends JFinalConfig {
 		// devMode 为 true 时支持模板文件热加载
 		me.setDevMode(p.getBoolean("engineDevMode", false));
 		me.addSharedObject("path", JFinal.me().getContextPath());
-		me.addSharedFunction("/apidev/common/_layout.html");
 	}
 	/**
 	 * 抽取成独立的方法，便于 _Generator 中重用该方法，减少代码冗余
@@ -92,7 +92,7 @@ public class ApidevConfig extends JFinalConfig {
 
 	@Override
 	public void configInterceptor(Interceptors me) {
-		me.addGlobalActionInterceptor(new ExceptionInterceptor());
+
 	}
 
 	@Override

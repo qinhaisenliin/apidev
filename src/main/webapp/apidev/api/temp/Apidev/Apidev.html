@@ -43,9 +43,10 @@
 			    padding: 20px;
 			}
 			table { 
-				border-left:1px solid #dedede; 
+				 border-left:1px solid #dedede; 
 				 border-collapse:collapse;
 				 padding:10px;
+				 font-size:14px;
 			}
 
 			td { 
@@ -136,6 +137,35 @@
 			.json{
 				max-height:600px;
 			}
+			li{
+				white-space: nowrap; /* 不允许换行 */
+				overflow: hidden; /* 隐藏超出部分 */
+				text-overflow: ellipsis; /* 超出部分显示省略号 */
+			}
+			.POST {
+				color: #ed5d11;
+				padding: 0px 2px 0px 0px;
+			}
+			
+			.DEL {
+				color: #c50101;
+				padding: 0px 12px 0px 0px;
+			}
+			
+			.GET {
+				color: #11ab11;
+				padding: 0px 11px 0px 0px;
+			}
+			
+			.PUT, .OPT {
+				color: #0f85df;
+				padding: 0px 11px 0px 0px;
+			}
+			
+			.HEAD {
+				color: #0f85df;
+				padding: 0px 2px 0px 0px;
+			}
 		</style>
 	</head>
 
@@ -153,7 +183,11 @@
 									<ul data-v-005611ed="" role="menubar" class="el-menu" style="list-style: none;line-height: 34px;padding-left:5px;">
 										<li data-v-005611ed="" role="menuitem" tabindex="0" class="el-menu-item" style="padding-left: 20px; ">
 											<i data-v-005611ed="" class="el-icon-document"></i>
-											<a data-v-005611ed="" style="text-decoration:none;" href="#1、/apidev/api/gettreelist（未调试）" title="1、/apidev/api/gettreelist（未调试）" >1、/apidev/api/gettreelist（未调试）</a>
+											<a data-v-005611ed="" style="text-decoration:none;" href="#1、/" title="1、/" >1、/</a>
+										</li>
+										<li data-v-005611ed="" role="menuitem" tabindex="1" class="el-menu-item" style="padding-left: 20px; ">
+											<i data-v-005611ed="" class="el-icon-document"></i>
+											<a data-v-005611ed="" style="text-decoration:none;" href="#2、/apidev/share" title="2、/apidev/share" >2、/apidev/share</a>
 										</li>
 									</ul>
 								</aside>
@@ -163,27 +197,34 @@
 							<div data-v-2eba7a07="">
 								<div data-v-2eba7a07="" id="doc-title-box" class="doc-title-box">
 									<span data-v-2eba7a07="" id="doc-title-span" class="dn"></span>
-									<a name="1、/apidev/api/gettreelist（未调试）"></a>
-									<h2 data-v-2eba7a07="" id="doc-title" style="text-align: left;padding-left:10px;">1、/apidev/api/gettreelist（未调试）</h2>
+									<a name="1、/"></a>
+									<h2 data-v-2eba7a07="" id="doc-title" style="text-align: left;padding-left:10px;">1、/</h2>
 
 								</div>
 								<div data-v-2eba7a07="" id="doc-body">
 
 									<div data-v-2eba7a07="" id="page_md_content" class="page_content_main">
 										<div data-v-2eba7a07="" id="editor-md" class="main-editor markdown-body editormd-html-preview">
+											<h5 id="h5-u7B80u8981u63CFu8FF0">
+												<a name="简要描述" class="reference-link"></a>
+												<span class="header-link octicon octicon-link"></span>接口状态
+											</h5>
+											<ul>
+												<li>开发中</li>
+											</ul>
 											<h5 id="h5-u8BF7u6C42u65B9u5F0F">
 												<a name="请求方式" class="reference-link"></a>
 												<span class="header-link octicon octicon-link"></span>请求方式
 											</h5>
 											<ul>
-												<li>POST</li>
+												<li class="GET">GET</li>
 											</ul>
 											<h5 id="h5-success-demo">
 												<a name="成功返回示例" class="reference-link"></a>
 												<span class="header-link octicon octicon-link"></span>成功返回示例
 											</h5>
-											<pre><span class="btn-pre-copy" id="copy_success_json_d3a5d0fe2b034363bd6484b1c1d7ebba" onclick="copy('success_json_d3a5d0fe2b034363bd6484b1c1d7ebba')">复制</span><code class="hljs json" id="success_json_d3a5d0fe2b034363bd6484b1c1d7ebba"></code></pre>
-											<h5 id="h5-success-demo-d3a5d0fe2b034363bd6484b1c1d7ebba">
+											<pre><span class="btn-pre-copy" id="copy_success_json_af15989c1df74268acecc0c39341671e" onclick="copy('success_json_af15989c1df74268acecc0c39341671e')">复制</span><code class="hljs json" id="success_json_af15989c1df74268acecc0c39341671e"></code></pre>
+											<h5 id="h5-success-demo-af15989c1df74268acecc0c39341671e">
 												<a name="成功返回示例的参数说明" class="reference-link"></a>
 												<span class="header-link octicon octicon-link"></span>成功返回示例的参数说明
 											</h5>
@@ -204,8 +245,8 @@
 												<a name="失败返回示例" class="reference-link"></a>
 												<span class="header-link octicon octicon-link"></span>失败返回示例
 											</h5>
-											<pre><span class="btn-pre-copy" id="copy_failuer_json_d3a5d0fe2b034363bd6484b1c1d7ebba" onclick="copy('failuer_json_d3a5d0fe2b034363bd6484b1c1d7ebba')">复制</span><code class="hljs json" id="failuer_json_d3a5d0fe2b034363bd6484b1c1d7ebba"></code></pre>
-											<h5 id="h5-failuer-demo-d3a5d0fe2b034363bd6484b1c1d7ebba">
+											<pre><span class="btn-pre-copy" id="copy_failuer_json_af15989c1df74268acecc0c39341671e" onclick="copy('failuer_json_af15989c1df74268acecc0c39341671e')">复制</span><code class="hljs json" id="failuer_json_af15989c1df74268acecc0c39341671e"></code></pre>
+											<h5 id="h5-failuer-demo-af15989c1df74268acecc0c39341671e">
 												<a name="失败返回示例的参数说明" class="reference-link"></a>
 												<span class="header-link octicon octicon-link"></span>失败返回示例的参数说明
 											</h5>
@@ -222,14 +263,83 @@
 													</tbody>
 												</table>
 											</div>
-											<h5 id="h5-u5907u6CE8">
-												<a name="备注" class="reference-link"></a>
-												<span class="header-link octicon octicon-link"></span>备注
-											</h5>
-											<p></p>
 										</div>
 									</div>
+									
+								</div>
+							</div>
+							<div data-v-2eba7a07="">
+								<div data-v-2eba7a07="" id="doc-title-box" class="doc-title-box">
+									<span data-v-2eba7a07="" id="doc-title-span" class="dn"></span>
+									<a name="2、/apidev/share"></a>
+									<h2 data-v-2eba7a07="" id="doc-title" style="text-align: left;padding-left:10px;">2、/apidev/share</h2>
 
+								</div>
+								<div data-v-2eba7a07="" id="doc-body">
+
+									<div data-v-2eba7a07="" id="page_md_content" class="page_content_main">
+										<div data-v-2eba7a07="" id="editor-md" class="main-editor markdown-body editormd-html-preview">
+											<h5 id="h5-u7B80u8981u63CFu8FF0">
+												<a name="简要描述" class="reference-link"></a>
+												<span class="header-link octicon octicon-link"></span>接口状态
+											</h5>
+											<ul>
+												<li>开发中</li>
+											</ul>
+											<h5 id="h5-u8BF7u6C42u65B9u5F0F">
+												<a name="请求方式" class="reference-link"></a>
+												<span class="header-link octicon octicon-link"></span>请求方式
+											</h5>
+											<ul>
+												<li class="GET">GET</li>
+											</ul>
+											<h5 id="h5-success-demo">
+												<a name="成功返回示例" class="reference-link"></a>
+												<span class="header-link octicon octicon-link"></span>成功返回示例
+											</h5>
+											<pre><span class="btn-pre-copy" id="copy_success_json_2a0cc5aae50c40fba3f6f0ca4404624b" onclick="copy('success_json_2a0cc5aae50c40fba3f6f0ca4404624b')">复制</span><code class="hljs json" id="success_json_2a0cc5aae50c40fba3f6f0ca4404624b"></code></pre>
+											<h5 id="h5-success-demo-2a0cc5aae50c40fba3f6f0ca4404624b">
+												<a name="成功返回示例的参数说明" class="reference-link"></a>
+												<span class="header-link octicon octicon-link"></span>成功返回示例的参数说明
+											</h5>
+											<div style="width: 100%;overflow-x: auto;">
+												<table>
+													<thead>
+														<tr style="background-color: #409eff">
+															<th class="td-wit-2">参数名</th>
+															<th class="td-wit-2">类型</th>
+															<th class="td-wit-2">说明</th>
+														</tr>
+													</thead>
+													<tbody>
+													</tbody>
+												</table>
+											</div>
+											<h5 id="h5-failuer-demo">
+												<a name="失败返回示例" class="reference-link"></a>
+												<span class="header-link octicon octicon-link"></span>失败返回示例
+											</h5>
+											<pre><span class="btn-pre-copy" id="copy_failuer_json_2a0cc5aae50c40fba3f6f0ca4404624b" onclick="copy('failuer_json_2a0cc5aae50c40fba3f6f0ca4404624b')">复制</span><code class="hljs json" id="failuer_json_2a0cc5aae50c40fba3f6f0ca4404624b"></code></pre>
+											<h5 id="h5-failuer-demo-2a0cc5aae50c40fba3f6f0ca4404624b">
+												<a name="失败返回示例的参数说明" class="reference-link"></a>
+												<span class="header-link octicon octicon-link"></span>失败返回示例的参数说明
+											</h5>
+											<div style="width: 100%;overflow-x: auto;">
+												<table>
+													<thead>
+														<tr style="background-color: #409eff">
+															<th class="td-wit-2">参数名</th>
+															<th class="td-wit-2">类型</th>
+															<th class="td-wit-2">说明</th>
+														</tr>
+													</thead>
+													<tbody>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+									
 								</div>
 							</div>
 						</div>

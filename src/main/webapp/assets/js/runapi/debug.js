@@ -356,6 +356,8 @@
         if(url==''){
 			$('#requestUrl_tips_'+apiId).show();
 			return;
+		}else if(url.indexOf('/')==-1){
+			url='/'+url;
 		}
         var bodyJson=$('#bodyJson_'+apiId).val();
         //form-data方式发起请求
@@ -460,8 +462,8 @@
 		            		time+=' ms';
 		            	$('#time_'+apiId).html(time);
 
-						var contentLength = xhr.getResponseHeader('Content-Length'); 
-						$('#size_'+apiId).html(contentLength);
+						// var contentLength = xhr.getResponseHeader('Content-Length'); 
+						// $('#size_'+apiId).html(contentLength);
 						
 		                $('#responseHeaders_'+apiId).val(xhr.getAllResponseHeaders());
 

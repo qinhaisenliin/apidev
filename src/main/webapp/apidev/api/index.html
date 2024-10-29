@@ -4,40 +4,31 @@
 <meta charset="utf-8">
 <title>Apidev 专注于开发者所需的接口工具，支持开发者的创新</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="renderer" content="webkit">
-<meta http-equiv="X-UA-Compatible" content="edge">
-<meta http-equiv="Expires" content="0">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Cache-control"
-	content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Cache" content="no-cache">
-
 <meta http-equiv="Cache" content="no-cache">
 <meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content="接口开发 技术文档 开发工具">
-<meta name="description"
-	content="一个非常适合IT团队的API开发工具、技术文档开发工具。Apidev专注于开发者所需的接口工具，支持开发者的创新">
+<meta name="description"content="一个非常适合IT团队的API开发工具、技术文档开发工具。Apidev专注于开发者所需的接口工具，支持开发者的创新">
 <link rel="stylesheet" href="#(path)/assets/lib/layui_exts/mouseRightMenu/mouseRightMenu.css" />
-<link rel="stylesheet" href="#(path)/assets/lib/layui-v2.9.14/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="#(path)/assets/lib/layui-v2.9.18/layui/css/layui.css" media="all" />
 <link rel="stylesheet" href="#(path)/assets/css/runapi/debug.css" />
 
 <script src="#(path)/assets/lib/jquery/jquery-2.1.4.min.js"></script>
 <script src="#(path)/assets/lib/jquery/jquery.form.js" type="text/javascript" ></script>
 <script src="#(path)/assets/lib/layui-v2.9.18/layui/layui.js" type="text/javascript"></script>
-
 <!-- jquery 表格移动需要 -->
-	<script src="#(path)/assets/lib/jquery/jquery-migrate-1.2.1.js"></script>
-	<script src="#(path)/assets/lib/jquery/jquery-ui.min.js" type="text/javascript" ></script>
-	<!-- jquery json美化插件 -->
-	<script src="#(path)/assets/lib/jquery/jquery.json-viewer.min.js"></script>
-	<link rel="stylesheet" href="#(path)/assets/lib/jquery/jquery.json-viewer.min.css"/>
-	<!-- debug 业务代码 -->
-	<script src="#(path)/assets/js/runapi/debug.js"></script>
-	
+<script src="#(path)/assets/lib/jquery/jquery-migrate-1.2.1.js"></script>
+<script src="#(path)/assets/lib/jquery/jquery-ui.min.js" type="text/javascript" ></script>
+<!-- jquery json美化插件 -->
+<script src="#(path)/assets/lib/jquery/jquery.json-viewer.min.js"></script>
+<link rel="stylesheet" href="#(path)/assets/lib/jquery/jquery.json-viewer.min.css"/>
+<!-- debug 业务代码 -->
+<script src="#(path)/assets/js/runapi/debug.js"></script>
 <style type="text/css">
+	.layui-icon-component{
+		color:green;
+	}
 	.layui-colla-content {
 	    color: #333333eb;
 	}
@@ -121,9 +112,7 @@ input[value="OPTIONS"] {
 </style>
 <link id="layui_theme_css" rel="stylesheet">
 <link rel="stylesheet" href="#(path)/assets/css/runapi/index.css" />
-<style>
 
-</style>
 </head>
 <body>
 <textarea id="copy_value"></textarea>
@@ -137,22 +126,16 @@ input[value="OPTIONS"] {
 			<div class="layui-side-scroll">
 				<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
 				<ul class="layui-nav layui-nav-tree" lay-filter="test">
-					<li class="layui-nav-item layui-nav-itemed">
-						<div class="item-group">
+					<li class="layui-nav-item layui-nav-itemed" onclick="tabCardRow('interface')">
+						<div class="item-group" >
 							<i class="layui-icon layui-icon-survey"></i> <a
-								class="item-group-text" href="javascript:;">接口管理</a>
+								class="item-group-text">接口管理</a>
 						</div>
 					</li>
-					<li class="layui-nav-item">
-						<div class="item-group">
-							<i class="layui-icon layui-icon-share"></i> <a
-								class="item-group-text" href="javascript:;">分享文档</a>
-						</div>
-					</li>
-					<li class="layui-nav-item">
+					<li class="layui-nav-item layui-hide" onclick="tabCardRow('project_setting')">
 						<div class="item-group">
 							<i class="layui-icon layui-icon-set"></i> <a
-								class="item-group-text" href="javascript:;">项目设置</a>
+								class="item-group-text">项目设置</a>
 						</div>
 					</li>
 					<li class="layui-nav-item" title="背景主题">
@@ -172,7 +155,7 @@ input[value="OPTIONS"] {
 
 			<div class="layui-card layui-panel">
 				<div class="layui-card-body">
-					<div class="layui-row" style="border: 1px solid #ccc;">
+					<div id="interface" class="layui-row" style="border: 1px solid #ccc;">
 						<div class="layui-col-xs12 layui-col-sm4 layui-col-md3 body-left">
 							<blockquote class="layui-elem-quote layui-text">
 								<h3>接口管理</h3>
@@ -241,6 +224,21 @@ input[value="OPTIONS"] {
 								<ul class="layui-tab-title tab-handle">
 								</ul>
 								<div class="layui-tab-content" style="padding-bottom:5px;"></div>
+							</div>
+						</div>
+					</div>
+					<div id="project_setting" class="layui-row layui-hide" style="border: 1px solid #ccc;">
+						<div class="layui-col-xs12 layui-col-sm4 layui-col-md3 body-left">
+							<blockquote class="layui-elem-quote layui-text">
+							<h3>项目设置</h3>
+							</blockquote>
+							<!-- 折叠面板 start-->
+							<div class="layui-collapse">
+								<div class="layui-colla-item1 project">
+									<div class="layui-colla-title active" data-id="project">
+										项目概况<i class="layui-icon layui-icon-layouts layui-colla-icon"></i>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -320,6 +318,16 @@ input[value="OPTIONS"] {
       activeNodes.forEach(node => node.classList.remove('active'));  
       $('div[data-id='+thisId+']').addClass('active');
 });
+
+ function tabCardRow(id){
+	if(id=='interface'){
+		$('#'+id).removeClass('layui-hide');
+		$('#project_setting').addClass('layui-hide');
+	} else if(id=='project_setting'){
+		$('#'+id).removeClass('layui-hide');
+		$('#interface').addClass('layui-hide');
+	}
+ }
   
   
   // 获取接口数
@@ -401,7 +409,7 @@ input[value="OPTIONS"] {
 	    			html += `<span class="GET">GET</span>`;
 	    		 }
             } else if(node.type=='demo'){ // 用例
-            	html += `<i class="layui-icon layui-icon-log"></i>`;
+            	html += `<i class="layui-icon layui-icon-log" title="接口用例"></i>`;
             }
             // 节点名称、更多图标
             html +=`<span>${node.title}${subNodeNum}</span><i data-id="${node.id}" class="layui-icon layui-icon-more tree-menu-more  ${divId}-${node.id=='1' ? 'root' : node.type}"></i></div>`;  
@@ -504,7 +512,7 @@ input[value="OPTIONS"] {
 	        }  
 		}else{
 			if(nodeData.type=='menu'){
-				menu(nodeData.id,title+nodeData.title,treeType);
+				menu(nodeData.id,title+nodeData.title,treeType,'0');
 			}else{
 				// 显示在右侧tab
 		        apiDetail(nodeData.id,title+nodeData.title); 
@@ -638,22 +646,29 @@ input[value="OPTIONS"] {
 			mouseRightMenu.open(menu_data,false,function(d){
 				var menuId=d.data.menuId;
 				if(d.type=='closeTab'){
-					element.tabDelete('tab-handle', menuId); 
+					tabClose(menuId); 
 		 		} else if(d.type=='closeOtherTabs'){
 		 			$('.layui-tab-title li').each(function() {  
-			 			if($(this).attr('lay-id')!=menuId){
-			        	  	element.tabDelete('tab-handle', $(this).attr('lay-id'));  
+			 			var tabId=$(this).attr('lay-id');
+			 			if(tabId!=menuId){ 
+			        	  	tabClose(tabId);
 			 			}
 			        }); 
 		 	 	} else if(d.type=='closeAllTabs'){
-		 	 		$('.layui-tab-title li').each(function() {  
-			        	  element.tabDelete('tab-handle', $(this).attr('lay-id')); 
+		 	 		$('.layui-tab-title li').each(function() { 
+		 	 			var tabId=$(this).attr('lay-id');
+		 	 			tabClose(tabId);
 			         }); 
 		 	 	}
 			})
 			return false;
 		});
 		
+	}
+
+  	// 关闭tab
+	function tabClose(tabId){
+		element.tabDelete('tab-handle', tabId); 
 	}
 
   	// 选项卡右键菜单
@@ -684,7 +699,7 @@ input[value="OPTIONS"] {
 		      title: '添加接口',
 		      id: 'addApi',
 		      templet: function(d){
-		    	  return '<i class="layui-icon layui-icon-file"></i> ' + d.title;
+		    	  return '<i class="layui-icon layui-icon-component"></i> ' + d.title;
 		      }
 		    },{
 		      title: '复制链接',
@@ -726,7 +741,7 @@ input[value="OPTIONS"] {
 		      title: '添加接口',
 		      id: 'addApi',
 		      templet: function(d){
-		    	  return '<i class="layui-icon layui-icon-file"></i> ' + d.title;
+		    	  return '<i class="layui-icon layui-icon-component"></i> ' + d.title;
 		      }
 		    },{
 			      title: '重命名',
@@ -1020,7 +1035,7 @@ input[value="OPTIONS"] {
 		      title: '新建接口',
 		      id: 'addApi',
 		      templet: function(d){
-		    	  return '<i class="layui-icon layui-icon-file"></i> ' + d.title;
+		    	  return '<i class="layui-icon layui-icon-component"></i> ' + d.title;
 		      }
 		    },{
 		      title: '快捷请求',
@@ -1063,7 +1078,7 @@ input[value="OPTIONS"] {
 			      title: '新建接口',
 			      id: 'addApi',
 			      templet: function(d){
-			    	  return '<i class="layui-icon layui-icon-file"></i> ' + d.title;
+			    	  return '<i class="layui-icon layui-icon-component"></i> ' + d.title;
 			      }
 			    },{
 			      title: '新建目录',
@@ -1148,6 +1163,63 @@ input[value="OPTIONS"] {
 		});
 	}
 
+	// 复制分享链接
+	function copyShareLink(id){
+		var protocol=window.location.protocol;
+		var host=window.location.host;
+		var location=protocol+"//"+host;
+		var node = findNodeById(treeData[0],id);
+		if(!node){
+			node=findNodeById(linkData[0],id);
+		}
+		 var menuDom=$('.menu-link-'+id);
+	     var shareId=menuDom.find('input[name=shareId]').val();
+	     if(!shareId){
+			layer.msg("请随机生成分享地址");
+			return;
+		 }
+		     
+		var title = '分享目录：'+node.title;
+		var url=location+"/apidev/api/share/"+shareId;
+		if(node.password){
+			var password='访问密码：'+node.password;
+			var msg='访问地址：'+url+'<br/>'+password;
+			layer.alert(msg,{
+		        title:title,
+		        offset:'100px',
+		        btn: ['复制地址和密码','复制带密码的链接','打开链接','取消'],
+		        btn1: function(){
+		        	copyText('访问地址：'+url+'\r\n'+password);
+		        },
+		        btn2: function(){
+		        	var link=url+'?password='+node.password;
+		        	copyText(link);
+			    },
+			    btn3:function(){
+			    	window.open(url);
+				},
+				 btn4:function(){
+
+				}
+		     });
+		}else{
+			layer.alert('访问地址：'+url,{
+		        title:title,
+		        offset:'100px',
+		        btn: ['复制链接','打开链接','取消'],
+		        btn1: function(){
+		        	copyText(url);
+		        },
+		        btn2: function(){
+		        	window.open(url);
+		        },
+		        btn3:function(){
+	
+			    }
+		     });
+		}
+	}
+
 	// 复制链接
 	function copyLink(id){
 		var protocol=window.location.protocol;
@@ -1158,21 +1230,33 @@ input[value="OPTIONS"] {
 			node=findNodeById(linkData[0],id);
 		}
 		var title = '分享目录：'+node.title;
-		var url=location+"/apidev/api/share/"+id;
+		var url=location+"/apidev/api/"+id;
+		if(node.type=='menu'){
+			if(node.share_id){
+				url=location+"/apidev/api/share/"+node.share_id;
+			}else{
+				layer.msg("请设置目录的分享链接");
+				return;
+			}
+		}
 		if(node.password){
 			var password='访问密码：'+node.password;
 			var msg='访问地址：'+url+'<br/>'+password;
 			layer.alert(msg,{
 		        title:title,
 		        offset:'100px',
-		        btn: ['复制地址和密码','打开链接','取消'],
+		        btn: ['复制地址和密码','复制带密码的链接','打开链接','取消'],
 		        btn1: function(){
 		        	copyText('访问地址：'+url+'\r\n'+password);
 		        },
 		        btn2: function(){
-		        	window.open(url);
+			        var link=url+'?password='+node.password;
+		        	copyText(link);
 			    },
 			    btn3:function(){
+			    	window.open(url);
+				},
+				btn4:function(){
 
 				}
 		     });
@@ -1638,12 +1722,12 @@ function updateData(id,title,parentId,treeType){
 /**
  * 修改目录
  */
-function updateMenu(id,title,parentId,remark,treeType){
+function updateMenu(id,title,parentId,remark,visible,treeType){
 	if(id){
 		 $.ajax({
 			 url:'#(path)/apidev/api/update',
 	 	 	 	type:"POST",
-	 	 	 	data:{'id':id,'title':title,'parent_id':parentId,'remark':remark},
+	 	 	 	data:{'id':id,'title':title,'parent_id':parentId,'remark':remark,visible:visible},
 	 	 	 	success:function(ret){
 		 	 	 	showMsg(ret.msg);
 		 	 	 	if(ret.state=='ok'){
@@ -1680,13 +1764,13 @@ function updateVisible(id,visible){
 /**
  * 修改访问设置
  */
-function updatePassword(id,password,expiretTime){
+function updatePassword(id,password,expiretTime,shareId){
 	if(id){
 		 // 这里可以添加进一步的逻辑，比如提交表单  
 		 $.ajax({
 			 url:'#(path)/apidev/api/update',
 	 	 	 	type:"POST",
-	 	 	 	data:{'id':id,'password':password,'expiret_time':expiretTime},
+	 	 	 	data:{'id':id,'password':password,'expiret_time':expiretTime,'share_id':shareId},
 	 	 	 	success:function(ret){
 		 	 	 	showMsg(ret.msg);
 		 	 	 	if(ret.state=='ok'){
@@ -1805,11 +1889,11 @@ function project(){
 }
 
 // 目录 
-function menu(id,title,treeType){ 
+function menu(id,title,treeType,isEditShare){ 
     $.ajax({
 		 url:'#(path)/apidev/api/menu',
 	 	 type:"POST",
-	 	 data:{id:id,treeType:treeType},
+	 	 data:{id:id,treeType:treeType,isEditShare:isEditShare},
 	 	 success:function(ret){
 	 	 	 var contentHtml=ret;
 			clickMenu(id,title,contentHtml);
@@ -1843,6 +1927,7 @@ function showMsg(msg){
 	layer.msg(msg,{icon:1,offset:'calc(100vh - 200px)',anim: 'slideUp'});
 }
 
+// 文档预览
 function getDoc(apiId){
 	$.ajax({
         type: 'POST',
@@ -1859,6 +1944,41 @@ function getDoc(apiId){
         }
     });
 }
+
+//保存
+function saveMenuData(menuId,treeType){
+	var menuDom=$('.menu-'+menuId);
+	var title=menuDom.find('input[name=title]').val();
+	var parentId=menuDom.find('input[name=parentId]').val();
+	var remark=menuDom.find('textarea[name=remark]').val();
+	var visible=menuDom.find('input[name=visible'+menuId+']:checked').val();
+	updateMenu(menuId,title,parentId,remark,visible,treeType);
+}
+
+// 保存访问设置
+function savePassword(menuId){
+	var menuDom=$('.menu-link-'+menuId);
+	var password=menuDom.find('input[name=password]').val();
+	var expiretTime=menuDom.find('input[name=expiretTime]').val();
+	var shareId=menuDom.find('input[name=shareId]').val();
+	updatePassword(menuId,password,expiretTime,shareId);
+}
+
+// 随机数
+function generateRandomPassword(length = 8,menuId,inputName) {  
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";  
+    let randomPassword = "";  
+
+    for (let i = 0; i < length; i++) {  
+        const randomIndex = Math.floor(Math.random() * charset.length);  
+        randomPassword += charset[randomIndex];  
+    }  
+    var menuDom=$('.menu-link-'+menuId);
+	menuDom.find('input[name='+inputName+']').val(randomPassword);
+	if(inputName=='shareId'){
+		$('#share_msg_'+menuId).removeClass('layui-hide');
+    }
+}  
 </script>
 </body>
 </html>

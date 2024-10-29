@@ -37,13 +37,13 @@
 </div>
 
 <!-- 任意自定义的 tab 元素 -->
-<div class="api-tab-header layui-btn-xs layui-btn-container" id="apiTabHeader#(api.id??)" style="#(api.type!='api'? 'width:1px;background-color:transparent' : '')">
-  <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius layui-this #(api.type!='api'?'layui-hide':'')">请求</button>
-  <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius #(api.type!='api'?'layui-hide':'')">响应示例</button>
-  <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius #(api.type!='api'?'layui-hide':'')">接口说明</button>
-  <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius #(api.type!='api'?'layui-hide':'')">文档预览</button>
+<div class="api-tab-header layui-btn-xs layui-btn-container" id="apiTabHeader#(api.id??)" style="#(api.type=='demo'? 'width:120px;background-color:transparent' : '')">
+  <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius layui-this">请求</button>
+  <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius">响应示例</button>
+  <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius #(api.type=='demo'?'layui-hide':'')">接口说明</button>
+  <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius #(api.type=='demo'?'layui-hide':'')">文档预览</button>
 </div>
-<div style="position: absolute;margin-left: #(api.type!='api'?'20px':'280px');margin-top:-23px;">
+<div style="position: absolute;margin-left: #(api.type=='demo'?'140px':'280px');margin-top:-23px;">
 	<a onclick="apiDetail('#(api.parent_id??)','<span class=&quot;#(api.request_mode??)&quot;>#(api.request_mode??)</span>#(api.parentName??)')" style="color:#8276c9">#(api.type=='demo'?api.parentName+' # ':'')</a>
 	<input id="title_input_#(api.id??)" oninput="titleInputHeader(this,'#(api.id??)')" title="#(api.type=='demo'?'用例':'接口')名称" placeholder="#(api.type=='demo'?'用例':'接口')名称" name="title" class="title-input" autocomplete="off" value="#(api.title??api.action_key)"/>
 	<span  id="title_input_tips_#(api.id??)" style="color:red;display:none">请输入#(api.type=='demo'?'用例':'接口')名称</span>
@@ -52,7 +52,7 @@
   <!-- 请求参数 -->
   	<div class="layui-show">
 	  	<div class="layui-tab layui-tab-brief">
-		  <ul class="layui-tab-title">
+		  <ul class="layui-tab-title param-header">
 		    <li class="layui-this">Params</li>
 		    <li>Body</li>
 		    <li>Headers</li>
@@ -91,10 +91,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <div class="add-row">
-                    ###<a onclick="addQueryDataRow(true,'','','','','','#(api.id??)')"><i class="layui-icon layui-icon-add-circle"></i>增加一行</a>
-                    ###<a onclick="layer.msg('待实现功能，主要是导入导出接口json参数')"><i class="layui-icon layui-icon-util"></i>参数工具</a>
-                </div>
+                
                 <div class="add-row path-data-#(api.id??) layui-hide"> Path 参数</div>
                  <table>
                     <tbody id="path_data_list_#(api.id??)">
@@ -118,10 +115,7 @@
 					    <div lay-radio class="lay-skin-tag layui-badge">xml</div>
 				  </div>
 
-	                  <div class="body-none body-none-#(api.id??) layui-hide">该请求没有 Body 体</div>
-                      <!-- <a id="formatBodyJson_#(api.id??)" onclick="formatBodyJson('#(api.id??)')" class="body-type-json-#(api.id??) json-format layui-hide">
-                          <i class="layui-icon layui-icon-download-circle"></i>json极速美化</a> -->
-                      
+	                  <div class="body-none body-none-#(api.id??) layui-hide">该请求没有 Body 体</div>                      
                       <div class="body-type-json-#(api.id??) layui-hide">
                           <textarea id="bodyJson_#(api.id??)" name="bodyJson" class="layui-textarea">#(api.request_body??)</textarea>
                           <p><span>json字段说明</span>
@@ -286,10 +280,6 @@
                               </tr>
                           </tbody>
                       </table>
-
-                      <!-- <div class="add-row">
-                          <a href="javascript:addSuccessDataRow('','','','#(api.id??)')"><i class="layui-icon layui-icon-add-circle"></i>增加一行</a>
-                      </div> -->
                   </div>
                   <!--失败返回示例 -->
                   <div class="layui-tab-item">
@@ -299,9 +289,6 @@
                     </p>
                       <div class="failuer-data-json">
                           <textarea id="failuerDataJson_#(api.id??)" name="failuerDataJson" class="layui-textarea">#(api.failuer_demo??)</textarea>
-                          <!-- <pre class="layui-code code-demo" style="height:200px;overflow: auto;resize: vertical;">
-							#(api.failuer_demo??)
-						  </pre> -->
                       </div>
                       
                       <p><span>返回参数说明</span>
@@ -335,10 +322,6 @@
                               </tr>
                           </tbody>
                       </table>
-
-                      <!-- <div class="add-row">
-                          <a href="javascript:addFailuerDataRow('','','','#(api.id??)')"><i class="layui-icon layui-icon-add-circle"></i>增加一行</a>
-                      </div> -->
                   </div>
                   <!--描述 -->
                   <div class="layui-tab-item">
@@ -373,6 +356,17 @@
 				 </div>
 			</div>
 		</div>
+		<div class="layui-row">
+	        	<div class="layui-col-xs12 layui-col-md6 layui-form"> 
+		        	 <div class="layui-form-item">
+						    <label class="layui-form-label">显示隐藏</label>
+						    <div class="layui-input-block">
+						     	  <input type="radio" name="visible#(api.id??)" value="0" title="隐藏" #if(api.visible==0) checked #end>
+  								  <input type="radio" name="visible#(api.id??)" value="1" title="显示" #if(api.visible==1) checked #end> 
+						    </div>
+					 </div>
+				</div>
+			</div>
 		<div class="layui-row">
 	        	<div class="layui-col-xs12 layui-col-md6"> 
 		        	 <div class="layui-form-item">
@@ -427,11 +421,6 @@
 		            <li>原生</li>
 		            <li onclick="reviewData('#(api.id??)')">预览</li>                          
 		        </ul>
-		        <!-- <ul id="response_info_#(api.id??)" class="layui-tab-title response-info layui-hide">
-		         <li>响应码：<span id="status_#(api.id??)"></span></li>
-		     	  <li>耗时：<span id="time_#(api.id??)"></span></li>
-		     	  <li class="size layui-hide">大小：<span id="size_#(api.id??)"></span></li>
-		    	  </ul> -->
 		        <div class="layui-tab-content response-content" style="height:calc(100vh - 660px);padding:0px; ">
 		            <!--美化-->
 		            <div class="layui-tab-item layui-show" style="height:calc(100vh - 660px);overflow-x:hidden;overflow-y: auto;width:100%;">
@@ -501,20 +490,20 @@
 
 	// 代码预览组件
 	layui.code({
-	    elem: '.code-demo-#(api.id??)',
-	    langMarker:true
+	    elem: '.code-demo-#(api.id??)'
 	  });
 	  
 	addBtnHover();
 	
 	getMenuTree('#treeSelect#(api.id??2)', '#(api.treeType??)');
-
+	
+	
 		
 	// 获取 input 元素  
 	  var titleInput = document.getElementById('title_input_#(api.id??)');  
 
 	  // 设置 input 的宽度  
-	  function setInputWidth() {  
+	 function setInputWidth() {  
 	    // 获取 input 的值的长度  
 	    var valueLength = titleInput.value.length;  
 
@@ -525,9 +514,8 @@
 	  // 监听 input 的 input 事件,实时更新宽度  
 	  titleInput.addEventListener('input', setInputWidth);  
 
-	  // 初次设置宽度  
-	  setInputWidth();  
-	
+	// 初次设置宽度  
+	setInputWidth();  	
 	
 	    //移动表格行排序
 	    moveTableTr("success_data_list_#(api.id??)");
@@ -566,7 +554,7 @@
 	        $("#body_type_#(api.id??)").val(value);
 	    });
 	    
-	init();
+		init();
 	        
 	function init(){
 	    var bodyType='#(api.request_body_type??)';
@@ -662,7 +650,7 @@
 		var interfaceStatus=$('#interfaceStatus_#(api.id??)').val();
 		var requestBodyType=$('#body_type_#(api.id??)').val();
 		var responseHeaders=$('#responseHeaders_#(api.id??)').val();
-		
+		var visible=$('input[name=visible#(api.id??)]:checked').val();
 	    var formData={};
 		formData['id']=id;
 		formData['action_key']=actionKey;
@@ -688,6 +676,7 @@
 		formData['interface_status']=interfaceStatus;
 		formData['request_body_type']=requestBodyType;
 		formData['response_headers']=responseHeaders;
+		formData['visible']=visible;
 		// 新曾
 		formData["isAdd"]=isAdd;
 		formData["type"]=type;
@@ -844,7 +833,8 @@
 		 	     }  
 		 	});
 	}
-	
+
+	// 保存为接口
 	function saveAsApi#(api.id??)(apiId){
 		layer.open({  
 		     btnAsync: true,  
@@ -906,6 +896,7 @@
 		 	});
 	}
 
+	// 收缩响应区域
     document.querySelectorAll('.resizable-row').forEach((row) => {  
     	  row.addEventListener('mousedown', (event) => {
     	    if (event.target.classList.contains('row-resize-handle')) {  
@@ -918,7 +909,7 @@
     	  });  
     	});
 
-	
+	// 监听请求body类型
 	$("#body_type_#(api.id??)").change(function(){
         var opt=$("#body_type_#(api.id??)").val();
         if(opt=='json'){
@@ -1034,23 +1025,23 @@
         
 	layui.util.on('lay-on', {
     	'save-api-#(api.id??)': function(){
-        	var content =`<a onclick="saveDemo#(api.id??)('#(api.id??)','#(api.title??)')">保存为用例</a>`;
+        	var content =`<a style="color:white;" onclick="saveDemo#(api.id??)('#(api.id??)','#(api.title??)')">保存为用例</a>`;
 		      layer.tips(content, this, {
-		        tips: 3,
+		        tips: [3,'#16baaa'],
 		        scrollbar:false
 		      });
     	},
     	'save-link-#(api.id??)': function(){
-        	var content =`<a onclick="saveAsApi#(api.id??)('#(api.id??)')">保存为接口</a>`;
+        	var content =`<a style="color:white;" onclick="saveAsApi#(api.id??)('#(api.id??)')">保存为接口</a>`;
 		      layer.tips(content, this, {
-		        tips: 3,
+		        tips: [3,'#16baaa'],
 		        scrollbar:false
 		      });
     	},
 	    'delete-#(api.id??)': function(){
-	    	var content =`<a onclick="del('#(api.id??)','#(api.treeType??)')">删除</a>`;
-		      layer.tips(content, this, {
-		        tips: 3,
+	    	var content =`<a style="color:white;" onclick="del('#(api.id??)','#(api.treeType??)')">删除</a>`;
+	    	layer.tips(content, this, {
+		        tips: [3,'#16baaa'],
 		        scrollbar:false
 		      });
 	    },

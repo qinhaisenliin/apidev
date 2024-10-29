@@ -136,5 +136,7 @@
    	.response-info #time,.response-info #size{
    		color:red;
    	}
-   	
+   	.param-header>.layui-tab-bar{
+		display:none!important;
+	} 
    	

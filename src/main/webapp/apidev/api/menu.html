@@ -2,15 +2,15 @@
 <div class="layui-tab ">  
     <ul class="layui-tab-title menu-tab">  
         <li>目录设置</li> 
-        <li class="layui-this">全部接口</li>  
-        <li>分享设置</li>
+        <li class="#(isEditShare=='0'?'layui-this':'')">全部接口</li>  
+        <li class="#(isEditShare=='1'?'layui-this':'')">分享设置</li>
     </ul>  
     
     <div class="layui-tab-content">  
          <div class="layui-tab-item menu-#(menu.id??)"> 
-	         <div style="position: absolute;right:20px;margin-top:-50px;">
+	        <!--  <div style="position: absolute;right:20px;margin-top:-50px;">
 		    	<button class="layui-btn layui-btn-radius" onclick="saveMenuData('#(menu.id??)')" style="font-size:16px;height:35px"> 保 存 </button>
-		     </div>
+		     </div> -->
          	<div class="layui-row">
 	        	<div class="layui-col-xs12 layui-col-md6"> 
 		        	 <div class="layui-form-item">
@@ -33,6 +33,17 @@
 				</div>
 			</div>
 			<div class="layui-row">
+	        	<div class="layui-col-xs12 layui-col-md6 layui-form"> 
+		        	 <div class="layui-form-item">
+						    <label class="layui-form-label">显示隐藏</label>
+						    <div class="layui-input-block">
+						     	  <input type="radio" name="visible#(menu.id??)" value="0" title="隐藏" #if(menu.visible==0) checked #end>
+  								  <input type="radio" name="visible#(menu.id??)" value="1" title="显示" #if(menu.visible==1) checked #end> 
+						    </div>
+					 </div>
+				</div>
+			</div>
+			<div class="layui-row">
 	        	<div class="layui-col-xs12 layui-col-md6"> 
 		        	 <div class="layui-form-item">
 						    <label class="layui-form-label">备注</label>
@@ -42,13 +53,21 @@
 					 </div>
 				</div>
 			</div>
-			
+			<div class="layui-row">
+				<div class="layui-col-xs12 layui-col-md6" > 
+					<div class="layui-form-item">
+						 <div class="layui-input-block layui-input-group">
+				    		<button class="layui-btn  layui-btn-fluid" onclick="saveMenuData('#(menu.id??)','#(treeType)')"> 保 存 </button>
+				    	</div>
+			    	</div>
+				</div>
+		  </div>
         </div>  
-        <div class="layui-tab-item  layui-show">  
+        <div class="layui-tab-item #(isEditShare=='0'?'layui-show':'')">  
         	 <script type="text/html" id="apiTable-#(menu.id??)-toolbar-setRowChecked">
                <div class="layui-btn-container-#(menu.id??)">
                     #(menu.title??menu.action_key??) （接口<span class="apiNum-#(menu.id??)" style="padding:5px;">1</span>个）
-					<div class="layui-form-item1" style="float: right;padding-right: 75px;">
+					<div class="layui-form-item1 layui-hide-xs" style="float: right;padding-right: 75px;">
    					 	<div class="layui-input-group">
        						<input type="search" name="#(menu.id??)" autocomplete="off" placeholder="输入关键词搜索" onblur="searchTableData()" onkeydown="checkEnter(event)"  class="layui-input" style="height:33px">
       						<div class="layui-input-split layui-input-suffix" style="cursor: pointer; height:30px" onclick="searchTableData()">
@@ -73,10 +92,10 @@
 	        </script>  
             <table class="layui-table layui-hide" id="apiTable-#(menu.id??)" lay-skin="line"></table>       
         </div>  
-        <div class="layui-tab-item menu-link-#(menu.id??)">  
-	        	<div style="position: absolute;right:20px;margin-top:-50px;">
+        <div class="layui-tab-item menu-link-#(menu.id??) #(isEditShare=='1'?'layui-show':'')">  
+	        	<!-- <div style="position: absolute;right:20px;margin-top:-50px;">
 			    	<button class="layui-btn layui-btn-radius" onclick="savePassword('#(menu.id??)')" style="font-size:16px;height:35px"> 保 存 </button>
-			    </div>
+			    </div> -->
 				<div style="padding-left:30px;">
 					<h4>#(menu.title??)&nbsp;分享设置</h4>
 				</div>
@@ -88,7 +107,7 @@
 							    <label class="layui-form-label">访问密码<i class="layui-icon layui-icon-question" title="留空表示公开访问"></i></label>
 							    <div class="layui-input-block layui-input-group" style="min-height:32px;">
 							     	 <input type="search"name="password" value="#(menu.password??)" lay-verify="" placeholder="" autocomplete="off" class="layui-input">
-							     	 <div class="layui-input-split layui-input-suffix" style="cursor: pointer;min-height:32px;" onclick="generateRandomPassword(8,'#(menu.id??)')">
+							     	 <div class="layui-input-split layui-input-suffix" style="cursor: pointer;min-height:32px;" onclick="generateRandomPassword(8,'#(menu.id??)','password')">
 								        <i class="layui-icon layui-icon-vercode"></i>&nbsp;随机生成
 								      </div>
 							    </div>
@@ -109,13 +128,29 @@
 					<div class="layui-col-xs12 layui-col-md6"> 
 			        	 <div class="layui-form-item">
 							<label class="layui-form-label">分享链接</label>
+							<div class="layui-input-block layui-input-group" style="min-height:32px;">
+							     	 <input type="search"name="shareId" value="#(menu.share_id??)" lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+							     	 <div class="layui-input-split layui-input-suffix" style="cursor: pointer;min-height:32px;" onclick="generateRandomPassword(32,'#(menu.id??)','shareId')">
+								        <i class="layui-icon layui-icon-vercode"></i>&nbsp;随机生成
+								      </div>
+							    </div>
 							<div class="layui-input-block" style="padding:6px 10px;">
-						       <a  href="javascript:copyLink('#(menu.id??)')" style="color:#1e9fff" title="本链接可以查看该目录下的接口"><i class="layui-icon layui-icon-link"></i>复制</a>
+						       <a  href="javascript:copyShareLink('#(menu.id??)')" style="color:#1e9fff" title="要先保存链接才生效"><i class="layui-icon layui-icon-link"></i>复制链接</a>
+						    	<span id="share_msg_#(menu.id??)" class="layui-hide" style="color:grey;font-size:12px;">(要先保存链接才生效)</span>
 						    </div>
 					    </div>
 				    </div>
+				    
 				</div>
-			
+				<div class="layui-row">
+					<div class="layui-col-xs12 layui-col-md3"> 
+						<div class="layui-form-item">
+						 <div class="layui-input-block layui-input-group">
+					    	<button class="layui-btn layui-btn-fluid" onclick="savePassword('#(menu.id??)')"> 保 存 </button>
+					    	</div>
+						</div>
+					</div>
+			  </div>
         </div>
     </div>  
 </div>
@@ -133,36 +168,7 @@
 
     layui.form.render();
 
-   
-    //保存
-    function saveMenuData(menuId){
-    	var menuDom=$('.menu-'+menuId);
-    	var title=menuDom.find('input[name=title]').val();
-    	var parentId=menuDom.find('input[name=parentId]').val();
-    	var remark=menuDom.find('textarea[name=remark]').val();
-    	updateMenu(menuId,title,parentId,remark,'#(treeType)');
-    }
-
-    // 保存访问设置
-    function savePassword(menuId){
-    	var menuDom=$('.menu-link-'+menuId);
-    	var password=menuDom.find('input[name=password]').val();
-    	var expiretTime=menuDom.find('input[name=expiretTime]').val();
-    	updatePassword(menuId,password,expiretTime);
-    }
-
-    function generateRandomPassword(length = 8,menuId) {  
-        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";  
-        let randomPassword = "";  
-
-        for (let i = 0; i < length; i++) {  
-            const randomIndex = Math.floor(Math.random() * charset.length);  
-            randomPassword += charset[randomIndex];  
-        }  
-        var menuDom=$('.menu-link-'+menuId);
-    	menuDom.find('input[name=password]').val(randomPassword);
-    }  
-    
+       
     loadTable#(menu.id??)(null);
     function loadTable#(menu.id??)(keyword) {
     	$.ajax({
@@ -537,7 +543,7 @@
 
    // 监听工具条的选中事件  
    layui.table.on('checkbox(apiTable-#(menu.id??))', function(obj){
-       var checkData = layui.table.checkStatus('apiTable-#(menu.id??)').data; //获取选中行状态\
+       var checkData = layui.table.checkStatus('apiTable-#(menu.id??)').data; //获取选中行状态
 
        if(checkData.length>0){
 			$('.layui-btn-container-#(menu.id??)').hide();

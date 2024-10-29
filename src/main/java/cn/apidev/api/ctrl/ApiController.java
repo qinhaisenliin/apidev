@@ -5,20 +5,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.Ret;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import cn.apidev.api.service.ApiService;
 import cn.apidev.base.ApidevBaseController;
+import cn.apidev.common.ShareInterceptor;
 
 /**
- * aipdev接口
- * @author apidev.cn
+ * Aipdev接口
+ * @author http://apidev.cn
  *
  */
 @Path("/apidev/api")
@@ -31,8 +35,20 @@ public class ApiController extends ApidevBaseController{
 	 * 主页
 	 */
 	public void index() {
+		String apiId=getPara(0);
+		if(StrKit.notBlank(apiId)) {
+			Record api=apiService.findById(apiId);
+			if(api!=null && api.get("type").equals("api")) {
+				set("api",api);
+				render("api.html");
+			}else {
+				redirect("/");
+			}
+			return;
+		}
 		render("index.html");
 	}
+	
 		
 	/**
 	 * 查询列表
@@ -51,7 +67,7 @@ public class ApiController extends ApidevBaseController{
 	public void getTreeList() {
 		String parentId = getPara("parentId","1");
 		String type = getPara("type");
-		List<Record> treeList=apiService.getTreeList(parentId,type);
+		List<Record> treeList=apiService.getTreeList(parentId,type,true);
 		List<Record> result=new ArrayList<>();
 		Record root=apiService.findById(parentId);
 		if(root==null) {
@@ -80,19 +96,13 @@ public class ApiController extends ApidevBaseController{
 	 */
 	public void menu() {
 		String id=getPara("id");
-		// -1和js方法名拼接有问题，因此此处转化一下根目录id
-//		if("1".equals(id)) {
-//			id="1";
-//		}
 		Record menu=apiService.findById(id);
 		if(menu!=null) {
 			Record parentMenu=apiService.findById(menu.getStr("parent_id"));
 			if(parentMenu!=null)
 				menu.set("parentName", parentMenu.getStr("title"));
 		}
-		// -1和js方法名拼接有问题，因此此处转化一下根目录id
-//		if(menu.get("id").equals("1"))
-//			menu.set("id", "1");
+		set("isEditShare",getPara("isEditShare","0"));
 		set("treeType",getPara("treeType","1"));
 		set("menu",menu);
 		render("menu.html");
@@ -181,28 +191,7 @@ public class ApiController extends ApidevBaseController{
 		set("api",api);
 		render("doc.html");
 	}
-	
-	/**
-	 * 运行接口
-	 */
-	public void run() {
-		
-	}
-	
-	/**
-	 * 接口信息
-	 */
-	public void getById() {
-		String id=getPara("id");
-		if(id==null) {
-			renderJson(fail("id is null"));
-			return;
-		}
-		Record api=apiService.findById(id);
-		renderJson(api !=null ? ok(api) : fail("没有找到数据"));
-	}
-	
-	
+
 	/**
 	 * 保存数据
 	 */
@@ -240,16 +229,25 @@ public class ApiController extends ApidevBaseController{
 		renderJson(ret);
 	}
 	
+	/**
+	 * 移动到
+	 */
 	public void moveTo() {
 		Ret ret=apiService.moveTo(getPara("id"),getPara("parentId"));
 		renderJson(ret);
 	}
 	
+	/**
+	 * 复制
+	 */
 	public void copy() {
 		Ret ret = apiService.copy(getPara("id"), null);
 		renderJson(ret);
 	}
 	
+	/**
+	 * 删除
+	 */
 	public void delete() {
 		String id=getPara("id");
 		Ret ret=fail();
@@ -262,16 +260,20 @@ public class ApiController extends ApidevBaseController{
 		renderJson(ret);
 	}
 	
+	/**
+	 * 分享页面
+	 */
+	@Before(ShareInterceptor.class)
 	public void share() {
-		String id = getPara(0);
-		List<Record> list = apiService.getExportApiList(id);
-		
-		set("apiList", list);
-
-		// 文档模板渲染
-		String wordString = renderToString("download.html", Kv.by("apiList", list));
-
-		writeToHtml("share.html", wordString);
+		String shareId = getPara(0);
+		Record api=apiService.findByShareId(shareId);
+		List<Record> treeList=apiService.getShareTreeList(api.get("id"), true);
+		api.set("isopen", true);
+		api.set("children", treeList);
+		List<Record> result=new ArrayList<>();
+		result.add(api);
+		set("api",api);
+		set("treeData",JsonKit.toJson(result));
 		render("share.html");
 	}
 
@@ -280,7 +282,7 @@ public class ApiController extends ApidevBaseController{
 	 */
 	public void download() {
 		String id = getPara("id");
-		String title = getPara("title");
+		String title = getPara("title","Apidev");
 		String ids = getPara("selectedIds");
 		List<Record> list;
 		if(ids!=null) {
@@ -297,7 +299,7 @@ public class ApiController extends ApidevBaseController{
 		// temp下载临时文件存放目录
 		String fileName = "temp/Apidev";
 		if (title != null)
-			fileName += "_" + title.replace("/", "_");
+			title += title.replace("/", "_");
 		File path=new File(PathKit.getWebRootPath() + getViewPath() + fileName);
 		if(!path.exists()){
 			path.mkdirs();
@@ -306,7 +308,35 @@ public class ApiController extends ApidevBaseController{
 		File file = new File(PathKit.getWebRootPath() + getViewPath() + fileName + ".html");
 		writeToFile(file, wordString);
 
-		renderFile(file);
+		renderFile(file,title+".html");
+	}
+	
+	/**
+	 * 下载分享接口
+	 */
+	public void downloadShareApi() {
+		String id = getPara("id");
+		String title = getPara("title","Apidev");
+
+		List<Record> list=apiService.getExportShareApiList(id);
+		set("apiList", list);
+
+		// 文档模板渲染
+		String wordString = renderToString("download.html", Kv.by("apiList", list));
+
+		// temp下载临时文件存放目录
+		String fileName = "temp/Apidev";
+		if (title != null)
+			title = title.replace("/", "_");
+		File path=new File(PathKit.getWebRootPath() + getViewPath() + fileName);
+		if(!path.exists()){
+			path.mkdirs();
+			fileName+="/Apidev";
+		}
+		File file = new File(PathKit.getWebRootPath() + getViewPath() + fileName + ".html");
+		writeToFile(file, wordString);
+
+		renderFile(file,title+".html");
 	}
 	
 	/**
@@ -318,13 +348,6 @@ public class ApiController extends ApidevBaseController{
 		render("project.html");
 	}
 	
-	/**
-	 * 项目统计数据
-	 */
-//	public void getProjectData(){
-//		Record record=apiService.getProjectData();
-//		renderJson(ok(record));
-//	}
 
 	/**
 	 * 回收站页面
@@ -385,5 +408,10 @@ public class ApiController extends ApidevBaseController{
 		Record api = apiService.findById(getPara("id"));
 		set("api",api);
 		render("debug.html");
+	}
+	
+	// 验证码
+	public void captcha() {
+		renderCaptcha();
 	}
 }

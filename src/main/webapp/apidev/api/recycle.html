@@ -187,7 +187,7 @@
    	        var content=`<span><i style="color: #f39b12;padding-right:10px;" class="layui-layer-face layui-icon layui-icon-tips"></i>确定恢复已选择的 ${selectedData.length} 个文件？</span>
    	            	<div style="padding-left:90px;"><button class="layui-btn layui-btn-xs layui-border-blue" 
    	                	onclick="layer.close(tipsIndex)"><font color="white">取消</font></button>
-   	            	<button class="layui-btn layui-btn-xs layui-btn-normal" onclick="recover('${selectedIdsString}','-2')">确定</button><div>`;
+   	            	<button class="layui-btn layui-btn-xs layui-btn-normal" onclick="recover('${selectedIdsString}','2')">确定</button><div>`;
    	         tipsIndex = layer.tips(content, this, {
    	   	    	tips: [4, '#16baaa'],
    	   	    	time:5000,
