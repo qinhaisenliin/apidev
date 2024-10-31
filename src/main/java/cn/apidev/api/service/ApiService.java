@@ -149,7 +149,7 @@ public class ApiService extends ApidevBaseService {
 					parent.set("title", controller);
 					parent.set("type", "menu");
 					parent.set("sort", 0);
-					api.set("visible", 0);//默认不显示到文档页
+					parent.set("visible", 0);//默认不显示到文档页
 					save(parent);
 					num=0;
 					api.set("sort", num++);
@@ -370,6 +370,7 @@ public class ApiService extends ApidevBaseService {
 		if(api.get("parent_id")==null)
 			api.set("parent_id", "1");
 		api.set("del", 0);
+		api.set("sort", 100);
 		boolean b = Db.save(tableName, api);
 		return b ? ok("保存成功") : fail("保存失败");
 	}
@@ -584,7 +585,7 @@ public class ApiService extends ApidevBaseService {
 		List<Record> childrenList = new ArrayList<>();
 		Record api = findById(id);
 		List<Record> childrenTreeList = getShareTreeList(id, true);
-		if (api.getInt("visible")==1 && "api".equals(api.getStr("type"))) {
+		if (api.getInt("visible")==1 && ("api".equals(api.getStr("type"))||"demo".equals(api.getStr("type")))) {
 			childrenList.add(api);
 		}
 		flattenTree(childrenTreeList, childrenList, true);
