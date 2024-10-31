@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import cn.apidev.base.ApidevBaseService;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Action;
 import com.jfinal.core.JFinal;
@@ -95,7 +96,6 @@ public class ApiService extends ApidevBaseService {
 			root.set("title", "根目录");
 			root.set("type", "menu");
 			root.set("parent_id", "root");
-			root.set("password", System.currentTimeMillis());
 			root.set("create_time", new Date());
 			root.set("update_time", new Date());
 			save(root);
@@ -106,13 +106,13 @@ public class ApiService extends ApidevBaseService {
 			root2.set("title", "快捷请求");
 			root2.set("type", "menu");
 			root2.set("parent_id", "root");
-			root.set("password", System.currentTimeMillis());
 			root2.set("create_time", new Date());
 			root2.set("update_time", new Date());
 			save(root2);
 		}
+		int num = 0;
 		for (String actionKey : allActionKeys) {
-
+			
 			String[] urlPara = new String[1];
 			Action action = JFinal.me().getAction(actionKey, urlPara);
 			if (action == null || actionKey.equals("")) {
@@ -137,18 +137,22 @@ public class ApiService extends ApidevBaseService {
 				api.set("interface_status", "开发中");
 				api.set("create_time", new Date());
 				api.set("update_time", new Date());
-				api.set("visible", 1);
+				api.set("visible", 0);//默认不显示到文档页
+				api.set("sort", num++);
 				// 根据controller分组
 				sql=getQueryFullSql("title","controller","type");
 				Record parent = Db.findFirst(sql, controller, controller,"menu");
 				if(parent==null) {
 					parent=new Record();
 					parent.set("id", UUID.randomUUID().toString().replace("-", ""));
-					//parent.set("action_key", controller);
 					parent.set("controller", controller);
 					parent.set("title", controller);
 					parent.set("type", "menu");
+					parent.set("sort", 0);
+					api.set("visible", 0);//默认不显示到文档页
 					save(parent);
+					num=0;
+					api.set("sort", num++);
 				}
 				api.set("parent_id", parent.getStr("id"));
 				saveList.add(api);
@@ -186,9 +190,9 @@ public class ApiService extends ApidevBaseService {
 		List<Record> list;
 		if (type != null) {
 			sql += " and type = ?";
-			list = Db.find(sql + " order by type desc,create_time asc", parentId, type);
+			list = Db.find(sql + " order by sort asc,type desc", parentId, type);
 		} else {
-			list = Db.find(sql + " order by type desc,create_time asc", parentId);
+			list = Db.find(sql + " order by sort asc,type desc", parentId);
 		}
 		
 		for (Record rd : list) {
@@ -239,7 +243,7 @@ public class ApiService extends ApidevBaseService {
 				+ " title,password,visible,share_id,create_time,update_time  "
 				+ " from "+ tableName 
 				+ " where del = 0 and parent_id=? and visible = 1";
-		List<Record> list = Db.find(sql + " order by type desc,create_time asc", parentId);
+		List<Record> list = Db.find(sql + " order by type desc,sort asc", parentId);
 		
 		for (Record rd : list) {
 			String id = rd.get("id");
@@ -279,13 +283,13 @@ public class ApiService extends ApidevBaseService {
 	public Page<Record> list(int pageNumber, int pageSize, Record record) {
 		Record params = new Record();
 		String parentId = record.getStr("parentId");
-		if (parentId != null && !"1".equals(parentId) && !"2".equals(parentId)) {
+//		if (parentId != null && !"1".equals(parentId) && !"2".equals(parentId)) {
 			params.set("parent_id=", parentId);
-		}
+//		}
 		params.set("type=", record.getStr("type"));
 		params.set("title like", record.getStr("keyword"));
 		params.set("del=", record.getStr("del"));
-		Page<Record> page = getPage(pageNumber, pageSize, params,"order by update_time desc");
+		Page<Record> page = getPage(pageNumber, pageSize, params,"order by sort asc");
 		page.getList().forEach(rd -> {
 			String pid = rd.getStr("parent_id");
 			rd.set("parentNames", getParantNames(pid));
@@ -849,6 +853,7 @@ public class ApiService extends ApidevBaseService {
     	boolean isAdd = api.getBoolean("isAdd");
     	api.remove("isAdd");
     	if(isAdd) {
+    		api.set("sort", 100);
     		return save(api);
     	}else {
     		Ret ret=update(api);
@@ -858,5 +863,103 @@ public class ApiService extends ApidevBaseService {
         	}
         	return ret;
     	}
+	}
+	
+	/**
+	 * 目录数据
+	 * @param param
+	 * @return
+	 */
+	public Record getMenuData(Record param) {
+		String id=param.get("id");
+		String keyword=param.get("keyword");
+		String treeType = param.get("treeType","1");
+		Record menuInfo=findById(id);
+		if(menuInfo!=null) {
+			Record parentMenu=findById(menuInfo.getStr("parent_id"));
+			if(parentMenu!=null)
+				menuInfo.set("parentName", parentMenu.getStr("title"));
+		}
+
+		List<Record> menuApiData=getMenuApiList(id,keyword,treeType);
+		Record menuData=new Record();
+		menuData.set("menuInfo", menuInfo);
+		menuData.set("menuApiData", menuApiData);
+		return menuData;
+	}
+	
+	/**
+	 * 获取接口详细信息
+	 * @param id
+	 * @param param
+	 * @return
+	 */
+	public Record getDetail(String id,Record param) {
+		Record api=findById(id);
+		if(api!=null) {
+			toApiJson(api);
+			Record parent=findById(api.get("parent_id"));
+			if(parent!=null) {
+				String parentName = parent.get("title")==null?parent.get("action_key") : parent.get("title");
+				api.set("parentName", parentName);
+			}
+			if(api.get("title")==null) {
+				api.set("title", api.get("action_key"));
+				api.set("request_url", api.get("action_key"));
+			}
+		}else {
+			api = new Record();
+			String title = param.get("title");
+			api.set("parent_id", param.get("parentId"));
+			api.set("id", param.get("id"));
+			api.set("type", param.get("type"));
+			api.set("title", title.substring(title.length()-4));
+			api.set("isAdd", true);
+			if(api.get("type").equals("demo")) {
+				Record parent=findById(api.get("parent_id"));
+				if(parent!=null) {
+					api.set("request_mode", parent.getStr("request_mode"));
+					String parentName = parent.get("title")==null?parent.get("action_key") : parent.get("title");
+					api.set("parentName", parentName);
+					api.set("action_key", parent.get("action_key"));
+					api.set("request_url", parent.get("request_url"));
+				}
+			}
+		}
+		String treeType=api.getStr("type").equals("link") ? "2" : "1";
+		api.set("treeType",treeType);
+		return api;
+	}
+	
+	/**
+	 * 文档预览
+	 * @param id
+	 * @return
+	 */
+	public Record getDoc(String id) {
+		Record api=findById(id);
+		if(api!=null) {
+			toApiJson(api);
+		}else {
+			api=new Record();
+			api.set("id", id);
+		}
+		return api;
+	}
+	
+	/**
+	 * 更新排序
+	 * @param ids
+	 */
+	public Ret updateSort(JSONArray ids) {
+		if(ids!=null) {
+			for(int i=0;i<ids.size();i++) {
+				Record api=new Record();
+				api.set("id", ids.get(i));
+				api.set("sort", i+1);
+				Db.update(tableName, api);
+			}
+		}
+		return ok("修改成功");
 	}
 }

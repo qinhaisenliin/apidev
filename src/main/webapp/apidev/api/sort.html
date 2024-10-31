@@ -1,53 +1,28 @@
-#@layout()
-#define css()
-<style type="text/css">
-	.run-api{
-		cursor:move;
-		padding-left: 10px;
-		border-bottom:1px solid #e4e7ed; 
-		background-color: rgb(255, 255, 255);
-	}
-</style>
-#end
-#define main()
 
-		<div class="layui-form layui-form-pane f-form " style="overflow: hidden;">
-			<div class="layui-row layui-col-space1 task-row" style="margin:10px;padding:5px;color:#ccc">
-				<label>选择特定的目录后，你可以对该目录下的页面进行拖动排序</label><br/><br/>
+	<div class="layui-form layui-form-pane f-form">
+			<div class="layui-row layui-col-space1 task-row" style="margin:10px;padding:5px;">
+				<label>选择特定的目录后，你可以对该目录下的接口进行拖动排序</label><br/><br/>
 				<div style="width:300px;float:left;margin-right:10px">
 					<select id="menuId" class="layui-select" name="menuId" lay-filter="menuId" >
-						<option value="0">0</option>
-						#for(data:menuList)
+						<option value="#(menu.id??)">#(menu.title??)</option>
+						#for(data:childrenMenuList)
 						<option value="#(data.id??)">#(data.title??)</option>
 						#end
 					</select>
 				</div>
-				<div><button id="addMenuBtn" class="layui-btn layui-btn-primary layui-hide" onclick="addMenuApi()">添加#(isTitleFilter?'文档':'接口')到此目录</button></div>
 			</div>
-			<div style="min-height:450px;margin:0 15px;">
-				<ul data-v-005611ed="" id="apiList" role="menubar" class="el-menu" style="background-color: rgb(255, 255, 255);">
+			<div style="margin:0 15px;overflow: auto;min-height:300px;max-height: 550px;">
+				<ul id="apiList">
 				</ul>
 			</div>
-			<div>
-		</div>
-		<div style="text-align: center;margin-top:20px;">
-			<button id='submitBtn' class='layui-btn  layui-btn-normal'  onclick="saveSort()">
-				<i class="layui-icon">&#xe605;</i>	保存
-			</button>
-		</div>
-#end
-
-#define js()
+	</div>
 <script type="text/javascript">
-var menuId=0;
-var menuTitle="";
-
-$(function(){
+	$(function(){
+		
+		getMenuApiList('#(menu.id??)');
 	
-	getMenuApiList(0);
-
-	moveTableTr('apiList','li');
-})
+		moveTableTr('apiList','li');
+	})
 
 	
 	//鼠标拖拉tr上下移动
@@ -67,93 +42,25 @@ $(function(){
         $("#"+docId).disableSelection();
     }
 
-	 // 拖拽排序
-    function saveSort(){
-        $('#submitBtn').attr("disabled",true)
-        var ids=[];
-		$('#apiList').find('li').each(function(){
-			var id=$(this).children().eq(1).attr("id");
-			if(id){
-				id=id.replace("left_page_","");
-				ids.push(id);
-			}
-		});
-		if(ids.length==0){
-			$('#submitBtn').attr("disabled",false)
-			layer.msg("无数据，无须保存")
-			return;
-		}
-		var body={
-			"ids":ids
-		};
-		$.ajax({
-			type: 'post',
-            url: '#(path)/runapi/saveSort',
-            data:JSON.stringify(body),
-            dataType:'json',
-            contentType:"application/json",
-            success:function(data){
-                layer.msg(data.msg);
-                $('#submitBtn').attr("disabled",false)
-				//parent.closeLayer();
-            }
-		});
-    }
-
-	 // 添加接口文档到目录
-    function addMenuApi(){
-    	var selectElement = document.getElementById("menuId");
-        menuTitle = selectElement.options[selectElement.selectedIndex].text;
-        var url="#(path)/menu/addApi?menuId="+menuId+"&projectId=#(projectId)&isTitleFilter=#(isTitleFilter)";
-        var title="#(isTitleFilter?'添加文档到目录':'添加接口到目录')-【"+menuTitle+"】";
-		parent.openDialog(title,url,false,null,null,{
-			end:function(){
-				getMenuApiList(menuId);
-			},
-			resize:false
-		},false);
-    }
-
-	 // 移除目录
-    function deleteMenuApi(menuId,apiId){
-        var body={"apiList":[{"value":apiId}],"menuId":menuId};
-		$.ajax({
-			type: 'post',
-            url: '#(path)/menu/deleteMenuApi',
-            data:JSON.stringify(body),
-            dataType:'json',
-            contentType:"application/json",
-            success:function(data){
-				getMenuApiList(menuId);
-            }
-		});
-    }
-
-
-    function moveToMenu(apiId){
-		
-    }
-
 	 // 查询目录接口
     function getMenuApiList(menuId){
-		var projectId='#(projectId)';
     	$.ajax({
             type: 'POST',
-            url: '#(path)/menu/getApiList',
-            data: {'menuId':menuId,'projectId':projectId,'isTitleFilter':#(isTitleFilter)},
+            url: '#(path)/apidev/api/list',
+            data: {'parentId':menuId,'del':0,'pageSize':5000},
             dataType: 'json',
-            success: function(data){
+            success: function(ret){
                 $("#apiList").html("");
                 var li='';
                 var n=1;
-                $.each(data, function(key, val) {
-                      li+=getLiHtml(menuId,val.id,val.title,val.actionKey,n);   
+                $.each(ret.data.list, function(key, val) {
+                      li+=getLiHtml(val.id,val.title,val.type,val.request_mode,n);   
                       n++;
                   }); 
                 if(li=='')
                     li='<li style="text-align: center;color:#ccc">该目录无数据</a></li>';
                 $("#apiList").html(li);
-               
+               	layui.form.render();
                $('.layui-icon-next').hover(function(){
 	           	    var index;
 	           	    var title="移动到顶层目录 0";
@@ -167,14 +74,22 @@ $(function(){
     	}); 
     }
 
-    function getLiHtml(menuId,apiId,title,actionKey,num){
-		var li='<li data-v-005611ed="" role="menuitem" title="'+actionKey+'" tabindex="'+apiId+'" class="el-menu-item run-api">'
-			+ num
-			+'<i data-v-005611ed="" class="el-icon-sort"></i>'
-			+'<a data-v-005611ed="" href="javascript:void(0)" style="cursor:move;" id="left_page_'+apiId+'">'+title+'</a>';
-			if(menuId>0)
-				li+='<i data-v-005611ed="" class="layui-icon layui-icon-next" style="float:right;cursor: pointer;" onclick="deleteMenuApi('+menuId+',\''+apiId+'\')"></i>';		
-			li+='</li>';
+    function getLiHtml(apiId,title,type,requestMode,num){
+		var li='<li style="padding:5px;border-bottom: 1px solid #cccc;cursor:move;">'
+		if(num<10)
+			li+='&nbsp;'+num+'&nbsp;';
+		else
+			li+=num;
+		if(type=='menu'){
+			li+='<i class="layui-icon layui-icon-export" style="padding:10px;"></i>'
+		}else{
+			if(requestMode==undefined)
+				requestMode = 'GET';
+			li+='<span class="'+requestMode+'" style="padding:10px;">'+requestMode+'</span>'
+		}
+					
+		li+='<span data-id="'+apiId+'">'+title+'</span>';
+		li+='</li>';
 		return li;
 	}
 
@@ -191,6 +106,37 @@ $(function(){
        		$("#addMenuBtn").addClass('layui-hide');
         }
    	})
+   	
+   	// 拖拽排序
+	function saveSort(){
+	    $('#submitBtn').attr("disabled",true)
+	    var ids=[];
+		$('#apiList').find('li').each(function(){
+			var id=$(this).children().eq(1).attr("data-id");
+			if(id){
+				ids.push(id);
+			}
+		});
+		if(ids.length==0){
+			$('#submitBtn').attr("disabled",false)
+			layer.msg("无数据，无须保存")
+			return;
+		}
+		var body={
+			"ids":ids
+		};
+		$.ajax({
+			type: 'post',
+	        url: '#(path)/apidev/api/updateSort',
+	        data:JSON.stringify(body),
+	        dataType:'json',
+	        contentType:"application/json",
+	        success:function(data){
+	        	var menuId = $('#menuId').val();
+	 	    	 getMenuApiList(menuId);
+	             showMsg(data.msg);
+	        }
+		});
+	}
 
 	</script>
-#end

@@ -1,6 +1,6 @@
 
 <div class="layui-form layui-row layui-col-space4 form-#(api.id??)">
-	<div class="layui-col-xs12 layui-col-sm2 layui-col-md1">
+	<div class="layui-col-xs12 layui-col-sm2 layui-col-md1 requestMode">
    		<select id="requestMode_#(api.id??)" name="requestMode" class=" status" #(api.type=='demo'?'disabled ':'') lay-filter="requestMode#(api.id??)" style="width:10%">
          <option value="GET" #if(api.request_mode??=='GET') selected="selected" #end>GET</option>
          <option value="POST" #if(api.request_mode??=='POST') selected="selected" #end>POST</option>
@@ -37,13 +37,13 @@
 </div>
 
 <!-- 任意自定义的 tab 元素 -->
-<div class="api-tab-header layui-btn-xs layui-btn-container" id="apiTabHeader#(api.id??)" style="#(api.type=='demo'? 'width:120px;background-color:transparent' : '')">
+<div class="api-tab-header layui-btn-xs layui-btn-container" id="apiTabHeader#(api.id??)" style="#(api.type=='demo'||api.type=='link'? 'width:120px;background-color:transparent' : '')">
   <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius layui-this">请求</button>
   <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius">响应示例</button>
-  <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius #(api.type=='demo'?'layui-hide':'')">接口说明</button>
-  <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius #(api.type=='demo'?'layui-hide':'')">文档预览</button>
+  <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius #(api.type=='demo'||api.type=='link'?'layui-hide':'')">接口说明</button>
+  <button class="layui-btn layui-btn-xs layui-btn-primary  layui-btn-radius #(api.type=='demo'||api.type=='link'?'layui-hide':'')">文档预览</button>
 </div>
-<div style="position: absolute;margin-left: #(api.type=='demo'?'140px':'280px');margin-top:-23px;">
+<div style="position: absolute;margin-left: #(api.type=='demo'||api.type=='link'?'140px':'280px');margin-top:-23px;">
 	<a onclick="apiDetail('#(api.parent_id??)','<span class=&quot;#(api.request_mode??)&quot;>#(api.request_mode??)</span>#(api.parentName??)')" style="color:#8276c9">#(api.type=='demo'?api.parentName+' # ':'')</a>
 	<input id="title_input_#(api.id??)" oninput="titleInputHeader(this,'#(api.id??)')" title="#(api.type=='demo'?'用例':'接口')名称" placeholder="#(api.type=='demo'?'用例':'接口')名称" name="title" class="title-input" autocomplete="off" value="#(api.title??api.action_key)"/>
 	<span  id="title_input_tips_#(api.id??)" style="color:red;display:none">请输入#(api.type=='demo'?'用例':'接口')名称</span>
@@ -852,8 +852,8 @@
 				         <div class="layui-form-item layui-form-text">  
 			                 <label class="layui-form-label">接口目录<font color="red">*</font></label>  
 			                 <div class="layui-input-block">  
-			                  	<input type="hidden" id="treeSelectId" name="parentId" value="1"/>
-			                  	<input type="text" id="treeSelect" name="parentName" value="根目录"  class="layui-input" autocomplete="off" placeholder="根目录" onblur="searchMenuBlur(this,1)" oninput="searchMenu(this,1)"/> 
+			                  	<input type="hidden" id="treeSelect2Id" name="parentId" value="1"/>
+			                  	<input type="text" id="treeSelect2" name="parentName" value="根目录"  class="layui-input" autocomplete="off" placeholder="根目录" onblur="searchMenuBlur(this,1)" oninput="searchMenu(this,1)"/> 
 			                    <div id="parentIdTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">请选择目录</div>
 			   	             </div>  
 			             </div>    
@@ -894,6 +894,8 @@
 		 	         layer.close(index); // 关闭弹出层  
 		 	     }  
 		 	});
+		//初始化接口目录
+		getMenuTree('#treeSelect2', '1');
 	}
 
 	// 收缩响应区域
@@ -1037,6 +1039,7 @@
 		        tips: [3,'#16baaa'],
 		        scrollbar:false
 		      });
+		      
     	},
 	    'delete-#(api.id??)': function(){
 	    	var content =`<a style="color:white;" onclick="del('#(api.id??)','#(api.treeType??)')">删除</a>`;

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -42,7 +43,7 @@ public class ApiController extends ApidevBaseController{
 				set("api",api);
 				render("api.html");
 			}else {
-				redirect("/");
+				renderError(404);
 			}
 			return;
 		}
@@ -112,20 +113,8 @@ public class ApiController extends ApidevBaseController{
 	 * 目录接口数据
 	 */
 	public void getMenuData() {
-		String id=getPara("id");
-		String keyword=getPara("keyword");
-		String treeType = getPara("treeType","1");
-		Record menuInfo=apiService.findById(id);
-		if(menuInfo!=null) {
-			Record parentMenu=apiService.findById(menuInfo.getStr("parent_id"));
-			if(parentMenu!=null)
-				menuInfo.set("parentName", parentMenu.getStr("title"));
-		}
-
-		List<Record> menuApiData=apiService.getMenuApiList(id,keyword,treeType);
-		Record menuData=new Record();
-		menuData.set("menuInfo", menuInfo);
-		menuData.set("menuApiData", menuApiData);
+		Record param=getAllParamsToRecord();
+		Record menuData = apiService.getMenuData(param);
 		renderJson(ok(menuData));
 	}
 	
@@ -140,39 +129,8 @@ public class ApiController extends ApidevBaseController{
 	 * 接口详情
 	 */
 	public void detail() {
-		Record api=apiService.findById(getPara("id"));
-		if(api!=null) {
-			apiService.toApiJson(api);
-			Record parent=apiService.findById(api.get("parent_id"));
-			if(parent!=null) {
-				String parentName = parent.get("title")==null?parent.get("action_key") : parent.get("title");
-				api.set("parentName", parentName);
-			}
-			if(api.get("title")==null) {
-				api.set("title", api.get("action_key"));
-				api.set("request_url", api.get("action_key"));
-			}
-		}else {
-			api = new Record();
-			String title = getPara("title");
-			api.set("parent_id", getPara("parentId"));
-			api.set("id", getPara("id"));
-			api.set("type", getPara("type"));
-			api.set("title", title.substring(title.length()-4));
-			api.set("isAdd", true);
-			if(api.get("type").equals("demo")) {
-				Record parent=apiService.findById(api.get("parent_id"));
-				if(parent!=null) {
-					api.set("request_mode", parent.getStr("request_mode"));
-					String parentName = parent.get("title")==null?parent.get("action_key") : parent.get("title");
-					api.set("parentName", parentName);
-					api.set("action_key", parent.get("action_key"));
-				}
-			}
-		}
-		String treeType=api.getStr("type").equals("link") ? "2" : "1";
-		api.set("treeType",treeType);
-		
+		Record param = getAllParamsToRecord();
+		Record api = apiService.getDetail(getPara("id"), param);		
 		set("api",api);
 		render("detail.html");
 	}
@@ -181,13 +139,7 @@ public class ApiController extends ApidevBaseController{
 	 * 接口文档
 	 */
 	public void doc() {
-		Record api=apiService.findById(getPara("id"));
-		if(api!=null) {
-			apiService.toApiJson(api);
-		}else {
-			api=new Record();
-			api.set("id", getPara("id"));
-		}
+		Record api=apiService.getDoc(getPara("id"));
 		set("api",api);
 		render("doc.html");
 	}
@@ -234,6 +186,26 @@ public class ApiController extends ApidevBaseController{
 	 */
 	public void moveTo() {
 		Ret ret=apiService.moveTo(getPara("id"),getPara("parentId"));
+		renderJson(ret);
+	}
+	
+	/**
+	 * 排序
+	 */
+	public void sort() {
+		Record param = getAllParamsToRecord();
+		Record menuData=apiService.getMenuData(param);
+		List<Record> childrenMenuList=apiService.getTreeList(param.get("id"), "menu", true);
+		set("menu",menuData.get("menuInfo"));
+		set("menuData",menuData.get("menuApiData"));
+		set("childrenMenuList",childrenMenuList);
+		render("sort.html");
+	}
+	
+	public void updateSort() {
+		JSONObject body=getBodyJson();
+		JSONArray ids = body.getJSONArray("ids");
+		Ret ret=apiService.updateSort(ids);
 		renderJson(ret);
 	}
 	

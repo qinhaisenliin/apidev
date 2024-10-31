@@ -55,7 +55,7 @@
     padding-left:12px;
     border-color:#ececee;
  }
- .layui-anim dd{  
+.layui-anim dd{  
   color:#11ab11;
 }
 
@@ -172,7 +172,7 @@ input[value="OPTIONS"] {
 								</div>
 							</blockquote>
 							<!-- 折叠面板 start-->
-							<div class="layui-collapse">
+							<div class="layui-collapse" id="left_collapse" >
 
 								<div class="layui-colla-item1 project">
 									<div class="layui-colla-title active" data-id="project">
@@ -286,7 +286,7 @@ input[value="OPTIONS"] {
   var menuTreeSelectId='';
 
   // 右键菜单组件
-  layui.config({base: '#(path)/assets/lib/layui_exts/mouseRightMenu/'});
+  layui.config({base: '#(path)/assets/apidev/lib/layui_exts/mouseRightMenu/'});
   layui.use(['mouseRightMenu'], function(){
   	mouseRightMenu = layui.mouseRightMenu;
 	 // 接口树
@@ -630,7 +630,13 @@ input[value="OPTIONS"] {
 			}
 		});
     }
-
+	//右键目录菜单
+	window.onload = function() {  
+		 var treeContainer = document.getElementById('left_collapse');  
+	     treeContainer.addEventListener('contextmenu', function(e) {  
+	 		e.preventDefault();  
+	 	}); 
+	 };  
   	// tab导航右键菜单
 	function bindTabRightMenu(){
 		$('.tab-handle li').off("contextmenu");
@@ -663,7 +669,6 @@ input[value="OPTIONS"] {
 			})
 			return false;
 		});
-		
 	}
 
   	// 关闭tab
@@ -671,15 +676,122 @@ input[value="OPTIONS"] {
 		element.tabDelete('tab-handle', tabId); 
 	}
 
+  	// 树右键菜单
+	function treeRightMenu(){
+		$('li .tree-node-title').off("contextmenu");
+		$('li .tree-node-title').bind("contextmenu",function(e){
+			var dataId=$(this).attr('data-id');
+			var data = {dataId:dataId}
+			var nodeData=findNodeById(treeData[0],dataId);
+			var menu_data=[];
+			var treeType = '1';
+			if(!nodeData){
+				nodeData=findNodeById(linkData[0],dataId);
+				treeType = '2';
+			}
+			if(nodeData){
+				if(nodeData.type=='menu'){
+					menu_data=[
+						{'data':data,'type':'addApi','title':'添加接口','icon':'layui-icon-component'},
+						{'data':data,'type':'addSubMenu','title':'添加子目录','icon':'layui-icon-export'},
+						{'data':data,'type':'rename','title':'重命名','icon':'layui-icon-edit'},
+						{'data':data,'type':'copy','title':'复制','icon':'layui-icon-templeate-1'},
+						{'data':data,'type':'moveTo','title':'移动到','icon':'layui-icon-next'},
+						{'data':data,'type':'sort','title':'排序','icon':'layui-icon-template-1'},
+						{'data':data,'type':'copyLink','title':'复制链接','icon':'layui-icon-link'},
+						{'data':data,'type':'export','title':'导出','icon':'layui-icon-download-circle'},
+						{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'},
+					];
+					if(dataId=='1'){
+						menu_data=[
+							{'data':data,'type':'addApiSubMenu','title':'添加子目录','icon':'layui-icon-export'},
+							{'data':data,'type':'addApi','title':'添加接口','icon':'layui-icon-component'},
+							{'data':data,'type':'copyLink','title':'复制链接','icon':'layui-icon-link'},
+							{'data':data,'type':'sort','title':'排序','icon':'layui-icon-template-1'},
+							{'data':data,'type':'export','title':'导出','icon':'layui-icon-download-circle'}
+						];
+					}else if(treeType=='2'){
+						menu_data=[
+							{'data':data,'type':'addLink','title':'新建快捷请求','icon':'layui-icon-senior'},
+							{'data':data,'type':'editMenu','title':'编辑','icon':'layui-icon-edit'},
+							{'data':data,'type':'copy','title':'复制','icon':'layui-icon-templeate-1'},
+							{'data':data,'type':'addSubMenu','title':'添加子目录','icon':'layui-icon-export'},
+							{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'},
+						];
+					}
+				} else if(nodeData.type=='api'){
+					menu_data=[
+						{'data':data,'type':'addDemo','title':'添加用例','icon':'layui-icon-log'},
+						{'data':data,'type':'rename','title':'重命名','icon':'layui-icon-edit'},
+						{'data':data,'type':'copy','title':'复制','icon':'layui-icon-templeate-1'},
+						{'data':data,'type':'moveTo','title':'移动到','icon':'layui-icon-next'},
+						{'data':data,'type':'copyLink','title':'复制链接','icon':'layui-icon-link'},
+						{'data':data,'type':'export','title':'导出','icon':'layui-icon-download-circle'},
+						{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'},
+					];
+					
+				} else if(nodeData.type=='demo') {
+					menu_data=[
+						{'data':data,'type':'rename','title':'重命名','icon':'layui-icon-edit'},
+						{'data':data,'type':'copy','title':'复制','icon':'layui-icon-templeate-1'},
+						{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'},
+					];
+				} else if(nodeData.type=='link'){
+					menu_data=[
+						{'data':data,'type':'copy','title':'复制','icon':'layui-icon-templeate-1'},
+						{'data':data,'type':'rename','title':'重命名','icon':'layui-icon-edit'},
+						{'data':data,'type':'moveTo','title':'移动到','icon':'layui-icon-next'},
+						{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'},
+					];
+				}
+
+				
+				mouseRightMenu.open(menu_data,false,function(d){
+					var dataId=d.data.dataId;
+					var id=new Date().getTime();
+					var type = d.type;
+					// 添加接口
+					if(type=='addApi'){
+	 	 	 	 		addApi(id,'<span class="GET">GET</span>新建接口',dataId,'api');
+		 	 	 	} else if(type=='addDemo'){
+		 	 	 		addApi(id,'<i class="layui-icon layui-icon-log"></i>添加用例',dataId,'demo');
+		 	 	 	} else if(type=='addLink'){
+		 	 	 		addApi(id,'<i class="layui-icon layui-icon-senior" style="color:#409EFF"></i>快捷请求',dataId,'link');
+		 	 	 	} else if(type=='rename'){
+		 	 	 		rename(dataId,treeType);
+		 	 	 	} else if(type=='copy'){
+	 	 	 	 		copy(dataId,treeType);
+		 	 	 	} else if(type=='moveTo'){
+	 	 	 	 		moveTo(dataId,treeType);
+		 	 	 	} else if(type=='sort'){
+		 	 	 		sort(dataId,treeType);
+					}else if(type=='addSubMenu'){
+	 	 				addMenu(dataId,treeType);	
+					}else if(type=='editMenu'){
+						editMenu(dataId,treeType);	
+		 	 		}else if(type=='copyLink'){
+						copyLink(dataId);
+	 	 	 	 	} else if(type=='export'){
+	 	 	 	 		download(dataId)
+		 	 	 	} else if(type=='del'){
+		 	 	 		del(dataId,treeType);
+	 	 	 	 	} 
+				});
+			}
+		});
+	}
+
   	// 选项卡右键菜单
 	function bindRightMenu(){
-		bindTabRightMenu();			
+		 treeRightMenu();
+		 bindTabRightMenu();			
 		 $('.tree-node i.tree-menu-more').off("click").on("click", function(e) {  
 			  event.stopPropagation(); 
 			  var dataId=$(this).attr("data-id");
 			  var nodeData=findNodeById(treeData[0],dataId);
 			  
 		 }); 
+		
 	}
 
 	// 树更多操作菜单
@@ -708,6 +820,12 @@ input[value="OPTIONS"] {
 		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
 		      }
 		    },{
+			      title: '排序',
+			      id: 'sort',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-template-1"></i> ' + d.title;
+			      }
+		    },{
 		      title: '导出',
 		      id: 'export',
 		      templet: function(d){
@@ -725,6 +843,8 @@ input[value="OPTIONS"] {
  	 				addApi(id,'<span class="GET">GET</span>新建接口',parentId,'api');
  	 	 	 	}else if(type=='copyLink'){
 					copyLink('1');
+ 	 	 	    } else if(type=='sort'){
+	 	 	 		sort('1','1');
  	 	 		} else if(type=='export'){
  	 	 			download(parentId)
  	 	 	 	}
@@ -744,6 +864,12 @@ input[value="OPTIONS"] {
 		    	  return '<i class="layui-icon layui-icon-component"></i> ' + d.title;
 		      }
 		    },{
+			      title: '添加子目录',
+			      id: 'addApiSubMenu',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-export" style="margin-left:-15px"></i> ' + d.title;
+			      }
+		    },{
 			      title: '重命名',
 			      id: 'rename',
 			      templet: function(d){
@@ -762,11 +888,12 @@ input[value="OPTIONS"] {
 			    	  return '<i class="layui-icon layui-icon-next"></i> ' + d.title;
 			      }
 		    },{
-		      title: '添加子目录',
-		      id: 'addApiSubMenu',
-		      templet: function(d){
-		    	  return '<i class="layui-icon layui-icon-export" style="margin-left:-15px"></i> ' + d.title;
-		      }
+			      title: '排序',
+			      id: 'sort',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-template-1"></i> ' + d.title;
+			      }
+		    
 		    },{
 		      title: '复制链接',
 		      id: 'copyLink',
@@ -800,6 +927,8 @@ input[value="OPTIONS"] {
  	 	 	 		copy(dataId,'1');
 	 	 	 	} else if(type=='moveTo'){
  	 	 	 		moveTo(dataId,'1');
+	 	 	 	} else if(type=='sort'){
+	 	 	 		sort(dataId,'1');
 				}else if(type=='addApiSubMenu'){
  	 				addMenu(dataId,'1');
 				}else if(type=='copyLink'){
@@ -1311,7 +1440,7 @@ function search(){
 function tabTheme(checked){
 	if(checked==true||checked=='true'){
 		  // 设置为深色主题
-		  document.getElementById('layui_theme_css').setAttribute('href','#(path)/assets/lib/layui-theme-dark/layui-theme-dark.css');
+		  document.getElementById('layui_theme_css').setAttribute('href','#(path)/assets/apidev/lib/layui-theme-dark/layui-theme-dark.css');
 		  document.getElementById("switchTheme").checked = true; 
 		  document.getElementById("themeIcon").classList.remove('layui-icon-light');
 		  document.getElementById("themeIcon").classList.add('layui-icon-moon');
@@ -1422,6 +1551,41 @@ function editMenu(id,treeType){
 //移动到
 function moveTo(id,treeType){
 	openMenuTree(id,'移动到...',treeType);
+}
+
+// 排序
+function sort(id,treeType){
+	if(id){ 
+		 $.ajax({
+			 url:'#(path)/apidev/api/sort',
+	 	 	 	type:"POST",
+	 	 	 	data:{'id':id},
+	 	 	 	success:function(html){
+		 	 	 	layer.open({  
+	        		     btnAsync: true,  
+	        		     title: '排序',  
+	        		     type: 1,  
+	        		     shadeClose: false,
+	        		     content: html,  
+	        		 	     area: '588px', 
+	        		 	     offset:'100px',
+	        		 	     resize:true,
+	        		 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
+	        		 	     btn: ['确定','取消'],  
+	        		 	     btn1: function (index, layero) {
+	        		 	    	 saveSort();
+	        		 	    	 return false;
+	        		 	     },
+		        		     btn2: function (index, layero) {
+	        		 	    	 getApiTreeList(treeType);
+	        		 	     }
+	        		 	});
+		 	 	 	 
+	 	 	 	}
+		 });
+	} else {
+		showMsg("id is null");
+	}
 }
 
 // 复制
@@ -1596,7 +1760,7 @@ function openMenu(treeNode,title,treeType){
 	                 <label class="layui-form-label">${showType=='parentId'?'目标':'父级'}目录<font color="red">*</font></label>  
 	                 <div class="layui-input-block">  
 	                  	<input type="hidden" id="${showType=='parentId'?'treeSelect2Id':'treeSelectId'}" name="parentId" value="${showType == 'updateData' ? parentNode.id:value}"/>
-	                  	<input type="text" id="${showType=='parentId'?'treeSelect2':'treeSelect'}" name="parentName" value="${showType == 'updateData' ? parentNode.title : placeholder}"  class="layui-input" autocomplete="off" onblur="searchMenuBlur(this,${treeType})" oninput="searchMenu(this,${treeType})"/> 
+	                  	<input type="text" id="${showType=='parentId'?'treeSelect2':'treeSelect'}" name="parentName" value="${showType == 'updateData' ? parentNode.title : placeholder}" placeholder="${placeholder}"  class="layui-input" autocomplete="off" onblur="searchMenuBlur(this,${treeType})" oninput="searchMenu(this,${treeType})"/> 
 	                    <div id="parentIdTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">请选择目录</div>
 	   	             </div>  
 	             </div>  

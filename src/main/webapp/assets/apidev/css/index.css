@@ -68,7 +68,6 @@ iframe {
 	border-right: 1px solid #ccc;
 	height: calc(100vh - 5px);
 	overflow-y: auto;
-	overflow-x: none;
 }
 
 .body-right {
@@ -123,12 +122,12 @@ iframe {
 	padding: 0px 12px 0px 0px;
 }
 
-.GET {
+.GET,.PATCH,.TRACE {
 	color: #11ab11;
 	padding: 0px 11px 0px 0px;
 }
 
-.PUT, .OPT {
+.PUT, .OPT,.HEAD,.CONNECT {
 	color: #0f85df;
 	padding: 0px 11px 0px 0px;
 }
@@ -172,6 +171,8 @@ ul {
 
 .tree-node li {
 	padding: 0px 0px 0px 5px;
+	border-left: 1px dashed #98a9af6e;
+    margin-left: -3px;
 }
 
 .tree-node-title {
