@@ -732,12 +732,18 @@ public class ApiService extends ApidevBaseService {
 		String sql="select count(id) count,type from "+tableName+" where del=0 group by type";
 		List<Record> list=Db.find(sql);
 		list.forEach(record -> {
-			result.set(record.get("type"), record.get("count"));
+			if(record.get("type").equals("menu")) {
+				int menuCount=record.getInt("count")-1;
+				result.set("menu", menuCount);
+			}else {
+				result.set(record.get("type"), record.get("count"));
+			}
 		});
 		String sql2="select id,title,password,expiret_time,share_id from "+tableName+" where del=0 and share_id is not null";
 		List<Record> shareList = Db.find(sql2);
 		shareList.forEach(rd->{
 			rd.set("parentNames", getParantNames(rd.get("id")));
+			
 		});
 
 		result.set("shareList",shareList);

@@ -500,7 +500,9 @@ function loadTree(data,isFirst,divId){
 				 var title=`确定导出【${node.title}】目录下的所有接口？`;
 				 if(node.type=='api'){
 					 title=`确定导出【${node.title}】接口？`;
-				 }
+				 } else if(node.type=='demo'){
+					title=`确定导出【${node.title}】用例？`;
+				}
 				 var index=layer.confirm(title, {icon: 3,title:'导出',offset:'100px'}, function(){
 					 var url='#(path)/apidev/api/downloadShareApi?id='+id+'&title='+node.title;
 					 window.open(url);
