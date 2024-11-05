@@ -1308,7 +1308,7 @@ input[value="OPTIONS"] {
 			return;
 		 }
 		     
-		var title = '分享目录：'+node.title;
+		var title = '分享对象：'+node.title;
 		var url=location+"/apidev/api/share/"+shareId;
 		if(node.password){
 			var password='访问密码：'+node.password;
@@ -1358,7 +1358,7 @@ input[value="OPTIONS"] {
 		if(!node){
 			node=findNodeById(linkData[0],id);
 		}
-		var title = '分享目录：'+node.title;
+		var title = '分享对象：'+node.title;
 		var url=location+"/apidev/api/"+id;
 		if(node.type=='menu'){
 			if(node.share_id){
