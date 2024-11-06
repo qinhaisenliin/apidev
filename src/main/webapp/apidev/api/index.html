@@ -253,7 +253,7 @@ input[value="OPTIONS"] {
 
 	<script>
 
-//JS 
+  //JS 
   // 缓存接口数据，用于查询
   // 接口树数据
   var treeData = [];
@@ -277,7 +277,7 @@ input[value="OPTIONS"] {
   var openAllLink = false;
   var   _path = "#(path)";
   var titleKeyword = '';
-  // 记录apiId是否促发发送按钮
+  // 记录apiId是否触发发送按钮
   var apiIdSendReq={};
   var apiClick = {};
   // 记录当前树节点
@@ -600,6 +600,7 @@ input[value="OPTIONS"] {
 	  
  }
 
+
   // 接口菜单点击事件
   function clickMenu(id,title,content){
 	  if(!content)
@@ -609,6 +610,10 @@ input[value="OPTIONS"] {
 		if(li.length>0){
 			element.tabChange('tab-handle', id); // 切换到标签
 		}else{
+			if($('.tab-handle li').length>=4){
+		 		var tabId=$('.tab-handle li').eq(0).attr('lay-id');
+		        tabClose(tabId);
+			}
 			element.tabAdd('tab-handle', {
 		        title: title,
 		        content: content,

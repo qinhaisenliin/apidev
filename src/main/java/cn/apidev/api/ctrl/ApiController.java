@@ -372,16 +372,7 @@ public class ApiController extends ApidevBaseController{
 		Ret ret = apiService.saveApi(body);
 		renderJson(ret);
 	}
-		
-	/**
-	 * 调试页面
-	 */
-	public void debug() {
-		Record api = apiService.findById(getPara("id"));
-		set("api",api);
-		render("debug.html");
-	}
-	
+			
 	// 验证码
 	public void captcha() {
 		renderCaptcha();
