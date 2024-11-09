@@ -410,6 +410,10 @@ function loadTree(data,isFirst,divId){
 			if(li.length>0){
 				element.tabChange('tab-handle', id); // 切换到标签
 			}else{
+				if($('.tab-handle li').length>=4){
+			 		var tabId=$('.tab-handle li').eq(0).attr('lay-id');
+			        tabClose(tabId);
+				}
 				element.tabAdd('tab-handle', {
 			        title: title,
 			        content: content,
@@ -464,7 +468,10 @@ function loadTree(data,isFirst,divId){
 			});
 			
 		}
-			
+		// 关闭tab
+		function tabClose(tabId){
+			element.tabDelete('tab-handle', tabId); 
+		}
 </script>  
 
 </body>  

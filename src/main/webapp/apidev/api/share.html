@@ -384,6 +384,10 @@ function loadTree(data,isFirst,divId){
 			if(li.length>0){
 				element.tabChange('tab-handle', id); // 切换到标签
 			}else{
+				if($('.tab-handle li').length>=4){
+			 		var tabId=$('.tab-handle li').eq(0).attr('lay-id');
+			        tabClose(tabId);
+				}
 				$.ajax({
 					url:'#(path)/apidev/api/doc',
 					type:'POST',
@@ -431,22 +435,29 @@ function loadTree(data,isFirst,divId){
 				mouseRightMenu.open(menu_data,false,function(d){
 					var menuId=d.data.menuId;
 					if(d.type=='closeTab'){
-						element.tabDelete('tab-handle', menuId); 
+		 	 			tabClose(menuId);
 			 		} else if(d.type=='closeOtherTabs'){
 			 			$('.layui-tab-title li').each(function() {  
 				 			if($(this).attr('lay-id')!=menuId){
-				        	  	element.tabDelete('tab-handle', $(this).attr('lay-id'));  
+				 				var id=$(this).attr('lay-id');
+				 	 			tabClose(id); 
 				 			}
 				        }); 
 			 	 	} else if(d.type=='closeAllTabs'){
 			 	 		$('.layui-tab-title li').each(function() {  
-				        	  element.tabDelete('tab-handle', $(this).attr('lay-id')); 
+				 	 		var id=$(this).attr('lay-id');
+			 	 			tabClose(id);
 				         }); 
 			 	 	}
 				})
 				return false;
 			});
 			
+		}
+
+		// 关闭tab
+		function tabClose(tabId){
+			element.tabDelete('tab-handle', tabId); 
 		}
 
 		// 接口根目录更多操作

@@ -96,6 +96,7 @@ public class ApiService extends ApidevBaseService {
 			root.set("title", "根目录");
 			root.set("type", "menu");
 			root.set("parent_id", "root");
+			root.set("share_id", System.currentTimeMillis());
 			root.set("create_time", new Date());
 			root.set("update_time", new Date());
 			save(root);
