@@ -9,6 +9,11 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+/**
+ * Apidev基础服务类
+ * @author apidev.cn
+ *
+ */
 public abstract class ApidevBaseService {
 	
 	/**
@@ -45,6 +50,7 @@ public abstract class ApidevBaseService {
 	 * @return
 	 */
 	protected abstract String getTableName();
+	
 	
 	/**
 	 * select * from getTable()

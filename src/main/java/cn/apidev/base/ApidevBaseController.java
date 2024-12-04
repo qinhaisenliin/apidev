@@ -15,6 +15,11 @@ import com.jfinal.kit.PathKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 
+/**
+ * Apidev 基础类
+ * @author apidev.cn
+ *
+ */
 public class ApidevBaseController extends Controller{
 	/**
 	 * 返回接口成功数据

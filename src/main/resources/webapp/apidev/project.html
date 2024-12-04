@@ -1,0 +1,92 @@
+<style>
+.project-row{
+	border: 1px solid #ccc;
+    padding: 10px 15px;
+    margin: 5px 5px 15px 5px;
+    border-radius: 10px;
+}
+.grid-project-data {
+	padding-top:20px;
+	font-size:12px;
+}
+.project-count{
+	font-size:22px;
+}
+</style>
+<div class="layui-row project-row">
+  <div>项目统计</div>
+  <div class="layui-col-md3">
+    <div class="grid-project-data"><span class="project-count">#(project_data.menu??0)</span><br/>目录数</div>
+  </div>
+  <div class="layui-col-md3">
+    <div class="grid-project-data"><span class="project-count">#(project_data.api??0)</span><br/>接口数</div>
+  </div>
+  <div class="layui-col-md3">
+    <div class="grid-project-data"><span class="project-count">#(project_data.demo??0)</span><br/>接口用例数</div>
+  </div>
+  <div class="layui-col-md3">
+    <div class="grid-project-data"><span class="project-count">#(project_data.link??0)</span><br/>快捷请求数</div>
+  </div>
+</div>
+   
+<div class="layui-row project-row">
+	<div>分享列表<br/>
+		<i class="layui-icon layui-icon-about"></i>将接口文档以 URL 形式分享出去，方便外部团队在线查看
+	</div>
+	
+  <div class="layui-col-md12">
+    <table class="layui-table #(project_data.share_list.size()>0?'':'layui-hide')" lay-skin="line">
+		<colgroup>
+		    <col>
+		    <col width="150">
+		    <col width="200">
+		  </colgroup>
+		<thead>
+			<tr>
+				<th>分享对象</th>
+				<th>有效期至</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			#for(data:project_data.share_list)
+			<tr>
+				<td>
+				<span style="padding:10px;color:#(data.password?'#8b33e7':'green');"><i class="layui-icon #(data.password?'layui-icon-lock':'layui-icon-password')"></i>#(data.password?'私有':'公开')</span>
+				#(data.title??)<span class="td-title" title="所属目录：#(data.parent_names??)">#(data.parent_names??)</span></td>
+				<td>#(data.expiret_time??'永久有效')</td>
+				<td>
+					<a onclick="copyLink('#(data.id??)')">复制链接</a>
+					<a style="padding:10px;" onclick="updateShareLink('#(data.id??)','#(data.title??)')">编辑</a>
+					<a onclick="deleteShareLink('#(data.id??)')">删除</a>
+				</td>
+			</tr>
+			#end
+		</tbody>
+	</table>
+  </div>
+</div>
+
+<script>
+	// 修改分享
+	function updateShareLink(id,title){
+		title='<i class="layui-icon layui-icon-export"></i>'+title;
+		menu(id,title,'1','1');
+	}
+
+	// 删除分享
+	function deleteShareLink(id){
+		layer.confirm('确定删除？', function () {
+	        $.ajax({
+				 url:'#(path)#(apiActionKey)/update',
+	 	 	 	 type:"POST",
+	 	 	 	 data:{'id':id,'share_id':null,'password':null,'expiret_time':null},
+	 	 	 	 success:function(ret){
+		 	 	 	showMsg('分享信息已删除');
+		 	 	 	tabClose('project');
+		 	 	 	project();
+		 	 	}
+			 });
+	    });
+	}
+</script>

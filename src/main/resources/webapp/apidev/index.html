@@ -1,0 +1,2155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Apidev 专注于开发者所需的接口工具，支持开发者的创新</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Cache" content="no-cache">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content="接口开发 技术文档 开发工具">
+<meta name="description"content="一个非常适合IT团队的API开发工具、技术文档开发工具。Apidev专注于开发者所需的接口工具，支持开发者的创新">
+<link rel="stylesheet" href="#(path)/assets/apidev/lib/layui_exts/mouseRightMenu/mouseRightMenu.css" />
+<link rel="stylesheet" href="#(path)/assets/apidev/lib/layui-v2.9.18/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="#(path)/assets/apidev/css/debug.css" />
+
+<script src="#(path)/assets/apidev/lib/jquery/jquery-2.1.4.min.js"></script>
+<script src="#(path)/assets/apidev/lib/jquery/jquery.form.js" type="text/javascript" ></script>
+<script src="#(path)/assets/apidev/lib/layui-v2.9.18/layui/layui.js" type="text/javascript"></script>
+<!-- jquery 表格移动需要 -->
+<script src="#(path)/assets/apidev/lib/jquery/jquery-migrate-1.2.1.js"></script>
+<script src="#(path)/assets/apidev/lib/jquery/jquery-ui.min.js" type="text/javascript" ></script>
+<!-- jquery json美化插件 -->
+<script src="#(path)/assets/apidev/lib/jquery/jquery.json-viewer.min.js"></script>
+<link rel="stylesheet" href="#(path)/assets/apidev/lib/jquery/jquery.json-viewer.min.css"/>
+<!-- debug 业务代码 -->
+<script src="#(path)/assets/apidev/js/debug.js"></script>
+<style type="text/css">
+	.layui-icon-component{
+		color:green;
+	}
+	.layui-colla-content {
+	    color: #333333eb;
+	}
+	.layui-colla-content, .layui-colla-item1{
+		border-color: #eee;
+    	border-top-width: 1px;
+    	border-top-style: solid;
+ }
+ #apiTable-toolbar-setRowChecked,#shortcutTable-toolbar-setRowChecked{
+ 	border: 1px solid #eee;
+ 	padding:10px;
+ 	border-bottom:none;
+ }
+/* api css start*/
+.api-tab-header{
+	width:265px;
+	background:#ececee;
+}
+.api-tab-header .layui-btn.layui-this{background:#ffffff;border:1px solid #ccc;}
+.api-tab-body>div{display: none;padding-top:10px}
+.layui-btn-container .layui-btn {
+    margin-right: 0px;
+    padding-right:10px;
+    padding-left:12px;
+    border-color:#ececee;
+ }
+.layui-anim dd{  
+  color:#11ab11;
+}
+
+.layui-anim dd:nth-child(2) {  
+   color:#ed5d11;
+}  
+
+.layui-anim dd:nth-child(3) {  
+  color: #0f85df;   
+}  
+
+.layui-anim dd:nth-child(4) {  
+  color: #c50101;
+}  
+
+.layui-anim dd:nth-child(5) {  
+  color: #0f85df;  
+}  
+
+.layui-anim dd:nth-child(6) {  
+  color: #0f85df;  
+}  
+
+.layui-anim dd:nth-child(7) {    
+	color: #0f85df;  
+}  
+input[value="GET"],
+input[value="TRACE"],
+input[value="PATCH"] {   
+  color: #11ab11;  
+}  
+
+/* POST 请求 */   
+input[value="POST"] {  
+  color: #ed5d11;  
+}  
+
+/* DELETE 请求 */  
+input[value="DELETE"]{
+	color:#c50101;
+}
+
+input[value="PULL"],
+input[value="HEAD"],
+input[value="CONNECT"],
+input[value="OPTIONS"] {  
+  color: #0f85df; 
+}  
+#title-input:focus {
+	border: none; 
+	border-bottom: 1px solid #ccc!important;
+    background-color: #ccc;
+}
+</style>
+<link id="layui_theme_css" rel="stylesheet">
+<link rel="stylesheet" href="#(path)/assets/apidev/css/index.css" />
+
+</head>
+<body>
+<textarea id="copy_value"></textarea>
+	<div class="layui-layout layui-layout-admin">
+		<div class="layui-header">
+			<div class="layui-logo layui-bg-black">
+				<a href="http://apidev.cn" target="_blank" style="color: #fff">Apidev</a>
+			</div>
+		</div>
+		<div class="layui-side layui-bg-black">
+			<div class="layui-side-scroll">
+				<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+				<ul class="layui-nav layui-nav-tree" lay-filter="test">
+					<li class="layui-nav-item layui-nav-itemed" onclick="tabCardRow('interface')">
+						<div class="item-group" >
+							<i class="layui-icon layui-icon-survey"></i> <a
+								class="item-group-text">接口管理</a>
+						</div>
+					</li>
+					<li class="layui-nav-item layui-hide" onclick="tabCardRow('project_setting')">
+						<div class="item-group">
+							<i class="layui-icon layui-icon-set"></i> <a
+								class="item-group-text">项目设置</a>
+						</div>
+					</li>
+					<li class="layui-nav-item" title="背景主题">
+						<div class="item-group layui-form">
+							<i id="themeIcon" class="layui-icon layui-icon-light"></i>
+							<div class="layui-form-item" style="margin-top: -15px">
+								<input id="switchTheme" type="checkbox" lay-skin="switch"
+									lay-filter="switchTheme" title="暗|亮">
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="layui-body">
+			<!-- 内容主体区域 -->
+
+			<div class="layui-card layui-panel">
+				<div class="layui-card-body">
+					<div id="interface" class="layui-row" style="border: 1px solid #ccc;">
+						<div class="layui-col-xs12 layui-col-sm4 layui-col-md3 body-left">
+							<blockquote class="layui-elem-quote layui-text">
+								<h3>接口管理</h3>
+								<div class="layui-form layui-input-wrap" style="width: 85%">
+									<div class="layui-input-prefix">
+										<i class="layui-icon layui-icon-search"></i>
+									</div>
+									<input type="text" name="keyword" lay-affix="clear" autocomplete="off"
+										class="layui-input" onblur="search()" oninput="search()">
+								</div>
+								<div class="add-btn">
+									<i class="layui-icon layui-icon-addition"
+										style="font-size: 22px;"></i>
+								</div>
+							</blockquote>
+							<!-- 折叠面板 start-->
+							<div class="layui-collapse" id="left_collapse" >
+
+								<div class="layui-colla-item1 project">
+									<div class="layui-colla-title active" data-id="project">
+										项目概况<i class="layui-icon layui-icon-layouts layui-colla-icon"></i>
+									</div>
+								</div>
+
+								<div class="layui-colla-item">
+									<div id="colla_title" class="layui-colla-title">
+										接口
+										<div class="menu-icon">
+											<i class="layui-icon layui-icon-eye-invisible layui-icon-eye"
+												title="展开目录"
+												onclick="openAllTree(event,this,'tree-container')"></i> <i
+												class="layui-icon layui-icon-more colla-title-more api"></i>
+										</div>
+									</div>
+									<div id="colla_content" class="layui-colla-content layui-show">
+										<div id="tree-container"></div>
+									</div>
+								</div>
+
+								<div class="layui-colla-item">
+									<div id="colla_title_link" class="layui-colla-title">
+										快捷请求
+										<div class="menu-icon">
+											<i class="layui-icon layui-icon-eye-invisible layui-icon-eye"
+												title="展开目录"
+												onclick="openAllTree(event,this,'link-container')"></i> <i
+												class="layui-icon layui-icon-more colla-title-more req"></i>
+										</div>
+									</div>
+									<div id="colla_content_link" class="layui-colla-content">
+										<div id="link-container"></div>
+									</div>
+								</div>
+								
+								<div class="layui-colla-item1 recycle">
+									<div class="layui-colla-title" data-id="recycle">
+										回收站<i class="layui-icon layui-icon-delete layui-colla-icon"></i>
+									</div>
+								</div>
+
+							</div>
+							<!-- 折叠面板 end -->
+						</div>
+						<div class="layui-col-xs12 layui-col-sm8 layui-col-md9 body-right">
+							<div class="layui-tab" lay-filter="tab-handle"lay-allowclose="true">
+								<ul class="layui-tab-title tab-handle">
+								</ul>
+								<div class="layui-tab-content" style="padding-bottom:5px;"></div>
+							</div>
+						</div>
+					</div>
+					<div id="project_setting" class="layui-row layui-hide" style="border: 1px solid #ccc;">
+						<div class="layui-col-xs12 layui-col-sm4 layui-col-md3 body-left">
+							<blockquote class="layui-elem-quote layui-text">
+							<h3>项目设置</h3>
+							</blockquote>
+							<!-- 折叠面板 start-->
+							<div class="layui-collapse">
+								<div class="layui-colla-item1 project">
+									<div class="layui-colla-title active" data-id="project">
+										项目概况<i class="layui-icon layui-icon-layouts layui-colla-icon"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="layui-footer" style="display: none">
+			<!-- 底部固定区域 -->
+			底部固定区域
+		</div>
+	</div>
+
+	<script>
+
+  //JS 
+  // 缓存接口数据，用于查询
+  // 接口树数据
+  var treeData = [];
+  var linkData = [];
+  // 目录树数据
+  var menuData = []; 
+  var menuDataLink = []; 
+  
+  // 回收站数据
+  var apiData = [];  
+  var shortcutData = [];  
+    
+  var element = layui.element;
+  var layer = layui.layer;
+  var util = layui.util;
+
+  var mouseRightMenu;
+  var form = layui.form;
+  var height=window.innerHeight-80;
+  var openAll = false;
+  var openAllLink = false;
+  var   _path = "#(path)";
+  var apiActionKey="#(apiActionKey)";
+  var titleKeyword = '';
+  // 记录apiId是否触发发送按钮
+  var apiIdSendReq={};
+  var apiClick = {};
+  // 记录当前树节点
+  var thisId='';
+  // 记录目录树选中id
+  var menuTreeSelectId='';
+
+  // 右键菜单组件
+  layui.config({base: '#(path)/assets/apidev/lib/layui_exts/mouseRightMenu/'});
+  layui.use(['mouseRightMenu'], function(){
+  	mouseRightMenu = layui.mouseRightMenu;
+	 // 接口树
+  	 getApiTreeList("1");
+	 // 快捷请求树
+  	 getApiTreeList("2");
+
+  	project();
+
+	// 初始化目录数据
+  	getMenuTree(null,'1');
+  	getMenuTree(null,'2');
+  });
+  
+  // 设置主题
+  document.addEventListener("DOMContentLoaded", function() {  
+	  var checked=localStorage.getItem("layui_theme_css");
+	  tabTheme(checked);
+  });  
+
+  layui.form.on('switch(switchTheme)', function(data){
+	  localStorage.setItem("layui_theme_css",this.checked);	
+	  tabTheme(this.checked);
+ });
+
+ layui.element.on('tab(tab-handle)', function(data){
+	  thisId=data.id;
+	  const activeNodes = document.querySelectorAll('.active');  
+      activeNodes.forEach(node => node.classList.remove('active'));  
+      $('div[data-id='+thisId+']').addClass('active');
+});
+
+ function tabCardRow(id){
+	if(id=='interface'){
+		$('#'+id).removeClass('layui-hide');
+		$('#project_setting').addClass('layui-hide');
+	} else if(id=='project_setting'){
+		$('#'+id).removeClass('layui-hide');
+		$('#interface').addClass('layui-hide');
+	}
+ }
+  
+  
+  // 获取接口数
+  function getApiTreeList(parentId,isLoadTree=true){
+	$.ajax({
+		url:'#(path)#(apiActionKey)/getTreeList',
+		type:'POST',
+		data:{"parent_id":parentId},
+		success:function(ret){
+			if(ret.state=='ok'){
+			  var divId="tree-container";
+			  if(parentId=="1"){
+				  treeData = ret.data; 
+				  if(isLoadTree)
+				  loadTree(treeData,true,divId);
+			  }else {
+				  linkData = ret.data;
+				  divId="link-container";
+				  if(isLoadTree)
+				  	loadTree(linkData[0].children,false,divId);
+			  }				  
+			  
+			}
+		}
+	});
+  }
+
+  // 重新渲染tree
+  function loadTree(data,isFirst,divId){
+	  $('#'+divId).html(createTree(data,isFirst,divId));
+	  bingLeftMenu(divId);
+	  bindRightMenu(divId);
+  }
+
+	// 创建树形菜单  
+    function createTree(data,isFirst,divId) { 
+        if(data==undefined) 
+            return '';
+        
+    	var html = '';  
+    	var display = data[0] && data[0].isopen ? 'block' : 'none';
+    	
+    	if(openAll && divId=='tree-container')
+        	display = 'block';
+    	if(openAllLink && divId=='link-container')
+    		display = 'block';
+		
+        if(isFirst){
+        	html = `<ul class="tree-root">`;  
+        }else{
+        	html = `<ul class="children" style="display: ${display}">`;  
+         }
+        // 循环节点
+        data.forEach(node => {  
+        	var hasChildren = node.children && node.children.length > 0;  
+            var iconClass = hasChildren && !node.children[0].isopen ? 'icon right' : 'icon down';  
+            if(openAll  && divId=='tree-container')
+            	iconClass = 'icon down';
+        	if(openAllLink && divId=='link-container')
+        		iconClass = 'icon down';
+        	// 创建节点
+            html += `<li class="tree-node"><div title="${node.type=='api' ? node.action_key : ''} ${node.tips||''} "  data-id="${node.id}"
+                onclick="toggleNode(event, this,'${divId}')" class="tree-node-title ${thisId == node.id?'active':''}">`; 
+            // 子节点数量    		
+            var subNodeNum = node.children && node.children.length>0 ?  '（'+node.children.length+'）' : '';
+            // 节点前面图标
+            if(node.type=='menu'){ // 目录
+                if(hasChildren)
+            		html += `<i class=" layui-icon layui-icon-right ${iconClass}" onclick="toggleRightIcon(event, this)"></i>`;
+            	html += `<i class="layui-icon layui-icon-export" style="padding-right:2px"></i>`;
+            	if(subNodeNum=='')
+            		subNodeNum='（0）';
+            } else if(node.type=='api' || node.type == 'link'){ // 接口
+            	if(hasChildren)
+            		html += `<i class=" layui-icon layui-icon-right ${iconClass}" onclick="toggleRightIcon(event, this)"></i>`;
+                 if(node.request_mode){
+	             	html += `<span class="${node.request_mode}">${node.request_mode}</span>`;
+	             } else {
+	    			html += `<span class="GET">GET</span>`;
+	    		 }
+            } else if(node.type=='demo'){ // 用例
+            	html += `<i class="layui-icon layui-icon-log" title="接口用例"></i>`;
+            }
+            // 节点名称、更多图标
+            html +=`<span>${node.title}${subNodeNum}</span><i data-id="${node.id}" class="layui-icon layui-icon-more tree-menu-more  ${divId}-${node.id=='1' ? 'root' : node.type}"></i></div>`;  
+			// 递归创建子节点
+            if (hasChildren) {
+                html += createTree(node.children,false,divId);  
+            }  
+
+            html += `</li>`;     
+        });  
+
+        html += `</ul>`;  
+        return html;  
+    }  
+
+	// 父级目录选择树
+    function createDownMenuTree(data,isFirst){
+    	if(data==undefined) 
+            return '';
+    	var display = data[0] && data[0].isopen ? 'block' : 'none';
+    	var html = '';  
+        if(isFirst){
+        	html = `<ul class="layui-menu layui-dropdown-menu">`;  
+        }else{
+        	html = `<ul class="children" style="display: ${display}">`;  
+         }
+     // 循环节点
+        data.forEach(node => {  
+        	var hasChildren = node.children && node.children.length > 0;  
+        	var iconClass = hasChildren && node.children[0].isopen ? 'layui-icon-down' : 'layui-icon-right';  
+            
+        	// 创建节点
+            html += `<li class="layui-menu-item-group" id="${node.id}">
+                <div class="layui-menu-body-title ${menuTreeSelectId==node.id?'active':''}" data-id="${node.id}">`; 	
+            // 节点前面图标
+            if(node.type=='menu'){ // 目录
+                if(hasChildren)
+            		html += `<i onclick="toggleNodeMenu(event, this)" class="layui-icon ${iconClass}"></i>`; 
+            	html += `<i class="layui-icon layui-icon-export"></i>`;
+            }
+            // 节点名称
+            html +=`${node.title}</div>`;  
+			// 递归创建子节点
+            if (hasChildren) {
+                html += createDownMenuTree(node.children,false);  
+            }  
+
+            html += `</li>`;     
+        });  
+
+        html += `</ul>`;  
+        return html;  
+    }
+
+   // 切换节点显示和隐藏  
+    function toggleNode(event,_this,divId) {
+        event.stopPropagation(); 
+     	// 移除其他节点的活动样式  
+        const activeNodes = document.querySelectorAll('.active');  
+        activeNodes.forEach(node => node.classList.remove('active'));  
+
+        // 设置当前节点为活动  
+        _this.classList.add('active');
+        
+        const childrenUl = _this.parentNode.querySelector('ul.children');  
+        const icon = _this.querySelector('.icon');  
+        
+        // 获取节点 ID 并显示  
+        const nodeId = _this.getAttribute('data-id');
+        var nodeData;
+        var treeType = '1';
+        if(divId=='tree-container') {
+        	nodeData = findNodeById(treeData[0], nodeId);
+        }else{
+        	nodeData = findNodeById(linkData[0], nodeId);
+        	treeType = '2';
+        }
+        
+        var title = '';  
+        if(nodeData.type=='menu'){
+			title='<i class="layui-icon layui-icon-export"></i>';
+        }else if(nodeData.type=='demo'){
+        	title='<i class="layui-icon layui-icon-log"></i>';
+        }else if(nodeData.type=='link'){
+        	title='<i class="layui-icon layui-icon-senior" style="color:#409EFF"></i>';
+        }else{
+            var mode=nodeData.request_mode||'GET';
+        	title='<span class="'+mode+'">'+mode+'</span>'
+        }
+        
+        var li=$('li[lay-id='+nodeId+']');
+        thisId = nodeId;
+		if(li.length>0){
+			element.tabChange('tab-handle', nodeId); // 切换到标签
+			if (childrenUl) {
+	            const isExpanded = childrenUl.style.display === 'block';  
+	            childrenUl.style.display = isExpanded ? 'none' : 'block';  
+	            icon.classList.toggle('right', isExpanded);  
+	            icon.classList.toggle('down', !isExpanded);  
+	        }  
+		}else{
+			if(nodeData.type=='menu'){
+				menu(nodeData.id,title+nodeData.title,treeType,'0');
+			}else{
+				// 显示在右侧tab
+		        apiDetail(nodeData.id,title+nodeData.title); 
+			}
+		}
+    }  
+
+    function toggleNodeMenu(event,_this){
+    	event.stopPropagation();         
+        const childrenUl = _this.parentNode.parentNode.querySelector('ul.children');  
+
+        // 获取节点 
+        if (childrenUl) {
+            const isExpanded = childrenUl.style.display === 'block';  
+            childrenUl.style.display = isExpanded ? 'none' : 'block';  
+            if(!isExpanded){
+                _this.classList.remove("layui-icon-right"); 
+                _this.classList.add("layui-icon-down"); 
+            }else{
+            	 _this.classList.add("layui-icon-right"); 
+                 _this.classList.remove("layui-icon-down"); 
+             }
+        }   
+    }
+
+    // 接口树点击图标
+    function toggleRightIcon(event,_this){
+    	event.stopPropagation();         
+        const childrenUl = _this.parentNode.parentNode.querySelector('ul.children');  
+
+        // 获取节点 
+        if (childrenUl) {
+            const isExpanded = childrenUl.style.display === 'block';  
+            childrenUl.style.display = isExpanded ? 'none' : 'block';  
+            _this.classList.toggle('right', isExpanded);  
+            _this.classList.toggle('down', !isExpanded);  
+        }
+    }
+
+
+  // 展开全部
+  function openAllTree(event, _this, divId){
+	  event.stopPropagation(); 
+	  if(divId=='tree-container'){
+		  var doc=document.getElementById('colla_content');
+	
+		  if(!doc.classList.contains('layui-show')){
+			  $('#colla_title').click();
+			  openAll = false;
+		  }
+		  if(!openAll){
+			  openAll = true;
+			  _this.title='收起目录';
+			  _this.classList.remove('layui-icon-eye-invisible');
+			  _this.classList.add('layui-icon-eye'); 
+		  }else{
+	 		  openAll = false;
+	 		 _this.title='展开目录';
+	 		_this.classList.add('layui-icon-eye-invisible');
+	 		_this.classList.remove('layui-icon-eye');
+	  	}
+	  	loadTree(treeData,true,divId);
+	  }else{
+		  var docLink=document.getElementById('colla_content_link');
+		  if(!docLink.classList.contains('layui-show')){
+			  $('#colla_title_link').click();
+			  openAllLink = false;
+		  }
+
+		  if(!openAllLink){
+			  openAllLink = true;
+			  _this.title='收起目录';
+			  _this.classList.remove('layui-icon-eye-invisible');
+			  _this.classList.add('layui-icon-eye'); 
+		  }else{
+			  openAllLink = false;
+	 		 _this.title='展开目录';
+	 		_this.classList.add('layui-icon-eye-invisible');
+	 		_this.classList.remove('layui-icon-eye');
+	  	}
+		  
+		  loadTree(linkData[0].children,false,divId);
+	  }
+
+	  
+ }
+
+
+  // 接口菜单点击事件
+  function clickMenu(id,title,content){
+	  if(!content)
+		  content=`<iframe width="100%" height="${height}px"  src="#(path)#(apiActionKey)#(apiActionKey)/detail?id=${id}"></iframe>`;
+		// 定义要查找的lay-id值
+		var li=$('li[lay-id='+id+']');
+		if(li.length>0){
+			element.tabChange('tab-handle', id); // 切换到标签
+		}else{
+			if($('.tab-handle li').length>=4){
+		 		var tabId=$('.tab-handle li').eq(0).attr('lay-id');
+		        tabClose(tabId);
+			}
+			element.tabAdd('tab-handle', {
+		        title: title,
+		        content: content,
+		        id: id,
+		        change: true // 是否添加完毕后即自动切换
+		    });
+		}
+		bindTabRightMenu();
+	}
+
+  	// api详情
+	function apiDetail(id,title){
+		$.ajax({
+			url:'#(path)#(apiActionKey)/detail',
+			type:'POST',
+			data:{id:id,title:title},
+			success:function(html){
+				clickMenu(id,title,html);
+			}
+		});
+    }
+	//右键目录菜单
+	window.onload = function() {  
+		 var treeContainer = document.getElementById('left_collapse');  
+	     treeContainer.addEventListener('contextmenu', function(e) {  
+	 		e.preventDefault();  
+	 	}); 
+	 };  
+  	// tab导航右键菜单
+	function bindTabRightMenu(){
+		$('.tab-handle li').off("contextmenu");
+		//右键目录菜单
+		$('.tab-handle li').bind("contextmenu",function(e){
+			var id=$(this).attr('lay-id');
+			var data = {menuId:id}
+			var menu_data=[
+				{'data':data,'type':'closeTab','title':'关闭当前标签','icon':'layui-icon-close'},
+				{'data':data,'type':'closeOtherTabs','title':'关闭其它标签','icon':'layui-icon-error'},
+				{'data':data,'type':'closeAllTabs','title':'关闭全部标签','icon':'layui-icon-close-fill'},
+			]
+			mouseRightMenu.open(menu_data,false,function(d){
+				var menuId=d.data.menuId;
+				if(d.type=='closeTab'){
+					tabClose(menuId); 
+		 		} else if(d.type=='closeOtherTabs'){
+		 			$('.layui-tab-title li').each(function() {  
+			 			var tabId=$(this).attr('lay-id');
+			 			if(tabId!=menuId){ 
+			        	  	tabClose(tabId);
+			 			}
+			        }); 
+		 	 	} else if(d.type=='closeAllTabs'){
+		 	 		$('.layui-tab-title li').each(function() { 
+		 	 			var tabId=$(this).attr('lay-id');
+		 	 			tabClose(tabId);
+			         }); 
+		 	 	}
+			})
+			return false;
+		});
+	}
+
+  	// 关闭tab
+	function tabClose(tabId){
+		element.tabDelete('tab-handle', tabId); 
+	}
+
+  	// 树右键菜单
+	function treeRightMenu(){
+		$('li .tree-node-title').off("contextmenu");
+		$('li .tree-node-title').bind("contextmenu",function(e){
+			var dataId=$(this).attr('data-id');
+			var data = {dataId:dataId}
+			var nodeData=findNodeById(treeData[0],dataId);
+			var menu_data=[];
+			var treeType = '1';
+			if(!nodeData){
+				nodeData=findNodeById(linkData[0],dataId);
+				treeType = '2';
+			}
+			if(nodeData){
+				if(nodeData.type=='menu'){
+					menu_data=[
+						{'data':data,'type':'addApi','title':'添加接口','icon':'layui-icon-component'},
+						{'data':data,'type':'addSubMenu','title':'添加子目录','icon':'layui-icon-export'},
+						{'data':data,'type':'rename','title':'重命名','icon':'layui-icon-edit'},
+						{'data':data,'type':'copy','title':'复制','icon':'layui-icon-templeate-1'},
+						{'data':data,'type':'moveTo','title':'移动到','icon':'layui-icon-next'},
+						{'data':data,'type':'sort','title':'排序','icon':'layui-icon-template-1'},
+						{'data':data,'type':'copyLink','title':'复制链接','icon':'layui-icon-link'},
+						{'data':data,'type':'export','title':'导出','icon':'layui-icon-download-circle'},
+						{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'},
+					];
+					if(dataId=='1'){
+						menu_data=[
+							{'data':data,'type':'addSubMenu','title':'添加子目录','icon':'layui-icon-export'},
+							{'data':data,'type':'addApi','title':'添加接口','icon':'layui-icon-component'},
+							{'data':data,'type':'copyLink','title':'复制链接','icon':'layui-icon-link'},
+							{'data':data,'type':'sort','title':'排序','icon':'layui-icon-template-1'},
+							{'data':data,'type':'export','title':'导出','icon':'layui-icon-download-circle'}
+						];
+					}else if(treeType=='2'){
+						menu_data=[
+							{'data':data,'type':'addLink','title':'新建快捷请求','icon':'layui-icon-senior'},
+							{'data':data,'type':'editMenu','title':'编辑','icon':'layui-icon-edit'},
+							{'data':data,'type':'copy','title':'复制','icon':'layui-icon-templeate-1'},
+							{'data':data,'type':'addSubMenu','title':'添加子目录','icon':'layui-icon-export'},
+							{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'},
+						];
+					}
+				} else if(nodeData.type=='api'){
+					menu_data=[
+						{'data':data,'type':'addDemo','title':'添加用例','icon':'layui-icon-log'},
+						{'data':data,'type':'rename','title':'重命名','icon':'layui-icon-edit'},
+						{'data':data,'type':'copy','title':'复制','icon':'layui-icon-templeate-1'},
+						{'data':data,'type':'moveTo','title':'移动到','icon':'layui-icon-next'},
+						{'data':data,'type':'copyLink','title':'复制链接','icon':'layui-icon-link'},
+						{'data':data,'type':'export','title':'导出','icon':'layui-icon-download-circle'},
+						{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'},
+					];
+					
+				} else if(nodeData.type=='demo') {
+					menu_data=[
+						{'data':data,'type':'rename','title':'重命名','icon':'layui-icon-edit'},
+						{'data':data,'type':'copy','title':'复制','icon':'layui-icon-templeate-1'},
+						{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'},
+					];
+				} else if(nodeData.type=='link'){
+					menu_data=[
+						{'data':data,'type':'copy','title':'复制','icon':'layui-icon-templeate-1'},
+						{'data':data,'type':'rename','title':'重命名','icon':'layui-icon-edit'},
+						{'data':data,'type':'moveTo','title':'移动到','icon':'layui-icon-next'},
+						{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'},
+					];
+				}
+
+				
+				mouseRightMenu.open(menu_data,false,function(d){
+					var dataId=d.data.dataId;
+					var id=new Date().getTime();
+					var type = d.type;
+					// 添加接口
+					if(type=='addApi'){
+	 	 	 	 		addApi(id,'<span class="GET">GET</span>新建接口',dataId,'api');
+		 	 	 	} else if(type=='addDemo'){
+		 	 	 		addApi(id,'<i class="layui-icon layui-icon-log"></i>添加用例',dataId,'demo');
+		 	 	 	} else if(type=='addLink'){
+		 	 	 		addApi(id,'<i class="layui-icon layui-icon-senior" style="color:#409EFF"></i>快捷请求',dataId,'link');
+		 	 	 	} else if(type=='rename'){
+		 	 	 		rename(dataId,treeType);
+		 	 	 	} else if(type=='copy'){
+	 	 	 	 		copy(dataId,treeType);
+		 	 	 	} else if(type=='moveTo'){
+	 	 	 	 		moveTo(dataId,treeType);
+		 	 	 	} else if(type=='sort'){
+		 	 	 		sort(dataId,treeType);
+					}else if(type=='addSubMenu'){
+	 	 				addMenu(dataId,treeType);	
+					}else if(type=='editMenu'){
+						editMenu(dataId,treeType);	
+		 	 		}else if(type=='copyLink'){
+						copyLink(dataId);
+	 	 	 	 	} else if(type=='export'){
+	 	 	 	 		download(dataId)
+		 	 	 	} else if(type=='del'){
+		 	 	 		del(dataId,treeType);
+	 	 	 	 	} 
+				});
+			}
+		});
+	}
+
+  	// 选项卡右键菜单
+	function bindRightMenu(){
+		 treeRightMenu();
+		 bindTabRightMenu();			
+		 $('.tree-node i.tree-menu-more').off("click").on("click", function(e) {  
+			  event.stopPropagation(); 
+			  var dataId=$(this).attr("data-id");
+			  var nodeData=findNodeById(treeData[0],dataId);
+			  
+		 }); 
+		
+	}
+
+	// 树更多操作菜单
+	function bingLeftMenu(){
+
+		// 接口根目录更多操作
+		layui.dropdown.render({
+		    elem: '.tree-container-root', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+		    trigger:'hover',
+		    data: [{
+		      title: '添加子目录',
+		      id: 'addApiSubMenu',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-export" style="margin-left:-15px"></i> ' + d.title;
+		      }
+		    },{
+		      title: '添加接口',
+		      id: 'addApi',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-component"></i> ' + d.title;
+		      }
+		    },{
+		      title: '复制链接',
+		      id: 'copyLink',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
+		      }
+		    },{
+			      title: '排序',
+			      id: 'sort',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-template-1"></i> ' + d.title;
+			      }
+		    },{
+		      title: '导出',
+		      id: 'export',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-download-circle"></i> ' + d.title;
+		      }
+		    }],
+		    click: function(obj){
+		      	var type=obj.id;
+		      	var title = obj.title;
+		      	var id=new Date().getTime();
+ 	 			var parentId="1";
+ 	 			if(type=='addApiSubMenu'){
+ 	 				addMenu(parentId,'1');
+ 	 	 	 	} else 	if(type=='addApi'){
+ 	 				addApi(id,'<span class="GET">GET</span>新建接口',parentId,'api');
+ 	 	 	 	}else if(type=='copyLink'){
+					copyLink('1');
+ 	 	 	    } else if(type=='sort'){
+	 	 	 		sort('1','1');
+ 	 	 		} else if(type=='export'){
+ 	 	 			download(parentId)
+ 	 	 	 	}
+		    }
+		  });
+
+
+		// 接口目录更多操作
+		layui.dropdown.render({
+		    elem: '.tree-container-menu', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+		    trigger:'hover',
+		    data: [
+		    {
+		      title: '添加接口',
+		      id: 'addApi',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-component"></i> ' + d.title;
+		      }
+		    },{
+			      title: '添加子目录',
+			      id: 'addApiSubMenu',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-export" style="margin-left:-15px"></i> ' + d.title;
+			      }
+		    },{
+			      title: '重命名',
+			      id: 'rename',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-edit"></i> ' + d.title;
+			      }
+		    },{
+			      title: '复制',
+			      id: 'copy',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-templeate-1"></i> ' + d.title;
+			      }
+		    },{
+			      title: '移动到',
+			      id: 'moveTo',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-next"></i> ' + d.title;
+			      }
+		    },{
+			      title: '排序',
+			      id: 'sort',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-template-1"></i> ' + d.title;
+			      }
+		    
+		    },{
+		      title: '复制链接',
+		      id: 'copyLink',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
+		      }
+		    },{
+		      title: '导出',
+		      id: 'export',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-download-circle"></i> ' + d.title;
+		      }
+		    },{
+			      title: '删除',
+			      id: 'del',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-delete"></i> ' + d.title;
+			      }
+		    }],
+		    click: function(obj){
+		      	var type=obj.id;
+		      	var dataId=$(this.elem).attr('data-id');
+				var treeNode=findNodeById(treeData[0],dataId);
+				var id=new Date().getTime();
+				// 添加接口
+				if(type=='addApi'){
+ 	 	 	 		addApi(id,'<span class="GET">GET</span>新建接口',dataId,'api');
+	 	 	 	} else if(type=='rename'){
+	 	 	 		rename(dataId,'1');
+	 	 	 	} else if(type=='copy'){
+ 	 	 	 		copy(dataId,'1');
+	 	 	 	} else if(type=='moveTo'){
+ 	 	 	 		moveTo(dataId,'1');
+	 	 	 	} else if(type=='sort'){
+	 	 	 		sort(dataId,'1');
+				}else if(type=='addApiSubMenu'){
+ 	 				addMenu(dataId,'1');
+				}else if(type=='copyLink'){
+					copyLink(dataId);
+ 	 	 	 	} else if(type=='export'){
+ 	 	 	 		download(dataId)
+	 	 	 	} else if(type=='del'){
+	 	 	 		del(dataId,'1');
+ 	 	 	 	} 
+		    }
+		  });
+
+		// 接口更多操作
+		layui.dropdown.render({
+		    elem: '.tree-container-api', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+		    trigger:'hover',
+		    data: [
+		    {
+		      title: '添加用例',
+		      id: 'addDemo',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-log"></i> ' + d.title;
+		      }
+		    },{
+			      title: '重命名',
+			      id: 'rename',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-edit"></i> ' + d.title;
+			      }
+		    },{
+			      title: '复制',
+			      id: 'copy',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-templeate-1"></i> ' + d.title;
+			      }
+		    },{
+			      title: '移动到',
+			      id: 'moveTo',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-next"></i> ' + d.title;
+			      }
+		    },{
+		      title: '复制链接',
+		      id: 'copyLink',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
+		      }
+		    },{
+		      title: '导出',
+		      id: 'export',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-download-circle"></i> ' + d.title;
+		      }
+		    },{
+			      title: '删除',
+			      id: 'del',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-delete"></i> ' + d.title;
+			      }
+		    }],
+		    click: function(obj){
+		      	var type=obj.id;
+		      	var dataId=$(this.elem).attr('data-id');
+				var treeNode=findNodeById(treeData[0],dataId);
+				var id=new Date().getTime();
+				if(type=='addDemo'){
+	 	 	 		addApi(id,'<i class="layui-icon layui-icon-log"></i>添加用例',dataId,'demo');
+	 	 	 	} else  if(type=='rename'){
+	 	 	 	 	rename(dataId,'1');
+	 	 	 	} else if(type=='copy'){
+	 	 	 		copy(dataId,'1');
+	 	 	 	} else if(type=='moveTo'){
+	 	 	 		moveTo(dataId,'1');
+ 	 	 	 	} else if(type=='copyLink'){
+ 	 	 	 		copyLink(dataId);
+	 	 	 	} else if(type=='addApiSubMenu'){
+ 	 				addMenu(parentId,'1');
+ 	 	 	 	} else if(type=='export'){
+ 	 	 	 		download(dataId)
+	 	 	 	} else if(type=='del'){
+	 	 	 		del(dataId,'1');
+	 	 	 	}
+		    }
+		  });
+
+		// 接口用例更多操作
+		layui.dropdown.render({
+		    elem: '.tree-container-demo', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+		    trigger:'hover',
+		    data: [
+			{
+			      title: '重命名',
+			      id: 'rename',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-edit"></i> ' + d.title;
+			      }
+		    },{
+			      title: '复制',
+			      id: 'copy',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-templeate-1"></i> ' + d.title;
+			      }
+		    },{
+			      title: '删除',
+			      id: 'del',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-delete"></i> ' + d.title;
+			      }
+		    }],
+		    click: function(obj){
+		      	var type=obj.id;
+		      	var dataId=$(this.elem).attr('data-id');
+				var treeNode=findNodeById(treeData[0],dataId);
+				var id=new Date().getTime();
+				if(type=='copy'){
+					copy(dataId,'1');
+	 	 	 	} else if(type=='rename'){
+	 	 	 	 	rename(dataId,'1');
+	 	 	 	} else if(type=='del'){
+	 	 	 		del(dataId,'1');
+ 	 	 	 	} 
+		    }
+		  });
+
+		// 快捷请求目录更多操作
+		layui.dropdown.render({
+		    elem: '.link-container-menu', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+		    trigger:'hover',
+		    data: [
+		    {
+		      title: '新建快捷请求',
+		      id: 'addLink',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-senior" style="color:#409EFF"></i> ' + d.title;
+		      }
+		    },{
+			      title: '编辑',
+			      id: 'editMenu',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-edit"></i> ' + d.title;
+			      }
+		    },{
+			      title: '复制',
+			      id: 'copy',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-templeate-1"></i> ' + d.title;
+			      }
+		    },{
+		      title: '添加子目录',
+		      id: 'addLinkSubMenu',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-export" style="margin-left:-15px"></i> ' + d.title;
+		      }
+		    },{
+			      title: '删除',
+			      id: 'del',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-delete"></i> ' + d.title;
+			      }
+		    }],
+		    click: function(obj){
+		      	var type=obj.id;
+		      	var dataId=$(this.elem).attr('data-id');
+				var treeNode=findNodeById(linkData[0],dataId);
+				var id=new Date().getTime();
+				
+				if(type=='addLink'){
+	 			    addApi(id,'<i class="layui-icon layui-icon-senior" style="color:#409EFF"></i>快捷请求',dataId,'link');
+	 	 	 	}else if(type=='addLinkSubMenu'){
+ 	 				addMenu(dataId,'2');
+	 	 	 	} else if(type=='editMenu'){
+	 	 	 	 	editMenu(dataId,'2')
+	 	 	 	} else if(type=='copy'){
+	 	 	 		copy(dataId,'2');
+	 	 	 	} else if(type=='del'){
+	 	 	 		del(dataId,'2');
+ 	 	 	 	} 
+		    }
+		  });
+
+
+		// 快捷请求更多操作
+		layui.dropdown.render({
+		    elem: '.link-container-link', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+		    trigger:'hover',
+		    data: [
+		    {
+			      title: '复制',
+			      id: 'copy',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-templeate-1"></i> ' + d.title;
+			      }
+		    },{
+			      title: '重命名',
+			      id: 'rename',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-edit"></i> ' + d.title;
+			      }
+		    },{
+			      title: '移动到',
+			      id: 'moveTo',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-next"></i> ' + d.title;
+			      }
+		    },{
+			      title: '删除',
+			      id: 'del',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-delete"></i> ' + d.title;
+			      }
+		    }],
+		    click: function(obj){
+		      	var type=obj.id;
+		      	var dataId=$(this.elem).attr('data-id');
+				var treeNode=findNodeById(linkData[0],dataId);
+				var id=new Date().getTime();
+				if(type=='copy'){
+					copy(dataId,'2');
+	 	 	 	} else if(type=='rename'){
+	 	 	 	 	rename(dataId,'2');
+	 	 	 	} else if(type=='moveTo'){
+	 	 	 		moveTo(dataId,'2');
+	 	 	 	} else if(type=='del'){
+	 	 	 		del(dataId,'2');
+ 	 	 	 	} 
+		    }
+		  });
+
+		layui.dropdown.render({
+		    elem: '.add-btn', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+		    trigger:'hover',
+		    data: [{
+		      title: '新建接口',
+		      id: 'addApi',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-component"></i> ' + d.title;
+		      }
+		    },{
+		      title: '快捷请求',
+		      id: 'addRequest',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-senior" style="color:#409EFF"></i> ' + d.title;
+		      }
+		    },{
+		      title: '新建接口目录',
+		      id: 'addApiMenu',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-export" style="margin-left:-15px"></i> ' + d.title;
+		      }
+		    }],
+		    click: function(obj){
+		      	var type=obj.id;
+		      	var title = obj.title;
+		      	var id=new Date().getTime();
+ 	 			var parentId="1";
+ 	 			if(type=='addApi'){
+ 	 				addApi(id,'<span class="GET">GET</span>新建接口',parentId,'api');
+ 	 	 		} else if(type=='addRequest'){
+ 	 	 			addApi(id,'<i class="layui-icon layui-icon-senior" style="color:#409EFF"></i>快捷请求',"2",'link');
+ 	 	 	 	} else if(type=='addApiMenu'){
+ 	 	 	 		addMenu(parentId,'1');
+ 	 	 	 	}
+		    }
+		  });
+		  
+		layui.dropdown.render({
+		    elem: '.api', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+		    trigger:'hover',
+		    data: [{
+			      title: '同步接口',
+			      id: 'syncApi',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-loading"></i> ' + d.title;
+			      }
+			    },{
+			      title: '新建接口',
+			      id: 'addApi',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-component"></i> ' + d.title;
+			      }
+			    },{
+			      title: '新建目录',
+			      id: 'addApiMenu',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-export" style="margin-left:-15px"></i> ' + d.title;
+			      }
+			    }
+			],
+		    click: function(obj){
+		    	var type=obj.id;
+		      	var title = obj.title;
+		      	var id=new Date().getTime();
+ 	 			var parentId="1";
+
+ 	 			// 更新接口
+ 	 			if(type=='syncApi'){
+ 	 				var loadIndex=layer.load(0);
+ 	 				$.ajax({
+ 	 					url:'#(path)#(apiActionKey)/sync',
+ 	 					type:'POST',
+ 	 					success:function(ret){
+ 	 						layer.close(loadIndex)
+ 	 						showMsg(ret.msg);
+ 	 						if(ret.msg.indexOf("共更新接口")!=-1){
+ 	 							getApiTreeList('1',true);
+ 	 						}
+ 	 					}
+ 	 				});
+ 	 	 	 	} else if(type=='addApi'){
+	 			    addApi(id,'<span class="GET">GET</span>新建接口',parentId,'api');
+ 	 	 	 	} else if(type=='addApiMenu'){
+ 	 	 	 		addMenu(parentId,'1');
+ 	 	 	 	}
+ 			}
+ 		});
+
+		layui.dropdown.render({
+		    elem: '.req', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+		    trigger:'hover',
+		    data: [{
+		      title: '新建快捷请求',
+		      id: 'addRequest',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-senior" style="color:#409EFF"></i> ' + d.title;
+		      }
+		    },{
+		      title: '新建目录',
+		      id: 'addMenu',
+		      templet: function(d){
+		    	  return '<i class="layui-icon layui-icon-export" style="margin-left:-15px"></i> ' + d.title;
+		      }
+		    }],
+		    click: function(obj){
+		    	var type=obj.id;
+		      	var title = obj.title;
+		      	var id=new Date().getTime();
+ 	 			var parentId="2";
+
+				if(type=='addRequest'){
+	 			    addApi(id,'<i class="layui-icon layui-icon-senior" style="color:#409EFF"></i>'+title,parentId,'link');
+ 	 	 	 	} else if(type=='addMenu'){
+ 	 	 	 		addMenu(parentId,'2');
+ 	 	 	 	}
+ 			}
+		});
+
+		$('.layui-colla-title').on("click", function(e) { 
+			const activeNodes = document.querySelectorAll('.active');  
+	        activeNodes.forEach(node => node.classList.remove('active'));  
+			$(this).addClass('active');
+		});
+
+		// 项目概况
+		$('.project').off('click').on("click", function(e) { 
+			project();
+		});
+
+		// 回收站
+		$('.recycle').off('click').on("click", function(e) { 
+			recycle();
+		});
+	}
+
+	// 复制分享链接
+	function copyShareLink(id){
+		var protocol=window.location.protocol;
+		var host=window.location.host;
+		var location=protocol+"//"+host;
+		var node = findNodeById(treeData[0],id);
+		if(!node){
+			node=findNodeById(linkData[0],id);
+		}
+		 var menuDom=$('.menu-link-'+id);
+	     var shareId=menuDom.find('input[name=shareId]').val();
+	     if(!shareId){
+			layer.msg("请随机生成分享地址");
+			return;
+		 }
+		     
+		var title = '分享对象：'+node.title;
+		var url=location+apiActionKey+"/share/"+shareId;
+		if(node.password){
+			var password='访问密码：'+node.password;
+			var msg='访问地址：'+url+'<br/>'+password;
+			layer.alert(msg,{
+		        title:title,
+		        offset:'100px',
+		        btn: ['复制地址和密码','复制带密码的链接','打开链接','取消'],
+		        btn1: function(){
+		        	copyText('访问地址：'+url+'\r\n'+password);
+		        },
+		        btn2: function(){
+		        	var link=url+'?password='+node.password;
+		        	copyText(link);
+			    },
+			    btn3:function(){
+			    	window.open(url);
+				},
+				 btn4:function(){
+
+				}
+		     });
+		}else{
+			layer.alert('访问地址：'+url,{
+		        title:title,
+		        offset:'100px',
+		        btn: ['复制链接','打开链接','取消'],
+		        btn1: function(){
+		        	copyText(url);
+		        },
+		        btn2: function(){
+		        	window.open(url);
+		        },
+		        btn3:function(){
+	
+			    }
+		     });
+		}
+	}
+
+	// 复制链接
+	function copyLink(id){
+		var protocol=window.location.protocol;
+		var host=window.location.host;
+		var location=protocol+"//"+host;
+		var node = findNodeById(treeData[0],id);
+		if(!node){
+			node=findNodeById(linkData[0],id);
+		}
+		var title = '分享对象：'+node.title;
+		var url=location+apiActionKey+"/"+id;
+		if(node.type=='menu'){
+			if(node.share_id){
+				url=location+apiActionKey+"/share/"+node.share_id;
+			}else{
+				layer.msg("请设置目录的分享链接");
+				return;
+			}
+		}
+		if(node.password){
+			var password='访问密码：'+node.password;
+			var msg='访问地址：'+url+'<br/>'+password;
+			layer.alert(msg,{
+		        title:title,
+		        offset:'100px',
+		        btn: ['复制地址和密码','复制带密码的链接','打开链接','取消'],
+		        btn1: function(){
+		        	copyText('访问地址：'+url+'\r\n'+password);
+		        },
+		        btn2: function(){
+			        var link=url+'?password='+node.password;
+		        	copyText(link);
+			    },
+			    btn3:function(){
+			    	window.open(url);
+				},
+				btn4:function(){
+
+				}
+		     });
+		}else{
+			layer.alert('访问地址：'+url,{
+		        title:title,
+		        offset:'100px',
+		        btn: ['复制链接','打开链接','取消'],
+		        btn1: function(){
+		        	copyText(url);
+		        },
+		        btn2: function(){
+		        	window.open(url);
+		        },
+		        btn3:function(){
+	
+			    }
+		     });
+		}
+	}	
+
+	//复制
+	function copyText(text){
+		const inputElement = document.querySelector('#copy_value');
+		inputElement.value=text;
+		inputElement.select();
+		try{
+			document.execCommand('copy');
+			showMsg("已复制到粘贴板")
+		}catch(e){
+			showMsg("复制失败")
+		}
+	}
+
+// 搜索
+function search(){
+	titleKeyword = $("input[name=keyword]").val();
+	 // 接口树
+	var filteredData = treeData.map(node => filterByTitleKeyword(node, titleKeyword)).filter(item => item !== null); 
+	if(titleKeyword==''){
+		filteredData=treeData;
+	}
+	loadTree(filteredData,true,'tree-container');
+	 // 快捷请求树
+	var filteredDataLink = linkData[0].children.map(node => filterByTitleKeyword(node, titleKeyword)).filter(item => item !== null); 
+	if(titleKeyword==''){
+		filteredDataLink=linkData;
+	}
+	loadTree(filteredDataLink,false,'link-container');
+}
+
+function tabTheme(checked){
+	if(checked==true||checked=='true'){
+		  // 设置为深色主题
+		  document.getElementById('layui_theme_css').setAttribute('href','#(path)/assets/apidev/lib/layui-theme-dark/layui-theme-dark.css');
+		  document.getElementById("switchTheme").checked = true; 
+		  document.getElementById("themeIcon").classList.remove('layui-icon-light');
+		  document.getElementById("themeIcon").classList.add('layui-icon-moon');
+		  layui.form.render(); 
+	  }else{
+		  // 恢复浅色主题
+		  document.getElementById('layui_theme_css').removeAttribute('href');
+		  document.getElementById("themeIcon").classList.remove('layui-icon-moon');
+		  document.getElementById("themeIcon").classList.add('layui-icon-light');
+	 }
+}
+
+// 通过关键词过滤
+function filterByTitleKeyword(node, titleKeyword, isParentOpened = false) {  
+    if (!node || typeof node !== 'object') return null;  
+
+    // 初始化当前节点的 isOpen 属性  
+    const currentIsOpen = isParentOpened || (node.title && node.title.includes(titleKeyword) && titleKeyword !='');
+    
+    // 过滤子节点  
+    if (Array.isArray(node.children)) {  
+        const filteredChildren = node.children  
+            .map(child => filterByTitleKeyword(child, titleKeyword, currentIsOpen))  
+            .filter(child => child !== null);  
+
+        // 如果当前节点有匹配标题的子节点，或者当前节点的标题包含关键词  
+        if (filteredChildren.length > 0 || currentIsOpen) {  
+            return {  
+                ...node,  
+                isopen: titleKeyword==''?false:true, // 设置当前节点的 isOpen 属性为 true  
+                children: filteredChildren.length > 0 ? filteredChildren : undefined,  
+            };  
+        }  
+    }  
+
+    // 返回当前节点本身如果它的标题包含关键词  
+    if (node.title && node.title.includes(titleKeyword)) {  
+        return {  
+            ...node,  
+            isopen: titleKeyword==''?false:true, // 设置当前节点的 isOpen 属性为 true  
+        };  
+    }  
+
+    return null; // 返回 null，如果没有匹配的条目  
+}  
+
+// 通过id查找api对象
+function findNodeById(node, id) {  
+    if (!node) return null;  
+    
+    // 检查当前节点是否是目标节点  
+    if (node.id === id) {  
+        return node;  
+    }  
+
+    // 如果有子节点，递归查找  
+    if (Array.isArray(node.children)) {  
+        for (var child of node.children) {  
+            const result = findNodeById(child, id);  
+            if (result) {  
+                return result; // 找到后返回  
+            }  
+        }  
+    }  
+
+    return null; // 没有找到，返回 null  
+}  
+
+// 添加接口
+function addApi(id,title,parentId,type){
+	$.ajax({
+		url:'#(path)#(apiActionKey)/detail',
+		type:'POST',
+		data:{id:id,title:title,parent_id:parentId,type:type},
+		success:function(html){
+			clickMenu(id,title,html);
+		}
+	});
+}
+
+
+/**
+ * 新建目录，parentId,treeType:1、2
+ */
+function addMenu(parentId,treeType){
+	 var treeNode={id:parentId,title:'根目录'};
+	 if(treeType=='1' && parentId!='1'){
+		 treeNode=findNodeById(treeData[0],parentId);
+	 }else if(treeType=='2' && parentId!='2'){
+		 treeNode=findNodeById(linkData[0],parentId);
+     }
+		 
+	openMenu(treeNode,'新建目录', treeType);
+	getMenuTree('#treeSelect', treeType);
+}
+
+
+// 重命名,treeType:1,2
+function rename(id,treeType){
+	openMenuTree(id,'重命名',treeType);
+}
+
+// 编辑目录
+function editMenu(id,treeType){
+	openMenuTree(id,'修改目录',treeType);
+}
+
+//移动到
+function moveTo(id,treeType){
+	openMenuTree(id,'移动到...',treeType);
+}
+
+// 排序
+function sort(id,treeType){
+	if(id){ 
+		 $.ajax({
+			 url:'#(path)#(apiActionKey)/sort',
+	 	 	 	type:"POST",
+	 	 	 	data:{'id':id},
+	 	 	 	success:function(html){
+		 	 	 	layer.open({  
+	        		     btnAsync: true,  
+	        		     title: '排序',  
+	        		     type: 1,  
+	        		     shadeClose: false,
+	        		     content: html,  
+	        		 	     area: '588px', 
+	        		 	     offset:'100px',
+	        		 	     resize:true,
+	        		 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
+	        		 	     btn: ['确定','取消'],  
+	        		 	     btn1: function (index, layero) {
+	        		 	    	 saveSort();
+	        		 	    	 return false;
+	        		 	     },
+		        		     btn2: function (index, layero) {
+	        		 	    	 getApiTreeList(treeType);
+	        		 	     }
+	        		 	});
+		 	 	 	 
+	 	 	 	}
+		 });
+	} else {
+		showMsg("id is null");
+	}
+}
+
+// 复制
+function copy(id,treeType){
+	if(id){ 
+		 $.ajax({
+			 url:'#(path)#(apiActionKey)/copy',
+	 	 	 	type:"POST",
+	 	 	 	data:{'id':id},
+	 	 	 	success:function(ret){
+		 	 	 	showMsg(ret.msg);
+		 	 	 	if(ret.state=='ok'){
+		 	 	 	   getApiTreeList(treeType,true);
+		 	 	 	}  
+	 	 	 	}
+		 });
+	} else {
+		showMsg("id is null");
+ 	}
+}
+
+// 导出
+function download(id){
+	if(id){ 
+		 var node=findNodeById(treeData[0],id);
+		 var title=`确定导出【${node.title}】目录下的所有接口？`;
+		 if(node.type=='api'){
+			 title=`确定导出【${node.title}】接口？`;
+		 }
+		 var index=layer.confirm(title, {icon: 3,title:'导出',offset:'100px'}, function(){
+			 var url='#(path)#(apiActionKey)/download?id='+id+'&title='+node.title;
+			 window.open(url);
+			 layer.close(index);
+	      }, function(){
+
+	      });
+	} else {
+		showMsg("id is null");
+	}
+}
+
+// 导出选中的接口
+function downloadSelectIds(id,selectedIds){
+	if(selectedIds){ 
+		var node=findNodeById(treeData[0],id);
+		var index=layer.alert(`确定导出【${node.title}】目录下的接口？`,{
+	        title:'导出',
+	        offset:'100px',
+	        btn: ['导出已选','导出所有','取消'],
+	        btn1: function(){
+	        	var url='#(path)#(apiActionKey)/download';
+				 var params={'selectedIds':selectedIds,'id':id,'title':node.title};
+				 openWindowWithPost(url,params);
+				 layer.close(index);
+	        },
+	        btn2: function(){
+	        	var url='#(path)#(apiActionKey)/download?id='+id+'&title='+node.title;
+				 window.open(url);
+	        },
+	        btn3:function(){
+
+		    }
+	     });
+	} else {
+		showMsg("id is null");
+	}
+}
+
+function openWindowWithPost(url, params) {  
+	  const form = document.createElement('form');  
+	  form.method = 'POST';  
+	  form.action = url;  
+	  form.target = '_blank'; // 在新窗口中打开  
+
+	  for (const key in params) {  
+	    if (params.hasOwnProperty(key)) {  
+	      const input = document.createElement('input');  
+	      input.type = 'hidden';  
+	      input.name = key;  
+	      input.value = params[key];  
+	      form.appendChild(input);  
+	    }  
+	  }  
+
+	  document.body.appendChild(form);  
+	  form.submit();  
+	  document.body.removeChild(form);  
+}  
+
+// 删除 id,treeType:1、2
+function del(id,treeType) {
+	if(id){
+		var treeNode=treeNode=findNodeById(treeData[0],id);
+		if(!treeNode){
+			treeNode=findNodeById(linkData[0],id);
+	    }
+	    if(!treeNode)
+		    return;
+	    var nodeType = treeNode.type;
+	    var title = treeNode.title;
+	    var typeName={menu:'目录',api:'接口',demo:'实例',link:'快捷请求',}
+	    var content=`删除${typeName[nodeType]}【${title}】?<br/>
+		    ${nodeType=='menu'?`该${typeName[nodeType]}及该${typeName[nodeType]}下的${treeType == '1' ? '接口和实例':'快捷请求'}`:`该${typeName[nodeType]}`}将移至回收站，30 天后自动彻底删除。`;
+	    layer.confirm(content, {icon: 0, title:'提示',offset:'100px',}, function(index){
+	    	$.ajax({
+				 url:'#(path)#(apiActionKey)/delete',
+		 	 	 	type:"POST",
+		 	 	 	data:{'id':id},
+		 	 	 	success:function(ret){
+			 	 	 	showMsg(ret.msg,{icon:1,offset:'calc(100vh - 200px)',anim: 'slideUp'});
+			 	 	 	if(ret.state=='ok'){
+			 	 	 	   getApiTreeList(treeType,true);
+			 	 	 	}  
+			 	 	 	tabClose(id);
+		 	 	 	}
+			 });
+	    	layer.close(index);
+	    });
+	} else {
+		showMsg("id is null");
+	}
+}
+
+//打目录树开对话框
+function openMenuTree(id,title,treeType){
+	var treeNode=findNodeById(treeType=='1' ? treeData[0] : linkData[0], id);
+	openMenu(treeNode,title, treeType);
+	if(title=='移动到...')
+		getMenuTree('#treeSelect2', treeType);
+	else if(title!='重命名')
+	    getMenuTree('#treeSelect', treeType);
+}
+
+// 目录对话框
+function openMenu(treeNode,title,treeType){
+	var parentNode=findNodeById(treeType=='1' ? treeData[0] : linkData[0], treeNode.parent_id);
+	var showType = 'addData';
+    var height="350px";
+    var value="";
+    var placeholder=treeType=='1'?"根目录":"快捷请求";
+	if(title=='重命名'){
+		showType = 'title';
+		height="250px";
+	 } else if(title == '移动到...'){
+		 showType = 'parentId';
+		 value = treeType;
+		 height="250px";
+	 }else if(title =='修改目录'){
+		 showType = 'updateData';
+		 placeholder=parentNode.title;
+		 value=parentNode.id;
+	 }else if(showType=='addData'){
+		value=treeNode.id;
+		placeholder=treeNode.title;
+	 }
+	menuTreeSelectId = showType == 'updateData' ? parentNode.id:value;
+	layer.open({  
+	     btnAsync: true,  
+	     title: title,  
+	     type: 1,  
+	     shadeClose: true,
+	     content: `  
+	         <div class="layui-form layui-form-pane" style="padding:15px;">  
+	             <div class="layui-form-item layui-form-text ${showType == 'parentId' ? 'layui-hide':''}">  
+	                 <label class="layui-form-label">名称&nbsp;<font color="red">*</font></label>  
+	                 <div class="layui-input-block">  
+	                     <input type="text" name="title" oninput="titleHeader(this)" placeholder="请输入..." lay-verify="required" autocomplete="off" class="layui-input" id="titleInput" value="${showType == 'addData' ? '' : treeNode.title}">  
+	                     <div id="titleTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">名称为必填项，请填写名称</div>  
+	                 </div>  
+	             </div>  
+	             <div class="layui-form-item layui-form-text ${showType == 'title' ? 'layui-hide':''}">  
+	                 <label class="layui-form-label">${showType=='parentId'?'目标':'父级'}目录<font color="red">*</font></label>  
+	                 <div class="layui-input-block">  
+	                  	<input type="hidden" id="${showType=='parentId'?'treeSelect2Id':'treeSelectId'}" name="parentId" value="${showType == 'updateData' ? parentNode.id:value}"/>
+	                  	<input type="text" id="${showType=='parentId'?'treeSelect2':'treeSelect'}" name="parentName" value="${showType == 'updateData' ? parentNode.title : placeholder}" placeholder="${placeholder}"  class="layui-input" autocomplete="off" onblur="searchMenuBlur(this,${treeType})" oninput="searchMenu(this,${treeType})"/> 
+	                    <div id="parentIdTip" style="color: red; display: none;position: absolute;left:15px;margin-top: -2px;">请选择目录</div>
+	   	             </div>  
+	             </div>  
+	         </div>`,  
+	 	     area: ['480px', height], 
+	 	     offset:'100px',
+	 	     resize:false,
+	 	     delay: [10,500],// 数组成员值分别表示显示延迟时间和隐藏延迟时间
+	 	     btn: ['确定', '取消'],  
+	 	     btn1: function (index, layero) { 
+		 	     
+	 	         // 读取输入框内容  
+	 	         var title = layero.find('input[name="title"]').val();  
+	 	         var titleTip = layero.find('#titleTip');  
+	 	         var parentIdTip = layero.find('#parentIdTip');  
+	 	         var parentId = layero.find('input[name="parentId"]').val();  
+	 	         // 验证名称是否填写  
+	 	         if (!title && showType !='parentId') {  
+	 	             titleTip.show(); // 显示提示信息  
+	 	             return false; // 阻止关闭弹出层  
+	 	         } else {  
+	 	             titleTip.hide(); // 隐藏提示信息  
+	 	         }  
+
+	 	     	
+				if(showType=='addData'){
+					if(!parentId){
+						parentIdTip.show();
+						return false;
+					}
+		 	    	saveData(title,parentId,'menu',treeType);
+				}else if(showType=='title'){
+					updateTitle(treeNode.id,title,treeType);
+				} else if(showType=='parentId'){
+					
+		 	     	if(!parentId){
+						parentIdTip.show();
+						return false;
+					}
+					updateParentId(treeNode.id,parentId,treeType);
+				} else if(showType == 'updateData') {
+					parentId = layero.find('input[name="parentId"]').val();  
+		 	     	if(!parentId){
+						parentIdTip.show();
+						return false;
+					}
+					updateData(treeNode.id,title,parentId,treeType);
+				}
+		       
+	 	     },  
+	 	     btn2: function (index) {  
+	 	         layer.close(index); // 关闭弹出层  
+	 	     }  
+	 	});
+}
+
+function titleHeader(_this){
+	var title=$(_this).val();
+	if(title)
+		$('#titleTip').hide();
+	else
+		$('#titleTip').show();
+}
+
+// 保存目录
+function saveData(title,parentId,type,treeType){
+	if(title){
+		 // 这里可以添加进一步的逻辑，比如提交表单  
+		 $.ajax({
+			 url:'#(path)#(apiActionKey)/save',
+	 	 	 	type:"POST",
+	 	 	 	data:{'parent_id':parentId,title:title,type:type},
+	 	 	 	success:function(ret){
+		 	 	 	showMsg(ret.msg);
+		 	 	 	if(ret.state=='ok'){
+		 	 	 	    getApiTreeList(treeType,true);
+		 	 	 		getMenuTree(null,treeType)
+		 	 	 	}  
+	 	 	 	}
+		 });
+	} else {
+		showMsg("title is null");
+    }
+}
+
+// 修改标题
+function updateTitle(id,title,treeType){
+	if(id && title){
+		updateData(id,title,null,treeType);
+	} else {
+		showMsg("id or title is null");
+   }
+}
+
+// 修改父级id
+function updateParentId(id,parentId,treeType){
+	if(id && parentId){
+		updateData(id,null,parentId,treeType);
+	} else {
+		showMsg("id or parentId is null");
+   }
+}
+
+// 修改数据
+function updateData(id,title,parentId,treeType){
+	if(id){
+		 $.ajax({
+			 url:'#(path)#(apiActionKey)/update',
+	 	 	 	type:"POST",
+	 	 	 	data:{'id':id,'title':title,'parent_id':parentId},
+	 	 	 	success:function(ret){
+		 	 	 	showMsg(ret.msg);
+		 	 	 	if(ret.state=='ok'){
+		 	 	 	   getApiTreeList(treeType,true);
+		 	 	 	}  
+	 	 	 	}
+		 });
+	} else {
+		showMsg("id is null");
+  }
+	
+}
+
+/**
+ * 修改目录
+ */
+function updateMenu(id,title,parentId,remark,visible,treeType){
+	if(id){
+		 $.ajax({
+			 url:'#(path)#(apiActionKey)/update',
+	 	 	 	type:"POST",
+	 	 	 	data:{'id':id,'title':title,'parent_id':parentId,'remark':remark,visible:visible},
+	 	 	 	success:function(ret){
+		 	 	 	showMsg(ret.msg);
+		 	 	 	if(ret.state=='ok'){
+		 	 	 	   getApiTreeList(treeType,true);
+		 	 	 	}  
+	 	 	 	}
+		 });
+	} else {
+		showMsg("id is null");
+  }
+}
+
+/**
+ * 修改状态
+ */
+function updateVisible(id,visible){
+	if(id){
+		 $.ajax({
+			 url:'#(path)#(apiActionKey)/update',
+	 	 	 	type:"POST",
+	 	 	 	data:{'id':id,'visible':visible},
+	 	 	 	success:function(ret){
+		 	 	 	showMsg(ret.msg);
+		 	 	 	if(ret.state=='ok'){
+		 	 	 	   getApiTreeList('1',false);
+		 	 	 	}  
+	 	 	 	}
+		 });
+	} else {
+		showMsg("id is null");
+ 	}
+}
+
+/**
+ * 修改访问设置
+ */
+function updatePassword(id,password,expiretTime,shareId){
+	if(id){
+		 // 这里可以添加进一步的逻辑，比如提交表单  
+		 $.ajax({
+			 url:'#(path)#(apiActionKey)/update',
+	 	 	 	type:"POST",
+	 	 	 	data:{'id':id,'password':password,'expiret_time':expiretTime,'share_id':shareId},
+	 	 	 	success:function(ret){
+		 	 	 	showMsg(ret.msg);
+		 	 	 	if(ret.state=='ok'){
+		 	 	 	   getApiTreeList('1',false);
+		 	 	 	}  
+	 	 	 	}
+		 });
+	} else {
+		showMsg("id is null");
+ 	}
+}
+
+ // ele:#treeSelect
+function getMenuTree(elemId,treeType){
+	$.ajax({
+	 	 	url:'#(path)#(apiActionKey)/getTreeList',
+	 	 	type:"POST",
+	 	 	data:{'parent_id':treeType,type:'menu'},
+	 	 	success:function(ret){
+	 	 		if(ret.state=='ok'){
+	 	 			if(treeType==1){
+	 	 				menuData = ret.data;
+		 	 		}else{
+		 	 			menuDataLink = ret.data;
+			 	 	}
+	 	 			if(elemId){
+	 	 			   loadMenuTree(ret.data,elemId,treeType);
+	 	 			}
+	 	 		}
+	 	 	}
+	 });
+}
+
+function loadMenuTree(data,elemId,treeType){
+	var html=createDownMenuTree(data,true);	
+	var treeId = $(elemId+'Id').val();
+	var treeTitle = $(elemId).val();
+	  // 绑定输入框
+	  layui.dropdown.render({
+	    elem: elemId,
+	    content:`<div style="max-height:380px;overflow:auto">${html}</div>`,
+	    ready: function(elemPanel, elem){
+	    	  //console.log(elemPanel); // 组件面板元素对象
+	    	  //console.log(elem); // 当前组件绑定的目标元素对象
+	    	  if(elem.selector!='#treeSelect'){
+			       var html=`<div style="padding:0px 15px 15px 20px;"><hr/><a href="javascript:addMenuFromDropdown('${elem}','${treeType}')"><i class="layui-icon layui-icon-export"></i>添加目录</a></div>`;
+			       elemPanel.append(html);
+	    	  }
+	    },
+	    style: 'width: 450px;',
+	    click: function(obj,othis){
+	      var nodeId=othis[0].id;
+	      var nodeData = findNodeById(data[0], nodeId);
+	      menuTreeSelectId=nodeId;
+	      $(elemId).val(nodeData.title);
+	      $(elemId+'Id').val(nodeId);
+	      // 隐藏提示信息
+	      $('#titleTip').hide();
+	      $('#parentIdTip').hide();
+	    }
+	}); 
+}
+
+function addMenuFromDropdown(elem,treeType){
+	layui.dropdown.close(elem.id)
+	addMenu(treeType,treeType)
+}
+
+function searchMenu(_this,treeType) {
+	titleKeyword = $(_this).val();
+	var filteredData = menuData.map(node => filterByTitleKeyword(node, titleKeyword)).filter(item => item !== null); 
+	if(titleKeyword==''){
+		filteredData=menuData;
+	}
+	if(treeType=='2'){
+		filteredData = menuDataLink.map(node => filterByTitleKeyword(node, titleKeyword)).filter(item => item !== null); 
+		if(titleKeyword==''){
+			filteredData=menuDataLink;
+		}
+	}
+	
+	
+	var id=$(_this).attr('id');	
+	var html=createDownMenuTree(filteredData,true);	
+	layui.dropdown.reloadData(id,{
+		content:`<div style="max-height:380px;overflow:auto">${html}</div>`
+	});
+}
+
+function searchMenuBlur(_this,treeType){
+	var id=$(_this).attr('id');
+	if(treeType=='1'){
+		loadMenuTree(menuData,'#'+id,treeType);
+	}else{
+		loadMenuTree(menuDataLink,'#'+id,treeType);
+	}
+	$('#'+id).val('');
+}
+
+// 项目概况
+function project(){
+    var id = 'project';
+    var li=$('li[lay-id='+id+']');
+    if(li.length>0){
+    	element.tabChange('tab-handle', id); // 切换到标签
+	}else{
+	    $.ajax({
+			 url:'#(path)#(apiActionKey)/project',
+		 	 type:"POST",
+		 	 success:function(ret){
+		 	 	 var contentHtml=ret;
+				clickMenu(id,'<i class="layui-icon layui-icon-layouts"></i>项目概况',contentHtml);
+		 	 }
+		});
+	}
+}
+
+// 目录 
+function menu(id,title,treeType,isEditShare){ 
+    $.ajax({
+		 url:'#(path)#(apiActionKey)/menu',
+	 	 type:"POST",
+	 	 data:{id:id,tree_type:treeType,is_edit_share:isEditShare},
+	 	 success:function(ret){
+	 	 	 var contentHtml=ret;
+			clickMenu(id,title,contentHtml);
+	 	 }
+	});
+}
+
+// 回收站
+function recycle(){
+	 $.ajax({
+		 url:'#(path)#(apiActionKey)/getRecycleList',
+	 	 type:"POST",
+	 	 success:function(ret){
+	 		apiData = ret.data.api_data;  
+	 	    shortcutData = ret.data.shortcut_data;
+	 	    // 读取html
+	 	    $.ajax({
+	 			 url:'#(path)#(apiActionKey)/recycle',
+	 		 	 type:"POST",
+	 		 	 success:function(ret){
+	 		 	 	 var contentHtml=ret;
+	 				clickMenu('recycle','<i class="layui-icon layui-icon-delete"></i>回收站',contentHtml);
+	 		 	 }
+	 		});
+	 	 }
+	 });
+}
+
+	
+function showMsg(msg){
+	layer.msg(msg,{icon:1,offset:'calc(100vh - 200px)',anim: 'slideUp'});
+}
+
+// 文档预览
+function getDoc(apiId){
+	$.ajax({
+        type: 'POST',
+        url: '#(path)#(apiActionKey)/doc',
+        data:{id:apiId},
+        success: function(html){
+        	$('#doc_review_'+apiId).html(html);
+        	
+        	// 代码预览组件
+        	layui.code({
+        	    elem: '.code-demo-'+apiId,
+        	    langMarker:true
+        	});
+        }
+    });
+}
+
+//保存
+function saveMenuData(menuId,treeType){
+	var menuDom=$('.menu-'+menuId);
+	var title=menuDom.find('input[name=title]').val();
+	var parentId=menuDom.find('input[name=parentId]').val();
+	var remark=menuDom.find('textarea[name=remark]').val();
+	var visible=menuDom.find('input[name=visible'+menuId+']:checked').val();
+	updateMenu(menuId,title,parentId,remark,visible,treeType);
+}
+
+// 保存访问设置
+function savePassword(menuId){
+	var menuDom=$('.menu-link-'+menuId);
+	var password=menuDom.find('input[name=password]').val();
+	var expiretTime=menuDom.find('input[name=expiretTime]').val();
+	var shareId=menuDom.find('input[name=shareId]').val();
+	updatePassword(menuId,password,expiretTime,shareId);
+}
+
+// 随机数
+function generateRandomPassword(length = 8,menuId,inputName) {  
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";  
+    let randomPassword = "";  
+
+    for (let i = 0; i < length; i++) {  
+        const randomIndex = Math.floor(Math.random() * charset.length);  
+        randomPassword += charset[randomIndex];  
+    }  
+    var menuDom=$('.menu-link-'+menuId);
+	menuDom.find('input[name='+inputName+']').val(randomPassword);
+	if(inputName=='shareId'){
+		$('#share_msg_'+menuId).removeClass('layui-hide');
+    }
+}  
+</script>
+</body>
+</html>
