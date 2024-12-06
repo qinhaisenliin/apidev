@@ -18,7 +18,8 @@ public abstract class ApidevBaseService {
 	
 	/**
 	 * 返回接口成功数据
-	 * @param data
+	 * @param data 接口返回数据
+	 * @return Ret
 	 */
 	protected Ret ok(Object data) {
 		return Ret.ok("成功").set("data", data);
@@ -38,7 +39,8 @@ public abstract class ApidevBaseService {
 
 	/**
 	 * 返回接口失败信息
-	 * 
+	 * @param msg 提示信息
+	 * @return Ret
 	 */
 	protected Ret fail(String msg) {
 		return Ret.fail(msg);
@@ -47,30 +49,30 @@ public abstract class ApidevBaseService {
 	/**
 	 * 查询表名称
 	 * 
-	 * @return
+	 * @return String
 	 */
 	protected abstract String getTableName();
 	
 	
 	/**
 	 * select * from getTable()
-	 * @return
+	 * @return String
 	 */
 	protected String getQuerySql() {			
 		return "select * from "+getTableName()+" ";
 	}
 	
 	/**
-	 * 获取字段查询sql</br/>
+	 * 获取字段查询sql
 	 * 
-	 * <br/>columns 查询字段可以带逻辑字符：=、like 、>= 、<= 、> 、< ,默认是=</br/>
+	 * columns 查询字段可以带逻辑字符,
 	 * 
-	 * <br/>如：用户表sys_user,用name、state、sex查询：getQuerySql("name like","state=","sex");<br/>
+	 * 如：用户表sys_user,用name、state、sex查询：getQuerySql("name like","state=","sex");
 	 * 
-	 * <br/>那么就会返回查询语句：select * from sys_user where name like ? and state = ? and sex = ? <br/>
+	 * 那么就会返回查询语句：select * from sys_user where name like ? and state = ? and sex = ?
 	 * 
 	 * @param columns name like,state=,sex
-	 * @return sql：select * from sys_user where name like ? and state = ? and sex = ?
+	 * @return String sql：select * from sys_user where name like ? and state = ? and sex = ?
 	 */
 	protected String getQueryFullSql(String...columns) {
 		String sql=getQuerySql();
@@ -96,11 +98,10 @@ public abstract class ApidevBaseService {
 	/**
 	 * 单表分页条件查询
 	 * 
-	 * @param dbConfig   数据源名称
 	 * @param pageNumber 页码
 	 * @param pageSize   分页大小
 	 * @param params     查询条件 条件前置部分集合（字段+匹配符号，如 name like,id = ）
-	 * @return
+	 * @return Page
 	 */
 	protected Page<Record> getPage(int pageNumber, int pageSize, Record params) {
 		return getPage( pageNumber, pageSize, params, null, null);
@@ -109,12 +110,11 @@ public abstract class ApidevBaseService {
 	/**
 	 * 单表分页条件查询
 	 * 
-	 * @param dbConfig   数据源名称
 	 * @param pageNumber 页码
 	 * @param pageSize   分页大小
 	 * @param params     查询条件 条件前置部分集合（字段+匹配符号，如 name like,id = ）
 	 * @param orderBySql orderBy语句
-	 * @return
+	 * @return Page
 	 */
 	protected Page<Record> getPage(int pageNumber, int pageSize, Record params, String orderBySql) {
 		return getPage(pageNumber, pageSize, params, orderBySql, null);
@@ -123,13 +123,12 @@ public abstract class ApidevBaseService {
 	/**
 	 * 单表分页条件查询，支持多数据源
 	 * 
-	 * @param dbConfig   数据源名称
 	 * @param pageNumber 页码
 	 * @param pageSize   分页大小
 	 * @param params     查询条件 条件前置部分集合（字段+匹配符号，如 name like,id = ）
 	 * @param orderBySql orderBy语句
 	 * @param groupBySql groupBy语句
-	 * @return
+	 * @return Page
 	 */
 	protected Page<Record> getPage(int pageNumber, int pageSize, Record params, String orderBySql,String groupBySql) {
 		// 拼接sql中的from部分

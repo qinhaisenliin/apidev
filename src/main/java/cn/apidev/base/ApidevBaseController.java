@@ -23,7 +23,8 @@ import com.jfinal.plugin.activerecord.Record;
 public class ApidevBaseController extends Controller{
 	/**
 	 * 返回接口成功数据
-	 * @param data
+	 * @param data 接口数据
+	 * @return Ret
 	 */
 	@NotAction
 	public Ret ok(Object data) {
@@ -47,7 +48,8 @@ public class ApidevBaseController extends Controller{
 
 	/**
 	 * 返回接口失败信息
-	 * 
+	 * @param msg 提示信息
+	 * @return Ret
 	 */
 	@NotAction
 	public Ret fail(String msg) {
@@ -56,7 +58,7 @@ public class ApidevBaseController extends Controller{
 	
 	/**
 	 * 获取http请求body参数
-	 * @return
+	 * @return JSONObject
 	 */
 	@NotAction
 	public JSONObject getBodyJson(){
@@ -66,9 +68,9 @@ public class ApidevBaseController extends Controller{
 	}
 	
 	/** 
-	 * 获取请求参数,转化为JFinal的Record对象 ,<br/>
+	 * 获取请求参数,转化为JFinal的Record对象 ,
 	 * 本方法不接受body传参，body中的参数请使用getBodyJson()
-	 * @return
+	 * @return Record
 	 */
 	@NotAction
     public Record getAllParamsToRecord(){
@@ -79,8 +81,8 @@ public class ApidevBaseController extends Controller{
 	
 	/**
 	 * 把内容写入文件
-	 * @param file
-	 * @param str
+	 * @param file 要写入的文件
+	 * @param str 要写入的内容
 	 */
 	@NotAction
 	public void writeToFile(File file,String str) {

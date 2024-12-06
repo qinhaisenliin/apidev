@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 import cn.apidev.base.ApidevBaseService;
 import cn.apidev.kit.ApidevKit;
-import cn.apidev.vo.MappingInfo;
 import cn.apidev.kit.RequestMappingKit;
+import cn.apidev.vo.MappingInfo;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -86,6 +86,7 @@ public class ApidevService extends ApidevBaseService {
 
 	/**
 	 * 数据库表
+	 * @return String
 	 */
 	@Override
 	protected String getTableName() {
@@ -95,7 +96,7 @@ public class ApidevService extends ApidevBaseService {
 	/**
 	 * 同步接口
 	 * 
-	 * @return
+	 * @return Ret
 	 */
 	public Ret sync() {
 		int counter = 0;
@@ -195,6 +196,7 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
      * 同步RequestMapping接口信息
+     * @return int
      */
     public int getRequestMapping() {
     	 List<MappingInfo> mappingInfoList;
@@ -266,10 +268,10 @@ public class ApidevService extends ApidevBaseService {
 	/**
 	 * 查询api接口
 	 * 
-	 * @param parentId
+	 * @param parentId 父级id
 	 * @param type 接口类型：menu、api、demo、link,null
-	 * @param isFirst 
-	 * @return
+	 * @param isFirst 是否第一次查询
+	 * @return List
 	 */
 	public List<Record> getTreeList(String parentId, String type,boolean isFirst) {
 		String sql = "select id,type,request_mode,parent_id,action_key,interface_status,controller,"
@@ -299,9 +301,9 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 查询被标记删除的数据
-	 * @param parentId
-	 * @param del
-	 * @return
+	 * @param parentId 父级id
+	 * @param del 删除状态
+	 * @return List
 	 */
 	public List<Record> getDelTreeList(String parentId, int del) {
 		String sql = "select id,type,request_mode,parent_id,action_key,interface_status,controller,"
@@ -322,10 +324,9 @@ public class ApidevService extends ApidevBaseService {
 	/**
 	 * 查询api接口
 	 * 
-	 * @param parentId
-	 * @param type 接口类型：menu、api、demo、link,null
-	 * @param isFirst 
-	 * @return
+	 * @param parentId 父级id
+	 * @param isFirst 是否第一次查询
+	 * @return List
 	 */
 	public List<Record> getShareTreeList(String parentId,boolean isFirst) {
 		String sql = "select id,type,request_mode,parent_id,action_key,interface_status,controller,"
@@ -353,8 +354,8 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 查询分享id对应的数据
-	 * @param shareId
-	 * @return
+	 * @param shareId 分享id
+	 * @return Record
 	 */
 	public Record findByShareId(String shareId) {
 		String sql="select * from "+tableName+" where share_id=?";
@@ -364,10 +365,10 @@ public class ApidevService extends ApidevBaseService {
 	/**
 	 * 分页查询api
 	 * 
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param record     查询key:parentId,title,type
-	 * @return
+	 * @param pageNumber 页码
+	 * @param pageSize 分页大小
+	 * @param record 查询key:parentId,title,type
+	 * @return Page
 	 */
 	public Page<Record> list(int pageNumber, int pageSize, Record record) {
 		Record params = new Record();
@@ -390,8 +391,8 @@ public class ApidevService extends ApidevBaseService {
 	/**
 	 * 查询父级名称
 	 * 
-	 * @param id
-	 * @return
+	 * @param id 主键id
+	 * @return String
 	 */
 	public String getParantNames(String id) {
 		if ("1".equals(id)) {
@@ -480,9 +481,9 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 修改状态
-	 * @param ids
-	 * @param status
-	 * @return
+	 * @param ids 修改的id集
+	 * @param status 状态
+	 * @return Ret
 	 */
 	public Ret updateStatus(String ids,String status) {
 		if(ids==null || status==null)
@@ -499,9 +500,9 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 显示隐藏接口
-	 * @param ids
-	 * @param visible
-	 * @return
+	 * @param ids ids
+	 * @param visible 显示隐藏状态
+	 * @return Ret
 	 */
 	public Ret updateVisible(String ids,String visible) {
 		if(ids==null || visible==null)
@@ -518,9 +519,9 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 批量移动
-	 * @param ids
-	 * @param parentId
-	 * @return
+	 * @param ids 修改的id集
+	 * @param parentId 父级id
+	 * @return Ret
 	 */
 	public Ret moveTo(String ids,String parentId) {
 		if(ids==null || parentId==null)
@@ -538,9 +539,9 @@ public class ApidevService extends ApidevBaseService {
 	/**
 	 * 复制
 	 * 
-	 * @param id
-	 * @param parentId
-	 * @return
+	 * @param id 复杂制对象主键
+	 * @param parentId 父级id
+	 * @return Ret
 	 */
 	public Ret copy(String id, String parentId) {
 		Record api = findById(id);
@@ -568,8 +569,8 @@ public class ApidevService extends ApidevBaseService {
 	/**
 	 * 标记删除
 	 * 
-	 * @param id
-	 * @return
+	 * @param id 标记删除的id
+	 * @return Ret
 	 */
 	public Ret updateDel(String id) {
 		Record api = new Record();
@@ -608,9 +609,9 @@ public class ApidevService extends ApidevBaseService {
 
 	/**
 	 *  treeList 转 list
-	 * @param tree
-	 * @param list
-	 * @param isApi
+	 * @param tree 树数据列表
+	 * @param list 过滤结果列表
+	 * @param isApi 是否api类型
 	 */
 	private void flattenTree(List<Record> tree, List<Record> list, boolean isApi) {
 		for (Record record : tree) {
@@ -630,8 +631,8 @@ public class ApidevService extends ApidevBaseService {
 
 	/**
 	 * 导出接口
-	 * @param id
-	 * @return
+	 * @param id 导出对象id
+	 * @return List
 	 */
 	public List<Record> getExportApiList(String id) {
 		// 获取列表
@@ -666,8 +667,8 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 导出分享的接口
-	 * @param id
-	 * @return
+	 * @param id 导出对象id
+	 * @return List
 	 */
 	public List<Record> getExportShareApiList(String id){
 		// 获取列表
@@ -686,7 +687,7 @@ public class ApidevService extends ApidevBaseService {
 
 	/**
 	 * 添加接口文档参数
-	 * @param api
+	 * @param api api对象
 	 */
 	public void toApiJson(Record api) {
 		api.put("headers_json", JSONObject.parseArray(api.get("request_headers")));
@@ -712,8 +713,8 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 转义html字符
-	 * @param html
-	 * @return
+	 * @param html html文本
+	 * @return String
 	 */
 	 public String escapeHtml(String html) {  
         if (html == null) {  
@@ -730,8 +731,8 @@ public class ApidevService extends ApidevBaseService {
 	/**
 	 * 恢复
 	 * 
-	 * @param id
-	 * @return
+	 * @param id 恢复对象id
+	 * @return Ret
 	 */
 	public Ret recover(String id) {
 		if (id == null)
@@ -769,7 +770,7 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 恢复下级数据
-	 * @param parentId
+	 * @param parentId 父级id
 	 */
 	public void recoverChildrenApi(String parentId) {
 		List<Record> treeList=getDelTreeList(parentId,2);
@@ -783,8 +784,10 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 目录数据
-	 * @param id
-	 * @return
+	 * @param id 目录id
+	 * @param keyword 关键词查询
+	 * @param treeType 树类型
+	 * @return List
 	 */
 	public List<Record> getMenuApiList(String id,String keyword,String treeType) {
 		String type="api";
@@ -813,8 +816,7 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 项目统计数据
-	 * @param record
-	 * @return
+	 * @return Record
 	 */
 	public Record getProjectData(){
 		Record result=new Record();
@@ -940,8 +942,8 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 保存接口文档
-	 * @param body
-	 * @return
+	 * @param body body参选
+	 * @return Ret
 	 */
 	public Ret saveApi(JSONObject body) {
 		Record api=new Record();      
@@ -968,8 +970,8 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 目录数据
-	 * @param param
-	 * @return
+	 * @param param 查询参数
+	 * @return Record
 	 */
 	public Record getMenuData(Record param) {
 		String id=param.get("id");
@@ -991,9 +993,9 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 获取接口详细信息
-	 * @param id
-	 * @param param
-	 * @return
+	 * @param id 接口id
+	 * @param param 查询参数
+	 * @return Record
 	 */
 	public Record getDetail(String id,Record param) {
 		Record api=findById(id);
@@ -1034,8 +1036,8 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 文档预览
-	 * @param id
-	 * @return
+	 * @param id 文档id
+	 * @return Record
 	 */
 	public Record getDoc(String id) {
 		Record api=findById(id);
@@ -1050,7 +1052,8 @@ public class ApidevService extends ApidevBaseService {
 	
 	/**
 	 * 更新排序
-	 * @param ids
+	 * @param ids ids集
+	 * @return Ret
 	 */
 	public Ret updateSort(JSONArray ids) {
 		if(ids!=null) {

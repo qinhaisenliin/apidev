@@ -24,6 +24,7 @@ public class RequestMappingKit {
 
     /**
      * 获取映射路由信息
+     * @return List
      */
     public static List<MappingInfo> getMappingInfoList() throws BeansException {
         RequestMappingHandlerMapping mapping = (RequestMappingHandlerMapping) ApidevApplicationContext.getBean("requestMappingHandlerMapping");

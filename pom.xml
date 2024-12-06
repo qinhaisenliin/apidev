@@ -9,6 +9,32 @@
     <name>apidev</name>
 
 	<url>http://apidev.cn</url>
+	 <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>apidev</id>
+            <name>apidev</name>
+            <email>qinhaisenlin1024@163.com</email>
+            <roles>
+                <role>Project Manager</role>
+                <role>Architect</role>
+            </roles>
+        </developer>
+    </developers>
+
+	<scm>
+        <connection>https://gitee.com/apidev/apidev.git</connection>
+        <developerConnection>scm:git:ssh://git@gitee.com:apidev/apidev.git
+        </developerConnection>
+        <url>https://gitee.com/apidev/apidev</url>
+    </scm>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
@@ -109,58 +135,63 @@
 				</configuration>
 			</plugin>
 			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.1</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<finalName>apidev</finalName>
-							<transformers>
-							<!--
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>cn.apidev.App</mainClass>
-								</transformer>
-								-->
-								<!--
-									下面的配置支持排除指定文件打包到 jar 之中，可以用于排除需要修改的配置文件以便于在外部的 config 目录下的
-									同名配置文件生效，建议使用 Prop.appendIfExists(xxx_pro.txt) 在外部放一个非同名配置来覆盖开发环境的配置
-									则可以不用使用下面的配置，文档参考:
-										http://maven.apache.org/plugins/maven-shade-plugin/examples/resource-transformers.html#DontIncludeResourceTransformer
-								-->
-								<transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
-									<resources>
-									<!-- <resource>demo-config-dev.txt</resource> -->
-									<!-- <resource>.PDF</resource> -->
-									<!-- <resource>READ.md</resource> -->
-									</resources>
-								</transformer>
-							</transformers>
-							
-							<!-- 
-								解决 fatjar 的 "java.lang.SecurityException: Invalid signature file digest
-								for Manifest main attributes" 问题
-							-->
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
-							
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+			<!--   central发布插件    -->
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>masiyi</publishingServerId>
+                    <tokenAuth>true</tokenAuth>
+                </configuration>
+            </plugin>
+            <!--   source源码插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--   javadoc插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <configuration>
+                    <executable>C:\Program Files (x86)\GnuPG\bin\gpg.exe</executable>
+                    <keyname>apidev</keyname>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>apidev</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 			
 		</plugins>
 	</build>

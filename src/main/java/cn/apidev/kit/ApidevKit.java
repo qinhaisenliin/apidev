@@ -66,6 +66,7 @@ public class ApidevKit {
 	
 	/**
 	 * 获取配置文件参数
+	 * @return Prop
 	 */
 	private static Prop getProp() {
 		if (p == null) {
@@ -77,6 +78,9 @@ public class ApidevKit {
 			
 	/**
 	 * 配置数据库信息
+	 * @param url url
+	 * @param username 用户名
+	 * @param password 密码
 	 */
 	public static void configDb(String url,String username,String password) {
 		ApidevKit.url = url;
@@ -86,6 +90,7 @@ public class ApidevKit {
 				
 	/**
 	 * Apidev控制器路由
+	 * @return String
 	 */
 	public static String getActionKey() {
 		String actionKey = getProp().get("apidev.actionKey", viewPath);
@@ -96,6 +101,7 @@ public class ApidevKit {
 	
 	/**
 	 * Apidev服务是否关闭
+	 * @return boolean
 	 */
 	public static boolean isStop() {
 		return getProp().getBoolean("apidev.stop", false);
@@ -103,6 +109,7 @@ public class ApidevKit {
 	
 	/**
 	 * 是否SpringBoot项目
+	 * @return boolean
 	 */
 	public static boolean isSpringBoot() {
 		return isSpringBoot;
@@ -110,6 +117,8 @@ public class ApidevKit {
 		
 	/**
 	 * 配置Apidev路由（必须配置）
+	 * @param me Routes
+	 * @return Routes
 	 */
 	public static Routes configRoute(Routes me) {
 		return configRoute(me,null);
@@ -117,6 +126,9 @@ public class ApidevKit {
 	
 	/**
 	 * 配置Apidev路由和路由拦截器
+	 * @param me Routes
+	 * @param interceptor 拦截器
+	 * @return Routes
 	 */
 	public static Routes configRoute(Routes me,Interceptor interceptor) {
 		// 添加Apidev前端路由
@@ -140,6 +152,8 @@ public class ApidevKit {
 	
 	/**
 	 * 配置Engine（必须配置）
+	 * @param me Engine
+	 * @return Engine
 	 */
 	public static Engine configEngine(Engine me) {
 		// 配置jar资源目录
@@ -149,9 +163,10 @@ public class ApidevKit {
 	}
 	
 	/**
-	 * 获取DruidPlugin,主要是SpringBoot项目中使用；<br/>
-	 * <br/>
+	 * 获取DruidPlugin,主要是SpringBoot项目中使用；
+	 * 
 	 * JFinal项目可以忽略该配置，默认就是项目中的主数据库。
+	 * @return DruidPlugin
 	 */
 	private static DruidPlugin getDruidPlugin() {
 		// 为空则从自定义配置文件apidev-config.txt配置文件读取
@@ -169,9 +184,11 @@ public class ApidevKit {
 	}
 	
 	/**
-	 * 配置数据库插件<br/>
-	 * SpringBoot项目中使用<br/>
+	 * 配置数据库插件
+	 * SpringBoot项目中使用,
 	 * JFinal可以忽略，默认就是项目中的主数据库
+	 * @param me Plugins
+	 * @return Plugins
 	 */
 	public static Plugins configPlugin(Plugins me) {
 		// 配置 JDBC 连接池插件
@@ -208,6 +225,7 @@ public class ApidevKit {
 		
 	/**
 	 * 获取JFinalFilter
+	 * @return JFinalFilter
 	 */
 	public static JFinalFilter getJFinalFilter() {
 		isSpringBoot = true;

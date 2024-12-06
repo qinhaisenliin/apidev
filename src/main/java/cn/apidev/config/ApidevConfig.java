@@ -16,7 +16,7 @@ import cn.apidev.kit.ApidevKit;
 
 /**
  * Apidev配置中心，该类主要是在SpringBoot项目中使用，JFinal项目可以
- * <br/>
+ * 
  * 单独使用ApidevKit中的ApidevKit.configRoute(me)和ApidevKit.configEngine(me);
  *
  */
