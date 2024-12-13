@@ -1,7 +1,7 @@
 # apidev
 
 #### Description
-开发API，专注于开发者所需的接口和工具，支持开发者的创新。
+开发API，专注于开发者所需的接口工具，支持开发者的创新。
 
 #### Software Architecture
 Software architecture description
