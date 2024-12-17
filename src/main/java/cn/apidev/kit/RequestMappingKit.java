@@ -1,3 +1,19 @@
+/**
+ * Copyright 2024-2025 琴海森林(qinhaisenlin@163.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package cn.apidev.kit;
 
 import org.springframework.beans.BeansException;
@@ -19,59 +35,63 @@ import java.util.Map;
 
 /**
  * 获取RequestMapping映射路由信息
+ * 
+ * @author 琴海森林
  */
 public class RequestMappingKit {
 
-    /**
-     * 获取映射路由信息
-     * @return List
-     */
-    public static List<MappingInfo> getMappingInfoList() throws BeansException {
-        RequestMappingHandlerMapping mapping = (RequestMappingHandlerMapping) ApidevApplicationContext.getBean("requestMappingHandlerMapping");
+	/**
+	 * 获取映射路由信息
+	 * 
+	 * @return List
+	 */
+	public static List<MappingInfo> getMappingInfoList() throws BeansException {
+		RequestMappingHandlerMapping mapping = (RequestMappingHandlerMapping) ApidevApplicationContext
+				.getBean("requestMappingHandlerMapping");
 
-        // 获取url与类和方法的对应信息
-        Map<RequestMappingInfo, HandlerMethod> map = mapping.getHandlerMethods();
+		// 获取url与类和方法的对应信息
+		Map<RequestMappingInfo, HandlerMethod> map = mapping.getHandlerMethods();
 
-        List<MappingInfo> list = new ArrayList<>(map.size());
+		List<MappingInfo> list = new ArrayList<>(map.size());
 
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> m : map.entrySet()) {
-            MappingInfo mappingInfo = new MappingInfo();
-            RequestMappingInfo info = m.getKey();
-            HandlerMethod handlerMethod = m.getValue();
-            //获取当前方法所在类名
-            Class<?> bean = handlerMethod.getBeanType();
-            //使用反射获取当前类注解内容
-            RequestMapping requestMapping = bean.getAnnotation(RequestMapping.class);
-            if (null != requestMapping) {
-                String[] value = (String[]) AnnotationUtils.getAnnotationAttributes(requestMapping).get("value");
-                mappingInfo.setClassRequestMappings(Arrays.asList(value));
-            }
-            //获取方法上注解以及注解值
-            PatternsRequestCondition p = info.getPatternsCondition();
-            List<String> urls = new ArrayList<>();
-            urls.addAll(p.getPatterns());
-            mappingInfo.setRequestMappings(urls);
+		for (Map.Entry<RequestMappingInfo, HandlerMethod> m : map.entrySet()) {
+			MappingInfo mappingInfo = new MappingInfo();
+			RequestMappingInfo info = m.getKey();
+			HandlerMethod handlerMethod = m.getValue();
+			// 获取当前方法所在类名
+			Class<?> bean = handlerMethod.getBeanType();
+			// 使用反射获取当前类注解内容
+			RequestMapping requestMapping = bean.getAnnotation(RequestMapping.class);
+			if (null != requestMapping) {
+				String[] value = (String[]) AnnotationUtils.getAnnotationAttributes(requestMapping).get("value");
+				mappingInfo.setClassRequestMappings(Arrays.asList(value));
+			}
+			// 获取方法上注解以及注解值
+			PatternsRequestCondition p = info.getPatternsCondition();
+			List<String> urls = new ArrayList<>();
+			urls.addAll(p.getPatterns());
+			mappingInfo.setRequestMappings(urls);
 
 //            ApiOperation apiOperation = handlerMethod.getMethodAnnotation(ApiOperation.class);
 //            if (apiOperation != null) {
-//                mappingInfo.setRemark(apiOperation.value());
+//                	mappingInfo.setRemark(apiOperation.value());
 //            } else {
-                  mappingInfo.setRemark(info.getName());
+//					mappingInfo.setRemark(info.getName());
 //            }
+			
+			mappingInfo.setRemark(info.getName());
+			mappingInfo.setClassName(handlerMethod.getMethod().getDeclaringClass().getName());
+			mappingInfo.setMethodName(handlerMethod.getMethod().getName());
 
-            mappingInfo.setClassName(handlerMethod.getMethod().getDeclaringClass().getName());
-            mappingInfo.setMethodName(handlerMethod.getMethod().getName());
+			RequestMethodsRequestCondition methodsCondition = info.getMethodsCondition();
+			List<String> httpMethods = new ArrayList<>();
+			methodsCondition.getMethods().forEach(requestMethod -> httpMethods.add(requestMethod.toString()));
+			mappingInfo.setHttpMethods(httpMethods);
 
-            RequestMethodsRequestCondition methodsCondition = info.getMethodsCondition();
-            List<String> httpMethods = new ArrayList<>();
-            methodsCondition.getMethods().forEach(requestMethod -> httpMethods.add(requestMethod.toString()));
-            mappingInfo.setHttpMethods(httpMethods);
+			list.add(mappingInfo);
+		}
 
-            list.add(mappingInfo);
-        }
-
-        return list;
-    }
-
+		return list;
+	}
 
 }

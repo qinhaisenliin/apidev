@@ -1,3 +1,19 @@
+/**
+ * Copyright 2024-2025 琴海森林(qinhaisenlin@163.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package cn.apidev.kit;
 
 import com.jfinal.aop.Interceptor;
@@ -21,15 +37,15 @@ import cn.apidev.api.ctrl.ApidevController;
 import cn.apidev.config.ApidevConfig;
 
 /**
- * Apidev配置工具类
+ * APIDev配置工具类
  * 
- * @author apidev.cn
+ * @author 琴海森林
  *
  */
 public class ApidevKit {
 
 	/**
-	 * Apidev视图路径
+	 * APIDev视图路径
 	 */
 	private static final String viewPath = "/apidev";
 	
@@ -41,9 +57,9 @@ public class ApidevKit {
 	private static final String apidevConfig = "apidev-config.txt";
 
 	/**
-	 * Apidev version
+	 * APIDev version
 	 */
-	public static final String version = "1.0";
+	public static final String version = "1.0.3";
 	
 	/**
 	 * 标记SpringBoot项目
@@ -71,7 +87,7 @@ public class ApidevKit {
 	private static Prop getProp() {
 		if (p == null) {
 			// 加载从左到右第一个被找到的配置文件
-			p = PropKit.useFirstFound(apidevConfig);
+			p = PropKit.appendIfExists(apidevConfig);
 		}
 		return p;
 	}
@@ -89,7 +105,7 @@ public class ApidevKit {
 	}
 				
 	/**
-	 * Apidev控制器路由
+	 * APIDev控制器路由
 	 * @return String
 	 */
 	public static String getActionKey() {
@@ -100,7 +116,7 @@ public class ApidevKit {
 	}
 	
 	/**
-	 * Apidev服务是否关闭
+	 * APIDev服务是否关闭
 	 * @return boolean
 	 */
 	public static boolean isStop() {
@@ -116,7 +132,7 @@ public class ApidevKit {
 	}
 		
 	/**
-	 * 配置Apidev路由（必须配置）
+	 * 配置APIDev路由（必须配置）
 	 * @param me Routes
 	 * @return Routes
 	 */
@@ -125,7 +141,7 @@ public class ApidevKit {
 	}
 	
 	/**
-	 * 配置Apidev路由和路由拦截器
+	 * 配置APIDev路由和路由拦截器
 	 * @param me Routes
 	 * @param interceptor 拦截器
 	 * @return Routes
@@ -245,10 +261,10 @@ public class ApidevKit {
 	}
 			
 	/**
-	 * 打印Apidev配置信息
+	 * 打印APIDev配置信息
 	 */
 	private static void printApidevInfo() {
-		String msg = "Apidev Server Info:\n";
+		String msg = "APIDev Server Info:\n";
 		msg += " > Start:     " + !isStop();
 		msg += "\n";
 		msg += " > Version:   " + version;

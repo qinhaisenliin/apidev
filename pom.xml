@@ -3,11 +3,11 @@
     
     <groupId>cn.apidev</groupId>
     <artifactId>apidev</artifactId>
-    <version>1.0</version>
+    <version>1.0.3</version>
   	<packaging>jar</packaging>
   	
     <name>apidev</name>
-	<description>开发API，专注于开发者所需的接口工具，支持开发者的创新。</description>
+	<description>APIDev is a platform focused on API development and management, designed to provide developers with efficient API solutions and tools.</description>
 	<url>http://apidev.cn</url>
 	 <licenses>
         <license>
@@ -19,12 +19,9 @@
     <developers>
         <developer>
             <id>apidev</id>
-            <name>apidev</name>
-            <email>qinhaisenlin1024@163.com</email>
-            <roles>
-                <role>Project Manager</role>
-                <role>Architect</role>
-            </roles>
+            <name>琴海森林</name>
+            <email>qinhaisenlin@163.com</email>
+            <organization>http://apidev.cn</organization>
         </developer>
     </developers>
 
@@ -42,20 +39,19 @@
     	<maven.compiler.target>1.8</maven.compiler.target>  
 	</properties>
 	
-	<!-- 使用阿里 maven 库 -->
-	<repositories>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>apidev</id>
+			<url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+		</snapshotRepository>
 		<repository>
-			<id>ali-maven</id>
-			<url>https://maven.aliyun.com/nexus/content/groups/public</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
+			<id>apidev</id>
+			<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
+	</distributionManagement>
+	
+
+	<repositories>
 	</repositories>
 
 	<dependencies>
@@ -89,38 +85,11 @@
 		    <version>2.1.15.RELEASE</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<finalName>apidev</finalName>		
-		<!--
-		    添加 includes 配置后，excludes 默认为所有文件 **/*.*，反之亦然
-		    该规则在 maven-jar-plugin 等插件中同样适用
-		-->
-		<resources>
-			<!-- 添加该配置是为了将 .sql 文件打入 jar 包 -->
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>**/*.class</include>
-				</includes>
-			</resource>
-			
-			<!--
-				没有添加 resources 配置时，src/main/resources 目录是默认配置
-			    一旦添加 resources 配置指向 src/main/java 目录时，原先的默认配置被取代，
-			    所以需要添加如下配置将默认配置再添加进来，否则无法使用 src/main/resources
-			    下的资源文件
-			-->
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-			
-		</resources>
-		
-		
-		
+					
 		<plugins>
-		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -139,11 +108,11 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.4.0</version>
+                <version>0.6.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>apidev</publishingServerId>
-                    <tokenAuth>true</tokenAuth>
+                    <waitUntil>published</waitUntil>
                 </configuration>
             </plugin>
             <!--   source源码插件 -->
@@ -164,7 +133,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>2.10.4</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -177,14 +146,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
+                <version>1.6</version>
                 <configuration>
-                    <executable>C:\Program Files (x86)\GnuPG\bin\gpg.exe</executable>
                     <keyname>apidev</keyname>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>apidev</id>
+                        <id>sign-artifacts</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
@@ -192,7 +160,6 @@
                     </execution>
                 </executions>
             </plugin>
-			
 		</plugins>
 	</build>
 </project>
