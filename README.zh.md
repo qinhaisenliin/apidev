@@ -2,6 +2,13 @@
 
 APIDev是一个专注于API开发和管理的平台，旨在为开发者提供高效的API解决方案和工具。  
 
+## 联系
+官网地址：[http://apidev.cn](http://apidev.cn)
+
+邮箱：qinhaisenlin@163.com
+
+QQ群：965020683
+
 ## 一、安装  
 
 ### Maven 依赖  
@@ -114,7 +121,7 @@ APIDev Server Info:
  > Version:   1.0.3
  > ActionKey: /apidev
 ```
-5、可选配置项：需要在src/main/resource目录创建apidev-conf.txt文件，然后添加如下可以选配置项：
+5、可选配置项：需要在src/main/resource目录创建apidev-conf.txt文件，然后添加如下配置项：
 ```
     #1、Apidev 路由配置，默认是/apidev
      
@@ -178,3 +185,6 @@ APIDev Server Info:
 
 #### 6、回收站
 ![输入图片说明](img/apidev_delete.png)
+
+
+
