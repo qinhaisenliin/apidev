@@ -130,51 +130,51 @@ APIDev Server Info:
 ## 三、界面效果图
 #### 1、APIDev管理首页,默认地址：http://localhost/apidev/
 暗黑主题
-![暗黑主题](apidev_black.png)
+![暗黑主题](img/apidev_black.png)
 
 #### 明亮主题
-![明亮主题](apidev_index.png)
+![明亮主题](img/apidev_index.png)
 
 #### 2、同步接口
-![同步接口信息](apidev_sync.png)
+![同步接口信息](img/apidev_sync.png)
 
 #### 3、目录管理页
 #### 目录接口管理页
-![目录接口管理](apidev_menu.png)
+![目录接口管理](img/apidev_menu.png)
 
 #### 新增目录
-![新增目录](apidev_menu_add.png)
+![新增目录](img/apidev_menu_add.png)
 
 #### 目录分享设置
-![目录分享](apidev_share_set.png)
+![目录分享](img/apidev_share_set.png)
 
 #### 4、接口管理页
 #### 接口调试界面
-![接口请求界面](apidev_api.png)
+![接口请求界面](img/apidev_api.png)
 
 #### 目录树功能菜单
-![输入图片说明](apidev_tree.png)
+![输入图片说明](img/apidev_tree.png)
 
 #### 响应示例
-![接口响应示例](apidev_api_demo.png)
+![接口响应示例](img/apidev_api_demo.png)
 
 #### 接口文档
-![接口文档](apidev_api_doc.png)
+![接口文档](img/apidev_api_doc.png)
 
 #### 接口说明信息
-![接口信息](apidev_api_info.png)
+![接口信息](img/apidev_api_info.png)
 
 #### 5、分享链接
-![目录分享](apidev_share_set.png)
+![目录分享](img/apidev_share_set.png)
 
 #### 复制链接
-![复制链接](apidev_share_link_copy.png)
+![复制链接](img/apidev_share_link_copy.png)
 
 #### 分享地址界面
-![分享页面](apidev_share.png)
+![分享页面](img/apidev_share.png)
 
 #### 导出文档
-![输入图片说明](imgapidev_download.png)
+![输入图片说明](img/apidev_download.png)
 
 #### 6、回收站
-![输入图片说明](apidev_delete.png)
+![输入图片说明](img/apidev_delete.png)
