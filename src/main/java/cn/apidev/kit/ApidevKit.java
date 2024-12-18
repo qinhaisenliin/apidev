@@ -25,12 +25,6 @@ import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
-import com.jfinal.plugin.activerecord.dialect.H2Dialect;
-import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
-import com.jfinal.plugin.activerecord.dialect.OracleDialect;
-import com.jfinal.plugin.activerecord.dialect.PostgreSqlDialect;
-import com.jfinal.plugin.activerecord.dialect.SqlServerDialect;
-import com.jfinal.plugin.activerecord.dialect.Sqlite3Dialect;
 import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.template.Engine;
 import cn.apidev.api.ctrl.ApidevController;
@@ -221,17 +215,17 @@ public class ApidevKit {
 		// 配置数据库方言
 		if(url.startsWith("jdbc:oracle")||url.startsWith("jdbc:dm")) {
 			toLowerCase = true;
-			arp.setDialect(new OracleDialect());
+			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.OracleDialect());
 		}else if(url.startsWith("jdbc:sqlite")) {
-			arp.setDialect(new Sqlite3Dialect());
+			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.Sqlite3Dialect());
 		} else if(url.startsWith("jdbc:postgresql")) {
-			arp.setDialect(new PostgreSqlDialect());
+			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.PostgreSqlDialect());
 		} else if(url.startsWith("jdbc:microsoft")) {
-			arp.setDialect(new SqlServerDialect());
+			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.SqlServerDialect());
 		} else if(url.startsWith("jdbc:h2")) {
-			arp.setDialect(new H2Dialect());
+			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.H2Dialect());
 		} else if(url.startsWith("jdbc:mysql")) {
-			arp.setDialect(new MysqlDialect());
+			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.MysqlDialect());
 		}
 		// 显示sql
 		arp.setShowSql(true);
