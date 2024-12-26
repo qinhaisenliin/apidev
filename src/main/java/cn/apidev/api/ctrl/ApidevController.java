@@ -290,9 +290,9 @@ public class ApidevController extends ApidevBaseController{
 		String wordString = renderToString("download.html", Kv.by("api_list", list));
 
 		// temp下载临时文件存放目录
-		String fileName = "temp/Apidev";
+		String fileName = "temp";
 		if (title != null)
-			title += title.replace("/", "_");
+			title = title.replace("/", "_");
 		File path=new File(PathKit.getWebRootPath() + getViewPath() + fileName);
 		if(!path.exists()){
 			path.mkdirs();
@@ -333,6 +333,35 @@ public class ApidevController extends ApidevBaseController{
 	}
 	
 	/**
+	 * 导出json
+	 */
+	public void exportJson() {  
+		String parentId=getPara("parentId");
+		Record record=apiService.findById(parentId);
+		if(record==null || record.getInt("del")!=0) {
+			renderJson(fail("无数据"));
+			return;
+		}
+
+		List<Record> allList=apiService.getExportAllApiList(parentId);
+		
+        // 准备JSON数据  
+        String jsonData =JsonKit.toJson(ok(allList));
+
+        // temp下载临时文件存放目录
+ 		String fileName = "temp";
+ 		File path=new File(PathKit.getWebRootPath() + getViewPath() + fileName);
+ 		if(!path.exists()){
+ 			path.mkdirs();
+ 		}
+ 		File file = new File(PathKit.getWebRootPath() + getViewPath() + fileName + ".txt");
+ 		writeToFile(file, jsonData);
+ 		
+ 		String title = "apidev-"+record.getStr("title")+".txt";
+ 		renderFile(file,title);
+    }  
+	
+	/**
 	 * 项目概况页面
 	 */
 	public void project(){
@@ -353,7 +382,6 @@ public class ApidevController extends ApidevBaseController{
 	 * 回收站表格数据
 	 */
 	public void getRecycleList() {
-		ApidevService.deleteByTask();
 		Record record=apiService.getRecycleList(getAllParamsToRecord());
 		renderJson(ok(record));
 	}

@@ -197,10 +197,11 @@ ul {
 	margin-top: -22px;
 }
 
+.item-group .layui-this,
+.tab-handle .layui-this,
 #apiList > li:hover,
 .active, .tree-node-title:hover, 
 .layui-colla-title:hover, 
-.item-group .layui-this,
 .layui-menu .layui-menu-item-group>.layui-menu-body-title:hover
 {
 	background-color: #607d8b54 !important; /* 活动节点样式 */

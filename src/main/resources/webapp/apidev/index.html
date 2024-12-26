@@ -10,6 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content="接口开发 接口文档 接口调试 API管理工具">
 <meta name="description"content="Apidev是一个专注于API开发和管理的平台，旨在为开发者提供高效的API解决方案和工具,非常适合IT团队的API开发工具、技术文档开发工具。">
+<link rel="icon" href="https://apidev.cn/logo.png" type="image/x-icon"/>
 <link rel="stylesheet" href="#(path)/assets/apidev/lib/layui_exts/mouseRightMenu/mouseRightMenu.css" />
 <link rel="stylesheet" href="#(path)/assets/apidev/lib/layui-v2.9.18/layui/css/layui.css" media="all" />
 <link rel="stylesheet" href="#(path)/assets/apidev/css/debug.css" />
@@ -138,7 +139,7 @@ input[value="OPTIONS"] {
 								class="item-group-text">项目设置</a>
 						</div>
 					</li>
-					<li class="layui-nav-item" title="背景主题">
+					<li class="layui-nav-item" title="背景主题" style="position: fixed;bottom: 0px;">
 						<div class="item-group layui-form">
 							<i id="themeIcon" class="layui-icon layui-icon-light"></i>
 							<div class="layui-form-item" style="margin-top: -15px">
@@ -705,7 +706,8 @@ input[value="OPTIONS"] {
 						{'data':data,'type':'moveTo','title':'移动到','icon':'layui-icon-next'},
 						{'data':data,'type':'sort','title':'排序','icon':'layui-icon-template-1'},
 						{'data':data,'type':'copyLink','title':'复制链接','icon':'layui-icon-link'},
-						{'data':data,'type':'export','title':'导出','icon':'layui-icon-download-circle'},
+						{'data':data,'type':'download','title':'下载 ','icon':'layui-icon-download-circle'},
+						{'data':data,'type':'exportJson','title':'导出JSON','icon':'layui-icon-download-circle'},
 						{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'},
 					];
 					if(dataId=='1'){
@@ -714,7 +716,8 @@ input[value="OPTIONS"] {
 							{'data':data,'type':'addApi','title':'添加接口','icon':'layui-icon-component'},
 							{'data':data,'type':'copyLink','title':'复制链接','icon':'layui-icon-link'},
 							{'data':data,'type':'sort','title':'排序','icon':'layui-icon-template-1'},
-							{'data':data,'type':'export','title':'导出','icon':'layui-icon-download-circle'}
+							{'data':data,'type':'download','title':'下载','icon':'layui-icon-download-circle'},
+							{'data':data,'type':'exportJson','title':'导出JSON','icon':'layui-icon-download-circle'}
 						];
 					}else if(treeType=='2'){
 						menu_data=[
@@ -732,8 +735,9 @@ input[value="OPTIONS"] {
 						{'data':data,'type':'copy','title':'复制','icon':'layui-icon-templeate-1'},
 						{'data':data,'type':'moveTo','title':'移动到','icon':'layui-icon-next'},
 						{'data':data,'type':'copyLink','title':'复制链接','icon':'layui-icon-link'},
-						{'data':data,'type':'export','title':'导出','icon':'layui-icon-download-circle'},
-						{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'},
+						{'data':data,'type':'download','title':'下载','icon':'layui-icon-download-circle'},
+						{'data':data,'type':'exportJson','title':'导出JSON','icon':'layui-icon-download-circle'},
+						{'data':data,'type':'del','title':'删除','icon':'layui-icon-delete'}
 					];
 					
 				} else if(nodeData.type=='demo') {
@@ -777,8 +781,10 @@ input[value="OPTIONS"] {
 						editMenu(dataId,treeType);	
 		 	 		}else if(type=='copyLink'){
 						copyLink(dataId);
-	 	 	 	 	} else if(type=='export'){
+	 	 	 	 	} else if(type=='download'){
 	 	 	 	 		download(dataId)
+	 	 	 	 	} else if(type=='exportJson'){
+	 	 	 	 		exportJson(dataId)
 		 	 	 	} else if(type=='del'){
 		 	 	 		del(dataId,treeType);
 	 	 	 	 	} 
@@ -832,11 +838,17 @@ input[value="OPTIONS"] {
 			    	  return '<i class="layui-icon layui-icon-template-1"></i> ' + d.title;
 			      }
 		    },{
-		      title: '导出',
-		      id: 'export',
+		      title: '下载',
+		      id: 'download',
 		      templet: function(d){
 		    	  return '<i class="layui-icon layui-icon-download-circle"></i> ' + d.title;
 		      }
+		    },{
+			      title: '导出JSON',
+			      id: 'exportJson',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-download-circle"></i> ' + d.title;
+			      }
 		    }],
 		    click: function(obj){
 		      	var type=obj.id;
@@ -853,6 +865,8 @@ input[value="OPTIONS"] {
 	 	 	 		sort('1','1');
  	 	 		} else if(type=='export'){
  	 	 			download(parentId)
+ 	 	 		} else if(type=='exportJson'){
+ 	 	 			exportJson(parentId)
  	 	 	 	}
 		    }
 		  });
@@ -907,11 +921,17 @@ input[value="OPTIONS"] {
 		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
 		      }
 		    },{
-		      title: '导出',
-		      id: 'export',
+		      title: '下载',
+		      id: 'download',
 		      templet: function(d){
 		    	  return '<i class="layui-icon layui-icon-download-circle"></i> ' + d.title;
 		      }
+		    },{
+			      title: '导出JSON',
+			      id: 'exportJson',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-download-circle"></i> ' + d.title;
+			      }
 		    },{
 			      title: '删除',
 			      id: 'del',
@@ -939,8 +959,10 @@ input[value="OPTIONS"] {
  	 				addMenu(dataId,'1');
 				}else if(type=='copyLink'){
 					copyLink(dataId);
- 	 	 	 	} else if(type=='export'){
+ 	 	 	 	} else if(type=='download'){
  	 	 	 		download(dataId)
+ 	 	 	 	} else if(type=='exportJson'){
+ 	 	 	 	 	exportJson(dataId);
 	 	 	 	} else if(type=='del'){
 	 	 	 		del(dataId,'1');
  	 	 	 	} 
@@ -983,11 +1005,17 @@ input[value="OPTIONS"] {
 		    	  return '<i class="layui-icon layui-icon-link"></i> ' + d.title;
 		      }
 		    },{
-		      title: '导出',
-		      id: 'export',
+		      title: '下载',
+		      id: 'download',
 		      templet: function(d){
 		    	  return '<i class="layui-icon layui-icon-download-circle"></i> ' + d.title;
 		      }
+		    },{
+			      title: '导出JSON',
+			      id: 'exportJson',
+			      templet: function(d){
+			    	  return '<i class="layui-icon layui-icon-download-circle"></i> ' + d.title;
+			      }
 		    },{
 			      title: '删除',
 			      id: 'del',
@@ -1012,8 +1040,10 @@ input[value="OPTIONS"] {
  	 	 	 		copyLink(dataId);
 	 	 	 	} else if(type=='addApiSubMenu'){
  	 				addMenu(parentId,'1');
- 	 	 	 	} else if(type=='export'){
+ 	 	 	 	} else if(type=='download'){
  	 	 	 		download(dataId)
+ 	 	 	 	} else if(type=='exportJson'){
+ 	 	 	 		exportJson(dataId)
 	 	 	 	} else if(type=='del'){
 	 	 	 		del(dataId,'1');
 	 	 	 	}
@@ -1613,15 +1643,15 @@ function copy(id,treeType){
  	}
 }
 
-// 导出
+// 下载
 function download(id){
 	if(id){ 
 		 var node=findNodeById(treeData[0],id);
-		 var title=`确定导出【${node.title}】目录下的所有接口？`;
+		 var title=`确定下载【${node.title}】目录下的所有接口？`;
 		 if(node.type=='api'){
-			 title=`确定导出【${node.title}】接口？`;
+			 title=`确定下载【${node.title}】接口？`;
 		 }
-		 var index=layer.confirm(title, {icon: 3,title:'导出',offset:'100px'}, function(){
+		 var index=layer.confirm(title, {icon: 3,title:'下载',offset:'100px'}, function(){
 			 var url='#(path)#(apiActionKey)/download?id='+id+'&title='+node.title;
 			 window.open(url);
 			 layer.close(index);
@@ -1631,6 +1661,12 @@ function download(id){
 	} else {
 		showMsg("id is null");
 	}
+}
+
+//导出JSON
+function exportJson(apiId){
+	var url="#(path)#(apiActionKey)/exportJson?parentId="+apiId;
+	window.open(url);
 }
 
 // 导出选中的接口

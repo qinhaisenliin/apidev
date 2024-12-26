@@ -1082,4 +1082,50 @@ public class ApidevService extends ApidevBaseService {
 		}
 		return ok("修改成功");
 	}
+	
+	/**
+	 * 导出接口
+	 * @param id 导出对象id
+	 * @return List
+	 */
+	public List<Record> getExportAllApiList(String id){
+
+		Record api = findById(id);
+		if(api==null) {
+			return new ArrayList<>();
+		}
+		List<Record> result=new ArrayList<>();
+		String projectId=api.getStr("project_id");
+		if(id.length()==1) {
+			id=projectId+"_"+id;
+		}
+		List<Record> allTreeList = getAllTreeList(id);
+		api.set("children", allTreeList);
+		result.add(api);
+		return result;
+	}
+	
+	/**
+	 * 查询api接口
+	 * 
+	 * @param parentId 父级id
+	 * @return List
+	 */
+	public List<Record> getAllTreeList(String parentId) {
+		String sql = "select * from "+ tableName + " where del = 0 and parent_id=? order by sort asc,type desc";
+		List<Record> list = Db.find(sql, parentId);
+
+		for (Record rd : list) {
+			String id = rd.get("id");
+
+			if(rd.get("title")==null) {
+				rd.set("title", rd.getStr("action_key"));
+			}
+			List<Record> children = getAllTreeList(id);
+			if (children.size() > 0)
+				rd.set("children", children);
+		}
+		return list;
+	}
+	
 }
