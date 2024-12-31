@@ -123,7 +123,7 @@ APIDev Server Info:
  > Version:   1.0.3
  > ActionKey: /apidev
 ```
-5、可选配置项：需要在src/main/resource目录创建apidev-conf.txt文件，然后添加如下配置项：
+5、可选配置项：需要在src/main/resource目录创建apidev-config.txt文件，然后添加如下配置项：
 ```
     #1、Apidev 路由配置，默认是/apidev
      
