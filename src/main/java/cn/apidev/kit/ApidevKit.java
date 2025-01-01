@@ -53,7 +53,7 @@ public class ApidevKit {
 	/**
 	 * APIDev version
 	 */
-	public static final String version = "1.0.3";
+	public static final String version = "1.0.4";
 	
 	/**
 	 * 标记SpringBoot项目
@@ -216,14 +216,14 @@ public class ApidevKit {
 		if(url.startsWith("jdbc:oracle")||url.startsWith("jdbc:dm")) {
 			toLowerCase = true;
 			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.OracleDialect());
-		}else if(url.startsWith("jdbc:sqlite")) {
-			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.Sqlite3Dialect());
+//		}else if(url.startsWith("jdbc:sqlite")) {
+//			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.Sqlite3Dialect());
 		} else if(url.startsWith("jdbc:postgresql")) {
 			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.PostgreSqlDialect());
 		} else if(url.startsWith("jdbc:microsoft")) {
 			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.SqlServerDialect());
-		} else if(url.startsWith("jdbc:h2")) {
-			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.H2Dialect());
+//		} else if(url.startsWith("jdbc:h2")) {
+//			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.H2Dialect());
 		} else if(url.startsWith("jdbc:mysql")) {
 			arp.setDialect(new com.jfinal.plugin.activerecord.dialect.MysqlDialect());
 		}
