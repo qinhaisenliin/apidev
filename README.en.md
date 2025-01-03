@@ -120,7 +120,7 @@ APIDev Server Info:
  > Version:   1.0.3
  > ActionKey: /apidev
 ```
-5、Optional configuration items: Create a apidev-conf.txt file in the src/main/resource directory and add the following configuration items:
+5、Optional configuration items: Create a apidev-config.txt file in the src/main/resource directory and add the following configuration items:
 ```
     #1、apidev route configuration, the default is /apidev
      
