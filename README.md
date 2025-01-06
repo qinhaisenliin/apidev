@@ -3,6 +3,8 @@
 
 APIDev is a platform focused on API development and management, designed to provide developers with efficient API solutions and tools.  
 
+Whether you are an experienced senior developer or a novice in the API field, APIDev can be your indispensable assistant, helping you on the road of API development and management.
+
 ## contact
 APIDev：[http://apidev.cn](http://apidev.cn)
 
